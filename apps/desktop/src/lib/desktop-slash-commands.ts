@@ -64,11 +64,8 @@ export type DesktopActionId =
   | 'btw'
   | 'compress'
   | 'handoff'
-  | 'hatch'
   | 'help'
-  | 'journey'
   | 'new'
-  | 'pet'
   | 'profile'
   | 'reasoning'
   | 'skin'
@@ -234,12 +231,6 @@ const DESKTOP_COMMAND_SPECS: readonly DesktopCommandSpec[] = [
     surface: action('browser'),
     argumentMode: 'options'
   },
-  {
-    name: '/journey',
-    description: 'Open the memory graph — skills + memories over time',
-    aliases: ['/learning', '/memory-graph'],
-    surface: action('journey')
-  },
 
   // Overlay pickers
   { name: '/model', description: 'Switch the model for this session', surface: picker('model'), hidden: true },
@@ -288,18 +279,6 @@ const DESKTOP_COMMAND_SPECS: readonly DesktopCommandSpec[] = [
     aliases: ['/background'],
     surface: action('background'),
     argumentMode: 'text'
-  },
-  {
-    name: '/pet',
-    description: 'Toggle or adopt a petdex mascot (/pet, /pet list, /pet boba)',
-    surface: action('pet'),
-    argumentMode: 'options'
-  },
-  {
-    name: '/hatch',
-    description: 'Generate a new pet (opens the pet generator)',
-    aliases: ['/generate-pet'],
-    surface: action('hatch')
   },
   {
     name: '/save',

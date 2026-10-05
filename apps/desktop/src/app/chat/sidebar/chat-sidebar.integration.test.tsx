@@ -24,6 +24,7 @@ import {
 } from '@/store/session'
 import { $removedSessionIds } from '@/store/session-removal'
 import { SIDEBAR_NAV_PREFS_AREA } from '@/store/sidebar-nav'
+import { $undermindHealth } from '@/store/undermind-health'
 import { makeSessionInfo } from '@/test/session-info'
 
 import { type AppView, ROUTES_AREA, SIDEBAR_NAV_AREA } from '../../routes'
@@ -499,5 +500,46 @@ describe('ChatSidebar messaging owners', () => {
     expect(telegramGroups()).toHaveLength(0)
     expect(screen.queryByText('work-1')).toBeNull()
     expect(within(row('default-1')).queryByRole('img', { name: /^Profile:/ })).toBeNull()
+  })
+})
+
+// The ambient Undermind light on the Subconscious nav row. These assert the
+// WIRING — that the store's verdict actually reaches the DOM — which the store's
+// own unit tests cannot cover.
+describe('ChatSidebar subconscious health dot', () => {
+  afterEach(() => {
+    cleanup()
+    $undermindHealth.set(null)
+  })
+
+  it('stays hidden until a probe has answered', () => {
+    renderSidebar('/', 'chat')
+
+    expect(screen.queryByTestId('undermind-status-dot')).toBeNull()
+  })
+
+  it('lights up when the proxy answers', () => {
+    $undermindHealth.set({ reachable: true, intents: 3 })
+
+    renderSidebar('/', 'chat')
+
+    expect(screen.getByTestId('undermind-status-dot').getAttribute('data-state')).toBe('up')
+  })
+
+  it('turns bad when the router reports the proxy unreachable', () => {
+    $undermindHealth.set({ reachable: false, error: 'connection refused' })
+
+    renderSidebar('/', 'chat')
+
+    expect(screen.getByTestId('undermind-status-dot').getAttribute('data-state')).toBe('down')
+  })
+
+  it('attaches to the Subconscious row alone, not every nav row', () => {
+    $undermindHealth.set({ reachable: true })
+
+    renderSidebar('/', 'chat')
+
+    expect(screen.getAllByTestId('undermind-status-dot')).toHaveLength(1)
+    expect(screen.getByTestId('undermind-status-dot').closest('button')?.textContent).toContain('Subconscious')
   })
 })

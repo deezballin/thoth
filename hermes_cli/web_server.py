@@ -1005,6 +1005,7 @@ from hermes_cli.web_routers import (  # noqa: E402
     chat_workspaces as _chat_workspaces_routes,
     dashboard_ui as _dashboard_ui_routes,
     shared_metrics as _shared_metrics_routes,
+    undermind as _undermind_routes,
 )
 
 app.include_router(_files_routes.router)
@@ -1030,6 +1031,7 @@ app.include_router(_cron_routes.router)
 app.include_router(_mcp_routes.router)
 app.include_router(_ops_routes.router)
 app.include_router(_skills_routes.hub_router)
+app.include_router(_undermind_routes.router)
 app.include_router(_profiles_routes.router)
 app.include_router(_skills_routes.router)
 app.include_router(_tools_routes.router)

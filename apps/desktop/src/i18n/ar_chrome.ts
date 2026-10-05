@@ -38,7 +38,6 @@ export const arChrome = {
     muteHaptics: 'كتم الاهتزازات',
     unmuteHaptics: 'تفعيل الاهتزازات',
     openSettings: 'فتح الإعدادات',
-    openStarmap: 'فتح خريطة الذاكرة',
     enterHud: 'وضع HUD',
     exitHud: 'إنهاء وضع HUD',
     resetHudLayout: 'إعادة تعيين حجم HUD وموضعه',

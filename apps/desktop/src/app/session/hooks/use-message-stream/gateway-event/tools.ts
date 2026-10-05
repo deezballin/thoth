@@ -3,7 +3,6 @@ import { reportFirstBuildToolComplete } from '@/components/onboarding-chat/first
 import { toolCallOwnerMessageId } from '@/lib/chat-messages'
 import { invalidateSlashCompletions } from '@/lib/slash-completion-cache'
 import { refreshBackgroundProcesses } from '@/store/composer-status'
-import { flashPetActivity, setPetActivity } from '@/store/pet'
 import { recordPreviewArtifact, reofferPreviewArtifact } from '@/store/preview-status'
 import { $sessionStates, storedSessionIdForRuntimeId } from '@/store/session-states'
 import { isTerminalSubagentCompletion, pruneDelegateFallbackSubagents, upsertSubagent } from '@/store/subagents'
@@ -46,10 +45,6 @@ export function handleToolEvent(ctx: GatewayEventContext): boolean {
 
     setSessionDraftingTool(sessionId, typeof payload?.name === 'string' ? payload.name : '')
 
-    if (isActiveEvent) {
-      setPetActivity({ reasoning: false, toolRunning: true })
-    }
-
     return true
   }
 
@@ -60,10 +55,6 @@ export function handleToolEvent(ctx: GatewayEventContext): boolean {
 
     flushQueuedDeltas(sessionId)
     upsertToolCall(sessionId, toTodoPayload(payload) ?? payload, 'running', event.type, occurredAt)
-
-    if (isActiveEvent) {
-      setPetActivity({ reasoning: false, toolRunning: true })
-    }
 
     return true
   }
@@ -99,17 +90,6 @@ export function handleToolEvent(ctx: GatewayEventContext): boolean {
       // Onboarding's first build paces its check-ins off real work done
       // (no-op in every other session).
       reportFirstBuildToolComplete(sessionId)
-
-      if (isActiveEvent) {
-        setPetActivity({ toolRunning: false })
-
-        // A tool can fail without ending the turn when the agent recovers
-        // and continues. Surface that failure as a short pet beat too;
-        // otherwise only turn-level errors ever reach the failed state.
-        if (payload?.error) {
-          flashPetActivity({ error: true })
-        }
-      }
 
       // A pending clarify blocks the turn, so the first tool.complete after
       // one is the clarify resolving — drop the "needs input" flag here so

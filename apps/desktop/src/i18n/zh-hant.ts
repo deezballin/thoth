@@ -77,7 +77,6 @@ export const zhHant = defineLocale({
   language: zhHantSettings.language,
   settings: zhHantSettings.settings,
   skills: zhHantCapabilities.skills,
-  starmap: zhHantCapabilities.starmap,
   agents: zhHantCapabilities.agents,
   commandCenter: zhHantCommandCenter.commandCenter,
   messaging: zhHantCommandCenter.messaging,

@@ -341,7 +341,6 @@ function Harness({
     getRuntimeIdForStoredSession: cache.getRuntimeIdForStoredSession,
     getRouteToken: () => 'token',
     handleSkinCommand: () => '',
-    openMemoryGraph: () => undefined,
     refreshSessions: async () => undefined,
     requestGateway,
     resumeStoredSession: sessionActions.resumeSession,

@@ -665,7 +665,6 @@ export const esOverrides = {
     muteHaptics: 'Silenciar háptica',
     unmuteHaptics: 'Activar háptica',
     openSettings: 'Abrir configuración',
-    openStarmap: 'Abrir grafo de memoria',
     enterHud: 'Modo HUD',
     exitHud: 'Salir del modo HUD',
     resetHudLayout: 'Restablecer el tamaño y la posición del HUD',
@@ -2973,34 +2972,6 @@ export const esOverrides = {
       searchFailed: 'Falló la búsqueda en el hub'
     }
   },
-  starmap: {
-    title: 'Grafo de memoria',
-    subtitle: (nodes, clusters) => `${nodes} skills en ${clusters} categorías`,
-    close: 'Cerrar grafo de memoria',
-    refresh: 'Actualizar',
-    memory: 'Memoria',
-    filterAll: 'Todo',
-    filterUsed: 'Usado',
-    filterLearned: 'Aprendido',
-    viewGraph: 'Grafo',
-    loadFailed: 'No se pudo cargar el grafo de memoria',
-    loading: 'Cargando…',
-    emptyTitle: 'Aún no se ha aprendido nada',
-    emptyDesc: 'A medida que Hermes crea skills y memorias para tu trabajo, aparecerán aquí.',
-    share: 'Compartir mapa',
-    shareHint:
-      'Copia el código para compartir este mapa o pega uno para cargarlo. Solo incluye el diseño, no el texto de tus memorias ni skills.',
-    shareTitle: 'Importar / exportar mapa',
-    sharePlaceholder: 'Pega un código de mapa…',
-    copy: 'Copiar código del mapa',
-    copied: '¡Copiado!',
-    importMap: 'Importar un mapa',
-    importBtn: 'Cargar',
-    importEmpty: 'Pega un código de mapa para cargarlo.',
-    importSuccess: nodes => `Se cargó un mapa con ${nodes} ${nodes === 1 ? 'nodo' : 'nodos'}.`,
-    importedBadge: 'mapa importado',
-    resetToMine: 'Volver a mi mapa'
-  },
   agents: {
     extendedTranscript: 'Transcripción ampliada',
     transcriptTruncated: 'Mostrando los últimos 16 KiB',
@@ -4256,7 +4227,6 @@ export const esOverrides = {
       '/bg': 'Ejecutar un prompt en una sesión independiente en segundo plano',
       '/btw': 'Hacer una pregunta al margen sobre esta conversación sin interrumpirla',
       '/agents': 'Mostrar los agentes activos y las tareas en curso',
-      '/journey': 'Abrir el grafo de memoria: skills y recuerdos a lo largo del tiempo',
       '/queue':
         'Poner un prompt en cola para el siguiente turno, o listar/editar/quitar/mover/vaciar los prompts en cola',
       '/steer': 'Insertar un mensaje tras la siguiente llamada a herramienta sin interrumpir',
@@ -5161,8 +5131,6 @@ export const esOverrides = {
       openCron: 'Abrir tareas cron',
       webhooks: 'Webhooks',
       openWebhooks: 'Abrir webhooks',
-      starmap: 'Grafo de memoria',
-      openStarmap: 'Abrir grafo de memoria',
       turnRunning: 'En ejecución',
       contextUsage: 'Uso de contexto',
       systemResources: {

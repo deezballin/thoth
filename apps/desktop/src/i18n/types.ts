@@ -677,7 +677,6 @@ export interface Translations {
     muteHaptics: string
     unmuteHaptics: string
     openSettings: string
-    openStarmap: string
     enterHud: string
     exitHud: string
     resetHudLayout: string
@@ -2225,33 +2224,6 @@ export interface Translations {
     }
   }
 
-  starmap: {
-    title: string
-    subtitle: (nodes: number, clusters: number) => string
-    close: string
-    refresh: string
-    memory: string
-    filterAll: string
-    filterUsed: string
-    filterLearned: string
-    viewGraph: string
-    loadFailed: string
-    loading: string
-    emptyTitle: string
-    emptyDesc: string
-    share: string
-    shareHint: string
-    shareTitle: string
-    sharePlaceholder: string
-    copy: string
-    copied: string
-    importMap: string
-    importBtn: string
-    importEmpty: string
-    importSuccess: (nodes: number) => string
-    importedBadge: string
-    resetToMine: string
-  }
   agents: {
     extendedTranscript: string
     transcriptTruncated: string
@@ -3979,8 +3951,6 @@ export interface Translations {
       openCron: string
       webhooks: string
       openWebhooks: string
-      starmap: string
-      openStarmap: string
       turnRunning: string
       contextUsage: string
       compressions: (count: number) => string

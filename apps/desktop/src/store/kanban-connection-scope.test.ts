@@ -30,7 +30,6 @@ vi.mock('@/hermes', async importOriginal => {
     }
   }
 })
-vi.mock('@/store/starmap', () => ({ resetStarmapGraph: vi.fn() }))
 
 const { getApiRequestConnection, setApiRequestConnection, setApiRequestProfile } = await import('@/api/client')
 const { queryClient } = await import('@/lib/query-client')

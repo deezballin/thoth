@@ -71,21 +71,6 @@ export const zhHantCapabilities = {
     officialPill: '官方'
   },
 
-  starmap: {
-    title: '記憶圖譜',
-    subtitle: (nodes, clusters) => `${clusters} 個類別中的 ${nodes} 個技能`,
-    close: '關閉記憶圖譜',
-    refresh: '重新整理',
-    memory: '記憶',
-    filterAll: '全部',
-    filterUsed: '已使用',
-    filterLearned: '已學習',
-    viewGraph: '圖譜',
-    loadFailed: '無法載入記憶圖譜',
-    loading: '載入中…',
-    emptyTitle: '尚無學習內容',
-    emptyDesc: '當 Hermes 為你的工作建立技能與記憶時，會顯示在這裡。'
-  },
 
   agents: {
     extendedTranscript: '完整記錄尾端',
@@ -129,4 +114,4 @@ export const zhHantCapabilities = {
     durationMinutes: (minutes, seconds) => `${minutes} 分 ${seconds} 秒`,
     tokens: value => `${value} 詞元`
   }
-} satisfies Pick<TranslationOverrides, 'skills' | 'starmap' | 'agents'>
+} satisfies Pick<TranslationOverrides, 'skills' | 'agents'>

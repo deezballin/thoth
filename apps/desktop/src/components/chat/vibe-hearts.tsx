@@ -1,8 +1,6 @@
 import { type CSSProperties } from 'react'
 
 import { createParticleEmitter, ParticleField, type ParticleFieldConfig } from '@/components/particles/particle-field'
-import { $petActive, flashPetActivity } from '@/store/pet'
-import { $petOverlayActive, forwardPetReaction } from '@/store/pet-overlay'
 import { $vibeHeartsEnabled } from '@/store/vibe-hearts-enabled'
 
 /**
@@ -64,17 +62,7 @@ export const burstVibeHearts = (count?: number) => {
     return
   }
 
-  const overlay = $petOverlayActive.get()
-
-  if (overlay || $petActive.get()) {
-    flashPetActivity({ celebrate: true })
-  }
-
-  if (overlay) {
-    forwardPetReaction('vibe')
-  } else {
-    playVibeHearts(count)
-  }
+  playVibeHearts(count)
 }
 
 export interface HeartFieldProps {

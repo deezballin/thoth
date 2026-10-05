@@ -6,12 +6,10 @@ import { clearClarifyRequest } from '@/store/clarify'
 import {
   notifyCronChanged,
   notifyPairingChanged,
-  notifyPetChanged,
   notifyPlatformsChanged,
   notifyProjectsChanged,
   notifySessionsChanged,
   notifySetupReady,
-  type PetChangeMeta,
   setChangeEventsAvailable
 } from '@/store/live-sync'
 import { clearAllPrompts, clearApprovalRequest } from '@/store/prompts'
@@ -64,7 +62,6 @@ export function handleLifecycleEvent(ctx: GatewayEventContext): boolean {
   }
 
   if (
-    event.type === 'pet.changed' ||
     event.type === 'cron.changed' ||
     event.type === 'sessions.changed' ||
     event.type === 'projects.changed' ||
@@ -77,9 +74,7 @@ export function handleLifecycleEvent(ctx: GatewayEventContext): boolean {
     // changes apply — background profile sockets (and other connections'
     // gateways) watch their own homes.
     if (fromActiveSource()) {
-      if (event.type === 'pet.changed') {
-        notifyPetChanged(payload as PetChangeMeta | undefined)
-      } else if (event.type === 'cron.changed') {
+      if (event.type === 'cron.changed') {
         notifyCronChanged()
       } else if (event.type === 'projects.changed') {
         notifyProjectsChanged()

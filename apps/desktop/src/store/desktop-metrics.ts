@@ -106,7 +106,6 @@ export type DesktopFeatureArea =
   | 'settings_sessions'
   | 'settings_vault'
   | 'skins'
-  | 'starmap'
   | 'terminal_pane'
   | 'voice_conversation'
   | 'voice_dictation'
@@ -124,7 +123,6 @@ const ROUTE_AREAS: Record<string, DesktopFeatureArea> = {
   profiles: 'profiles',
   'session-import': 'session_import',
   settings: 'settings_other',
-  starmap: 'starmap',
   webhooks: 'webhooks'
 }
 

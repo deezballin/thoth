@@ -13,12 +13,6 @@ import type { GrowRequest } from '../electron/window-growth'
 
 import type { WakeIndicatorState } from './lib/wake-indicator'
 import type {
-  PetOverlayBounds,
-  PetOverlayControl,
-  PetOverlayOpenRequest,
-  PetOverlayStatePayload
-} from './store/pet-overlay'
-import type {
   QuickEntryStatePush,
   QuickEntryStatus,
   QuickEntrySubmitPayload,

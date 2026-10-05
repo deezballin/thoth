@@ -67,7 +67,6 @@ async function main() {
     ['Cron', '/cron'],
     ['Profiles', '/profiles'],
     ['Agents', '/agents'],
-    ['Starmap', '/starmap'],
     ['Webhooks', '/webhooks'],
   ]) {
     results.push(await measure(ws, `OVERLAY: ${label} (open + 2s idle)`, async (ws) => {
@@ -93,7 +92,7 @@ async function main() {
   // Messaging sub-tabs (platform detail) — click through if present
   await nav(ws, '/messaging')
   await sleep(800)
-  results.push(await measure(ws, 'MESSAGING: idle 2s w/ platform list', async (ws) => {
+  results.push(await measure(ws, 'MESSAGING: idle 2s w/ platform list', async () => {
     await sleep(2000)
   }, 100))
   await nav(ws, '/')

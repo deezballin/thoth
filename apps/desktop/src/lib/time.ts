@@ -25,7 +25,7 @@ export const fmtDateTime = new Intl.DateTimeFormat(undefined, { dateStyle: 'medi
 // Weekday + full date + clock (message time tooltips).
 export const fmtFullDateTime = new Intl.DateTimeFormat(undefined, { dateStyle: 'full', timeStyle: 'short' })
 
-// Date only, "5 Jun 2026" (starmap tooltip).
+// Date only, "5 Jun 2026" (billing dates).
 export const fmtDate = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
 
 // Month name alone / with year — session-list date-bucket dividers ("September",

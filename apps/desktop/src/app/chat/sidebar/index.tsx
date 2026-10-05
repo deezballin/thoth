@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation } from 'react-router'
 
 import { PlatformAvatar } from '@/app/messaging/platform-icon'
+import { StatusDot } from '@/components/status-dot'
 import { Button } from '@/components/ui/button'
 import { Codicon } from '@/components/ui/codicon'
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from '@/components/ui/context-menu'
@@ -24,6 +25,7 @@ import {
 import { Tip, TipKeybindLabel } from '@/components/ui/tooltip'
 import { useContributions } from '@/contrib/react/use-contributions'
 import { searchSessions, type SessionInfo, type SessionSearchResult } from '@/hermes'
+import { useUndermindHealthPoll } from '@/hooks/use-undermind-health'
 import { useI18n } from '@/i18n'
 import { comboTokens } from '@/lib/keybinds/combo'
 import { sessionMatchesSearch } from '@/lib/session-search'
@@ -137,6 +139,7 @@ import { markSessionUnread } from '@/store/session-unread-remote'
 import { $archivedSessions, loadArchivedSessions } from '@/store/sidebar-archive'
 import { applySidebarNavPrefs, SIDEBAR_NAV_PREFS_AREA } from '@/store/sidebar-nav'
 import { $sidebarSessionRankIds } from '@/store/sidebar-sort'
+import { $undermindDotState } from '@/store/undermind-health'
 
 import {
   type AppView,
@@ -145,7 +148,8 @@ import {
   CRON_ROUTE,
   MESSAGING_ROUTE,
   SIDEBAR_NAV_AREA,
-  type SidebarNavContribution
+  type SidebarNavContribution,
+  SUBCONSCIOUS_ROUTE
 } from '../../routes'
 import type { SidebarNavItem } from '../../types'
 import { type NewSessionSplitHandler, startNewSessionDrag } from '../new-session-drag'
@@ -244,6 +248,15 @@ const SIDEBAR_NAV: SidebarNavItem[] = [
     route: CRON_ROUTE,
     keybindActionId: 'nav.cron',
     tier: 'advanced'
+  },
+  // The subconscious: Undermind's offered memory, self-mirror and doctor
+  // census. No i18n key (this build ships English only), so the literal label
+  // below is what renders — `s.nav[id] ?? item.label` falls back to it.
+  {
+    id: 'subconscious',
+    label: 'Subconscious',
+    icon: props => <Codicon name="brain" {...props} />,
+    route: SUBCONSCIOUS_ROUTE
   }
 ]
 
@@ -548,6 +561,12 @@ export function ChatSidebar({
   const [serverMatches, setServerMatches] = useState<SessionSearchResult[]>([])
   const [searchPending, setSearchPending] = useState(false)
   const [newSessionKbdFlash, setNewSessionKbdFlash] = useState(false)
+
+  // Ambient health for the Subconscious row. On a failed probe this reads null
+  // and the dot stays hidden rather than turning red — see $undermindDotState.
+  useUndermindHealthPoll()
+  const undermindDot = useStore($undermindDotState)
+
   const [messagingLoadMorePending, setMessagingLoadMorePending] = useState<Record<string, boolean>>({})
   const [recentsLoadMorePending, setRecentsLoadMorePending] = useState(false)
   const messagingOpenIds = useStore($sidebarMessagingOpenIds)
@@ -1606,6 +1625,7 @@ export function ChatSidebar({
                   (item.id === 'messaging' && currentView === 'messaging') ||
                   (item.id === 'artifacts' && currentView === 'artifacts') ||
                   (item.id === 'cron' && currentView === 'cron') ||
+                  (item.id === 'subconscious' && currentView === 'subconscious') ||
                   // Contributed rows light up at their own route.
                   (currentView === 'extension' && Boolean(item.route) && pathname === item.route)
 
@@ -1689,6 +1709,14 @@ export function ChatSidebar({
                     <span className="min-w-0 truncate" data-tip-arrow-only="" data-tour={`sidebar-nav-${item.id}`}>
                       {s.nav[item.id] ?? item.label}
                     </span>
+                    {item.id === 'subconscious' && undermindDot && (
+                      <StatusDot
+                        className="ml-auto shrink-0"
+                        data-state={undermindDot}
+                        data-testid="undermind-status-dot"
+                        tone={undermindDot === 'up' ? 'good' : 'bad'}
+                      />
+                    )}
                     {isNewSession && (
                       <KbdGroup
                         className={cn('ml-auto opacity-55', newSessionKbdFlash && 'opacity-100!')}

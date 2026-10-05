@@ -664,7 +664,6 @@ export const frOverrides = {
     muteHaptics: 'Couper les vibrations',
     unmuteHaptics: 'Réactiver les vibrations',
     openSettings: 'Ouvrir les paramètres',
-    openStarmap: 'Ouvrir le graphe de mémoire',
     enterHud: 'Mode HUD',
     exitHud: 'Quitter le mode HUD',
     resetHudLayout: 'Réinitialiser la taille et la position du HUD',
@@ -2991,35 +2990,6 @@ export const frOverrides = {
       searchFailed: 'Échec de la recherche dans le hub'
     }
   },
-  starmap: {
-    title: 'Graphique de mémoire',
-    subtitle: (nodes, clusters) => `${nodes} skills dans ${clusters} catégories`,
-    close: 'Fermer le graphique de mémoire',
-    refresh: 'Actualiser',
-    memory: 'Mémoire',
-    filterAll: 'Tout',
-    filterUsed: 'Utilisés',
-    filterLearned: 'Appris',
-    viewGraph: 'Graphique',
-    loadFailed: 'Impossible de charger le graphique de mémoire',
-    loading: 'Chargement…',
-    emptyTitle: "Rien d'appris pour le moment",
-    emptyDesc:
-      'Au fur et à mesure que Hermes construit des skills et des mémoires pour votre travail, ils apparaissent ici.',
-    share: 'Partager la carte',
-    shareHint:
-      'Copiez le code pour partager cette carte, ou collez-en un pour le charger. Il inclut uniquement la disposition, pas votre texte de mémoire ou de skill.',
-    shareTitle: 'Importer / exporter la carte',
-    sharePlaceholder: 'Collez un code de carte…',
-    copy: 'Copier le code de la carte',
-    copied: 'Copié !',
-    importMap: 'Importer une carte',
-    importBtn: 'Charger',
-    importEmpty: 'Collez un code de carte pour le charger.',
-    importSuccess: nodes => `Carte chargée avec ${nodes} ${nodes === 1 ? 'nœud' : 'nœuds'}.`,
-    importedBadge: 'carte importée',
-    resetToMine: 'Retour à ma carte'
-  },
   agents: {
     extendedTranscript: 'Transcription étendue',
     transcriptTruncated: 'Affichage des 16 Kio les plus récents',
@@ -4275,7 +4245,6 @@ export const frOverrides = {
       '/bg': 'Exécuter un prompt dans une session d’arrière-plan distincte',
       '/btw': 'Poser une question annexe sur cette conversation sans l’interrompre',
       '/agents': 'Afficher les agents actifs et les tâches en cours',
-      '/journey': 'Ouvrir le graphe de mémoire — skills et souvenirs au fil du temps',
       '/queue':
         'Mettre un prompt en file pour le prochain tour, ou lister/modifier/supprimer/déplacer/vider les prompts en file',
       '/steer': 'Injecter un message après le prochain appel d’outil sans interrompre',
@@ -5183,8 +5152,6 @@ export const frOverrides = {
       openCron: 'Ouvrir les tâches cron',
       webhooks: 'Webhooks',
       openWebhooks: 'Ouvrir les webhooks',
-      starmap: 'Graphique de mémoire',
-      openStarmap: 'Ouvrir le graphique de mémoire',
       turnRunning: 'En cours',
       contextUsage: 'Utilisation du contexte',
       systemResources: {

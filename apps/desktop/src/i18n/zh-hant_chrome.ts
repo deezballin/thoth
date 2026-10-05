@@ -33,7 +33,6 @@ export const zhHantChrome = {
     muteHaptics: '靜音觸感回饋',
     unmuteHaptics: '開啟觸感回饋',
     openSettings: '開啟設定',
-    openStarmap: '開啟記憶圖譜',
     resetHudLayout: '重設 HUD 大小和位置'
   },
 
@@ -346,8 +345,6 @@ export const zhHantChrome = {
       running: count => `${count} 個執行中`,
       cron: '排程',
       openCron: '開啟排程工作',
-      starmap: '記憶圖譜',
-      openStarmap: '開啟記憶圖譜',
       turnRunning: '執行中',
       contextUsage: '上下文使用量',
       compressions: count => `壓縮次數：${count}`,

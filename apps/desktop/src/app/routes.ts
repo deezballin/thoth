@@ -17,10 +17,10 @@ export const CAPABILITIES_ROUTE = '/capabilities'
 export const MESSAGING_ROUTE = '/messaging'
 export const WEBHOOKS_ROUTE = '/webhooks'
 export const ARTIFACTS_ROUTE = '/artifacts'
+export const SUBCONSCIOUS_ROUTE = '/subconscious'
 export const CRON_ROUTE = '/cron'
 export const PROFILES_ROUTE = '/profiles'
 export const AGENTS_ROUTE = '/agents'
-export const STARMAP_ROUTE = '/starmap'
 
 export type AppView =
   | 'session-import'
@@ -38,7 +38,7 @@ export type AppView =
   | 'messaging'
   | 'profiles'
   | 'settings'
-  | 'starmap'
+  | 'subconscious'
   | 'webhooks'
 
 export type AppRouteId =
@@ -52,7 +52,7 @@ export type AppRouteId =
   | 'new'
   | 'profiles'
   | 'settings'
-  | 'starmap'
+  | 'subconscious'
   | 'webhooks'
 
 export interface AppRoute {
@@ -73,7 +73,7 @@ export const APP_ROUTES = [
   { id: 'cron', path: CRON_ROUTE, view: 'cron' },
   { id: 'profiles', path: PROFILES_ROUTE, view: 'profiles' },
   { id: 'agents', path: AGENTS_ROUTE, view: 'agents' },
-  { id: 'starmap', path: STARMAP_ROUTE, view: 'starmap' }
+  { id: 'subconscious', path: SUBCONSCIOUS_ROUTE, view: 'subconscious' }
 ] as const satisfies readonly AppRoute[]
 
 const APP_VIEW_BY_PATH = new Map<string, AppView>(APP_ROUTES.map(route => [route.path, route.view]))
@@ -167,7 +167,6 @@ export const OVERLAY_VIEWS: ReadonlySet<AppView> = new Set([
   'cron',
   'profiles',
   'settings',
-  'starmap',
   'webhooks'
 ])
 

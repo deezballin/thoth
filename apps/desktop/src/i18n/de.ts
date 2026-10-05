@@ -664,7 +664,6 @@ export const deOverrides = {
     muteHaptics: 'Haptik stummschalten',
     unmuteHaptics: 'Haptik einschalten',
     openSettings: 'Einstellungen öffnen',
-    openStarmap: 'Speicher-Graph öffnen',
     enterHud: 'HUD-Modus',
     exitHud: 'HUD-Modus beenden',
     resetHudLayout: 'HUD-Größe und -Position zurücksetzen',
@@ -2979,34 +2978,6 @@ export const deOverrides = {
       searchFailed: 'Hub-Suche fehlgeschlagen'
     }
   },
-  starmap: {
-    title: 'Speichergraph',
-    subtitle: (nodes, clusters) => `${nodes} Skills in ${clusters} Kategorien`,
-    close: 'Speichergraph schließen',
-    refresh: 'Aktualisieren',
-    memory: 'Speicher',
-    filterAll: 'Alle',
-    filterUsed: 'Verwendet',
-    filterLearned: 'Gelernt',
-    viewGraph: 'Graph',
-    loadFailed: 'Speichergraph konnte nicht geladen werden',
-    loading: 'Wird geladen…',
-    emptyTitle: 'Noch nichts gelernt',
-    emptyDesc: 'Sobald Hermes Skills und Erinnerungen zu Ihrer Arbeit aufbaut, erscheinen sie hier.',
-    share: 'Map teilen',
-    shareHint:
-      'Kopieren Sie den Code, um diese Map zu teilen, oder fügen Sie einen ein, um sie zu laden. Er enthält nur das Layout, nicht Ihren Speicher oder Skill-Text.',
-    shareTitle: 'Map importieren / exportieren',
-    sharePlaceholder: 'Einen Map-Code einfügen…',
-    copy: 'Map-Code kopieren',
-    copied: 'Kopiert!',
-    importMap: 'Eine Map importieren',
-    importBtn: 'Laden',
-    importEmpty: 'Fügen Sie einen Map-Code ein, um ihn zu laden.',
-    importSuccess: nodes => `Eine Map mit ${nodes} ${nodes === 1 ? 'Knoten' : 'Knoten'} geladen.`,
-    importedBadge: 'importierte Map',
-    resetToMine: 'Zurück zu meiner Map'
-  },
   agents: {
     extendedTranscript: 'Extended Transcript',
     transcriptTruncated: 'Zeigt die letzten 16 KiB',
@@ -4264,7 +4235,6 @@ export const deOverrides = {
       '/bg': 'Einen Prompt in einer separaten Hintergrund-Session ausführen',
       '/btw': 'Eine Nebenfrage zu dieser Unterhaltung stellen, ohne sie zu unterbrechen',
       '/agents': 'Aktive Agents und laufende Aufgaben anzeigen',
-      '/journey': 'Den Gedächtnisgraphen öffnen – Skills und Erinnerungen im Zeitverlauf',
       '/queue':
         'Einen Prompt für den nächsten Turn einreihen oder eingereihte Prompts auflisten/bearbeiten/entfernen/verschieben/leeren',
       '/steer': 'Nach dem nächsten Tool-Aufruf eine Nachricht einfügen, ohne zu unterbrechen',
@@ -5169,8 +5139,6 @@ export const deOverrides = {
       openCron: 'Cron-Jobs öffnen',
       webhooks: 'Webhooks',
       openWebhooks: 'Webhooks öffnen',
-      starmap: 'Memory-Graph',
-      openStarmap: 'Memory-Graph öffnen',
       turnRunning: 'Läuft',
       contextUsage: 'Kontext-Verbrauch',
       systemResources: {

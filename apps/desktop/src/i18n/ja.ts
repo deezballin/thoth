@@ -341,7 +341,6 @@ export const ja = defineLocale({
     muteHaptics: '触覚フィードバックをオフ',
     unmuteHaptics: '触覚フィードバックをオン',
     openSettings: '設定を開く',
-    openStarmap: 'メモリグラフを開く',
     resetHudLayout: 'HUD のサイズと位置をリセット'
   },
 
@@ -1712,21 +1711,6 @@ export const ja = defineLocale({
     officialPill: '公式'
   },
 
-  starmap: {
-    title: 'メモリグラフ',
-    subtitle: (nodes, clusters) => `${clusters} カテゴリの ${nodes} スキル`,
-    close: 'メモリグラフを閉じる',
-    refresh: '更新',
-    memory: 'メモリ',
-    filterAll: 'すべて',
-    filterUsed: '使用済み',
-    filterLearned: '学習済み',
-    viewGraph: 'グラフ',
-    loadFailed: 'メモリグラフを読み込めませんでした',
-    loading: '読み込み中…',
-    emptyTitle: 'まだ学習はありません',
-    emptyDesc: 'Hermes がスキルやメモリを蓄積すると、ここに表示されます。'
-  },
   agents: {
     extendedTranscript: '詳細な実行ログ',
     transcriptTruncated: '最新の 16 KiB を表示',
@@ -2730,7 +2714,6 @@ export const ja = defineLocale({
       '/bg': '別のバックグラウンドセッションでプロンプトを実行',
       '/btw': '進行中の会話を中断せずに関連する質問をする',
       '/agents': 'アクティブなセッションとタスクを表示',
-      '/journey': 'メモリグラフを開く',
       '/queue': '次のターンのプロンプトを追加、一覧、編集、削除、移動、全消去',
       '/steer': '現在の実行を誘導',
       '/goal': 'このセッションの継続目標を管理',
@@ -3450,8 +3433,6 @@ export const ja = defineLocale({
       running: count => `${count} 実行中`,
       cron: 'Cron',
       openCron: 'Cron ジョブを開く',
-      starmap: 'メモリグラフ',
-      openStarmap: 'メモリグラフを開く',
       turnRunning: '実行中',
       contextUsage: 'コンテキスト使用状況',
       compressions: count => `圧縮回数: ${count}`,
