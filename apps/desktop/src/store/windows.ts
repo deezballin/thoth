@@ -29,31 +29,6 @@ export function isSecondaryWindow(): boolean {
 
 let watchWindowCache: boolean | null = null
 
-// A "hud" window is HUD mode: the chrome-free floating chat. Unlike the pet
-// overlay / quick entry it is a FULL app renderer with its own gateway — the
-// flag only tells the shell to render the slim floating layout (composer +
-// scrollback) instead of the pane tree, so the composer it shows is the real
-// one. Read from location.search for the same reason as the flag above.
-let hudWindowCache: boolean | null = null
-
-export function isHudWindow(): boolean {
-  if (hudWindowCache !== null) {
-    return hudWindowCache
-  }
-
-  let result = false
-
-  try {
-    result = new URLSearchParams(window.location.search).get('win') === 'hud'
-  } catch {
-    result = false
-  }
-
-  hudWindowCache = result
-
-  return result
-}
-
 // A "watch" window spectates a session that is being driven elsewhere (a
 // running subagent). It resumes lazily — the gateway registers history + a
 // transport for the live mirror without building an agent, so opening it is
@@ -108,10 +83,10 @@ export function windowBrowserTabId(): null | string {
 }
 
 // True for any window that is NOT the primary app instance — a secondary
-// session window, the HUD, or a popped-out Browser. Single-claim channels
-// (the quick-entry capture bridge, the pet overlay control bridge) and the
+// session window or a popped-out Browser. Single-claim channels (the
+// quick-entry capture bridge, the pet overlay control bridge) and the
 // install/onboarding overlays belong to the primary alone.
-export const isAuxiliaryWindow = (): boolean => isSecondaryWindow() || isHudWindow() || isBrowserWindow()
+export const isAuxiliaryWindow = (): boolean => isSecondaryWindow() || isBrowserWindow()
 
 // A full peer window renders the ordinary app shell against the backend that
 // Electron already has running. It is not an auxiliary/specialized renderer,
@@ -137,12 +112,12 @@ export function isProfilePinnedWindow(search = typeof window === 'undefined' ? '
   }
 }
 
-// The profile a helper window (the HUD) was asked to boot against, carried in
-// the query string by the main process (see hudUrl). The HUD is a full app
-// renderer that otherwise adopts the PRIMARY backend's profile — wrong the
-// moment the conversation it was opened on belongs to another profile
-// (#82285). Empty/absent means "no override": boot adopts the primary as
-// before, so ordinary windows and single-profile users are untouched.
+// The profile a helper window was asked to boot against, carried in the
+// query string by the main process. A helper window is a full app renderer
+// that otherwise adopts the PRIMARY backend's profile — wrong the moment the
+// conversation it was opened on belongs to another profile (#82285).
+// Empty/absent means "no override": boot adopts the primary as before, so
+// ordinary windows and single-profile users are untouched.
 // Not cached: it is read a handful of times per boot and staying cache-free
 // keeps it honest under test.
 export function windowProfileOverride(): null | string {

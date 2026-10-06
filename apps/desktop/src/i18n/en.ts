@@ -659,9 +659,6 @@ export const en: Translations = {
     muteHaptics: 'Mute haptics',
     unmuteHaptics: 'Unmute haptics',
     openSettings: 'Open settings',
-    enterHud: 'HUD mode',
-    exitHud: 'Exit HUD mode',
-    resetHudLayout: 'Reset HUD size and position',
     layoutEditor: 'Layout editor',
     layoutEditorTitle: mod => `Layout editor — ${mod}-click resets the layout`
   },
@@ -732,8 +729,6 @@ export const en: Translations = {
       'view.toggleSimpleMode': 'Toggle Simple mode',
       'view.showFiles': 'Show file browser',
       'view.showBrowser': 'Toggle browser',
-      'view.toggleHud': 'Toggle HUD mode',
-      'hud.snapToPointer': 'Move HUD to pointer (global, while HUD is open)',
       'view.showTerminal': 'Toggle terminal',
       'view.newTerminal': 'New terminal',
       'view.nextTerminal': 'Next terminal',
@@ -848,7 +843,6 @@ export const en: Translations = {
       gatewayManagedUpdatesUnavailable: 'Remote updates need a desktop version with managed SSH update support.',
       gatewayManagedUpdatesEmpty: 'Add an SSH connection in Saved connections to manage its updates here.',
       keyboardShortcuts: 'Key bindings',
-      hudGesture: 'HUD gesture',
       screenCapture: 'Screen capture',
       notificationAlerts: 'Desktop alerts',
       notificationSounds: 'Sounds',
@@ -1135,7 +1129,7 @@ export const en: Translations = {
       tabStripAlways: 'Always',
       tabStripNever: 'Never',
       appActionsTitle: 'App Actions',
-      appActionsDesc: 'Where Settings, Layout, and HUD sit in the titlebar. Right leaves room for tabs on the left.',
+      appActionsDesc: 'Where Settings and Layout sit in the titlebar. Right leaves room for tabs on the left.',
       appActionsLeft: 'Left',
       appActionsRight: 'Right',
       terminalFontTitle: 'Terminal Font',
@@ -1397,19 +1391,6 @@ export const en: Translations = {
       voiceShortcutHintDesc:
         'Set the voice recording shortcut in Settings → Keyboard Shortcuts ("Start / stop voice conversation"). The voice.record_key config value only applies to the CLI and TUI.',
       showOptions: 'Show options'
-    },
-    hudModifier: {
-      title: 'Tap to summon HUD',
-      description:
-        'Tap and release ⌘ + Option on Mac, or Ctrl + Alt on Windows/Linux, to bring the HUD forward from any app. Off by default; applies only to this device.',
-      permission:
-        'Allow Hermes in System Settings → Privacy & Security → Input Monitoring, then retry. This gesture does not record keystrokes or capture your screen.',
-      unavailable:
-        'The HUD gesture helper could not start or stopped unexpectedly. Retry, or restart Hermes. The existing HUD shortcut still works inside Hermes.',
-      missingHelper:
-        'This Hermes installation is missing the HUD gesture helper. Update or reinstall Hermes, then retry.',
-      unsupportedSession:
-        'This desktop session does not support global modifier taps. Linux requires X11; Wayland is not supported.'
     },
     screenshot: {
       enabledTitle: 'Screenshot shortcut',

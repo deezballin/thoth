@@ -28,7 +28,7 @@ test('native consumption copies admitted modules and helpers, rejecting changed 
     fs.writeFileSync(path.join(out, 'node-pty/package.json'), '{}')
     const binding = path.join(out, 'node-pty/pty.node')
     fs.writeFileSync(binding, 'native fixture')
-    const helper = 'native/linux-x64/hud-modifier-monitor'
+    const helper = 'native/linux-x64/command-screenshot-monitor'
     fs.mkdirSync(path.dirname(path.join(out, helper)), { recursive: true })
     fs.writeFileSync(path.join(out, helper), 'helper fixture', { mode: 0o755 })
     const selection = { source, nativeDeps: out, platform: 'linux', arch: 'x64', nativeToolchain: 'compiler-a' }
@@ -45,7 +45,7 @@ test('native consumption copies admitted modules and helpers, rejecting changed 
     fs.writeFileSync(path.join(destination, 'node-pty/pty.node'), 'product mutation')
     assert.equal(fs.readFileSync(binding, 'utf8'), 'native fixture')
     assert.throws(() => native.readNativeInputs({ ...selection, arch: 'arm64' }), /run preparation again/)
-    const header = path.join(app, 'electron/native/hud-modifier-gesture.h')
+    const header = path.join(app, 'electron/native/command-screenshot-monitor.m')
     const originalHeader = fs.readFileSync(header)
     fs.appendFileSync(header, '\n/* changed gesture */\n')
     assert.throws(() => native.readNativeInputs(selection), /run preparation again/)

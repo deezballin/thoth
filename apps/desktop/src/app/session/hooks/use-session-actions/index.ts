@@ -1744,10 +1744,9 @@ export function useSessionActions({
               // an empty one — the cache is the base and the live projection is
               // a tail to graft onto it. Reconciling against the empty list
               // instead rebuilds the thread out of the projection alone, so
-              // activating a session that is mid-turn somewhere else (leaving
-              // HUD mode is exactly that) collapsed the whole conversation down
-              // to the in-flight prompt until the turn finished and the
-              // post-turn hydrate restored it.
+              // activating a session that is mid-turn somewhere else collapsed
+              // the whole conversation down to the in-flight prompt until the
+              // turn finished and the post-turn hydrate restored it.
               let activatedMessages = activated.messages_omitted
                 ? appendLiveSessionProjection(cachedViewState.messages, activated)
                 : activated.messages.length || activated.inflight || activated.queued

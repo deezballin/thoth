@@ -3,7 +3,7 @@
  *
  * A `<webview>` guest is its own out-of-process webContents: once a guest
  * page takes HTML5 fullscreen it owns the input focus, and nothing in the
- * host renderer — menus, HUD chords, the app's own keybinds — can reach
+ * host renderer — menus, the app's own keybinds — can reach
  * the user while the guest holds the screen. On Wayland there is no
  * xdotool/wmctrl to force a window change from outside either, so a page
  * that swallows Esc (or simply never offers one) locks the whole display.

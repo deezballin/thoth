@@ -232,19 +232,6 @@ export function wantsNativeBrowser(event: Pick<MouseEvent, 'button' | 'ctrlKey' 
 }
 
 /**
- * The HUD is a chrome-free bar with no in-app browser. A preview tile there
- * either no-ops or tries to paint a webview into the transparent overlay —
- * the OAuth-in-the-HUD case. Always hand off to the OS browser.
- */
-export function hudForcesNativeLinks(search = typeof window === 'undefined' ? '' : window.location.search): boolean {
-  try {
-    return new URLSearchParams(search).get('win') === 'hud'
-  } catch {
-    return false
-  }
-}
-
-/**
  * Where a link the user clicked should open.
  *
  * A web page opens in the in-app browser — that pane exists so reading a doc
@@ -253,9 +240,9 @@ export function hudForcesNativeLinks(search = typeof window === 'undefined' ? ''
  * where you go for anything needing your logged-in session or a password.
  *
  * Everything that ISN'T a web page — `mailto:`, `file:`, a custom scheme — has
- * no business in the webview and always hands off to the OS. The HUD has no
- * browser pane, so it always takes the OS path. The "Always open links in
- * external browser" setting (`$alwaysExternalLinks`) sends every click there.
+ * no business in the webview and always hands off to the OS. The "Always open
+ * links in external browser" setting (`$alwaysExternalLinks`) sends every
+ * click there.
  */
 export function openLink(href: string, options: { native?: boolean } = {}): void {
   const target = normalizeExternalUrl(href)
@@ -268,7 +255,6 @@ export function openLink(href: string, options: { native?: boolean } = {}): void
     options.native ||
     $alwaysExternalLinks.get() ||
     isConnectorAuthorizationLink(target) ||
-    hudForcesNativeLinks() ||
     !/^https?:$/i.test(parseUrl(target)?.protocol ?? '')
   ) {
     openExternalLink(target)

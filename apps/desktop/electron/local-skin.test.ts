@@ -59,7 +59,7 @@ test('reads the active named profile instead of the root home', () => {
   }
 })
 
-test('uses a routed session or hud profile before any gateway can connect', () => {
+test('uses a routed profile before any gateway can connect', () => {
   const home = makeHome()
   const profileHome = localSkinHome(home, 'research')
 

@@ -9,8 +9,8 @@
  * over a dark palette is a milky sheet over a light one. The book of settings
  * is the persisted unit (`TranslucencyBook`); `$translucency` publishes the
  * RESOLVED state for the appearance currently painted, so every consumer —
- * the CSS field surfaces, the main process, the HUD — keeps reading one flat
- * state and never has to know appearances were split.
+ * the CSS field surfaces, the main process — keeps reading one flat state
+ * and never has to know appearances were split.
  *
  * The renderer owns the value and mirrors the resolved state to the main
  * process over IPC. Glass additionally needs page-level work, which lives
@@ -148,9 +148,9 @@ export function setTranslucencyScope(scope: GlassScope): void {
 }
 
 // Glass thins surfaces only in real chat windows (the primary window and
-// secondary session windows). The HUD, pet overlay, quick entry and wake
-// indicator are transparent special-purpose windows that manage their own
-// backgrounds — a page-surface rewrite there would fight them.
+// secondary session windows). The pet overlay, quick entry and wake indicator
+// are transparent special-purpose windows that manage their own backgrounds —
+// a page-surface rewrite there would fight them.
 const CHAT_WINDOW_KINDS = new Set([null, 'secondary', 'browser'])
 
 export const isChatWindow = (search = typeof window === 'undefined' ? '' : window.location.search): boolean => {
@@ -307,12 +307,9 @@ const applyGlassSurfaces = ({ intensity, mode, scope }: TranslucencyState): void
   // Is the user's Glass setting live at all — the same answer in every window.
   const glassLive = mode === 'glass' && intensity > 0 && GLASS_SUPPORTED
   // ...and may THIS window's field surfaces be rewritten for it. Only real
-  // chat windows: the HUD, pet overlay, quick entry and wake indicator are
+  // chat windows: the pet overlay, quick entry and wake indicator are
   // transparent windows that own their backgrounds, and the surface rewrite
-  // would fight them. The HUD still wants the first answer, because its band
-  // paints the app's field mix from `--translucency-glass-keep` and its native
-  // frost is gated on the setting being on (see the `[data-hud-glass]` rules
-  // and hudFrostFor) — which is why these are two flags and not one.
+  // would fight them.
   const glassOn = glassLive && isChatWindow()
   // Clear mode fades the whole window uniformly, so overlay text and the
   // covered transcript blend; styles.css strengthens the overlay scrim while

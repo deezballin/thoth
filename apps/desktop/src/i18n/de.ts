@@ -664,9 +664,6 @@ export const deOverrides = {
     muteHaptics: 'Haptik stummschalten',
     unmuteHaptics: 'Haptik einschalten',
     openSettings: 'Einstellungen öffnen',
-    enterHud: 'HUD-Modus',
-    exitHud: 'HUD-Modus beenden',
-    resetHudLayout: 'HUD-Größe und -Position zurücksetzen',
     layoutEditor: 'Layout-Editor',
     layoutEditorTitle: mod => `Layout-Editor — ${mod}-Klick setzt das Layout zurück`
   },
@@ -732,8 +729,6 @@ export const deOverrides = {
       'view.toggleSimpleMode': 'Einfachen Modus umschalten',
       'view.showFiles': 'Dateibrowser anzeigen',
       'view.showBrowser': 'Browser umschalten',
-      'view.toggleHud': 'HUD-Modus umschalten',
-      'hud.snapToPointer': 'HUD zum Zeiger bewegen (global, während HUD offen ist)',
       'view.showTerminal': 'Terminal umschalten',
       'view.newTerminal': 'Neues Terminal',
       'view.nextTerminal': 'Nächstes Terminal',
@@ -847,7 +842,6 @@ export const deOverrides = {
       gatewayManagedUpdatesEmpty:
         'Fügen Sie unter „Gespeicherte Verbindungen“ eine SSH-Verbindung hinzu, um deren Updates hier zu verwalten.',
       keyboardShortcuts: 'Tastenbelegung',
-      hudGesture: 'HUD-Geste',
       screenCapture: 'Bildschirmaufnahme',
       notificationAlerts: 'Desktop-Hinweise',
       notificationSounds: 'Töne',
@@ -1164,7 +1158,7 @@ export const deOverrides = {
       tabStripNever: 'Nie',
       appActionsTitle: 'App-Aktionen',
       appActionsDesc:
-        'Wo Einstellungen, Layout und HUD in der Titelleiste sitzen. Rechts lässt Platz für Tabs auf der linken Seite.',
+        'Wo Einstellungen und Layout in der Titelleiste sitzen. Rechts lässt Platz für Tabs auf der linken Seite.',
       appActionsLeft: 'Links',
       appActionsRight: 'Rechts',
       terminalFontTitle: 'Terminalschrift',
@@ -1705,19 +1699,6 @@ export const deOverrides = {
       attachmentSizeUnit: 'MB',
       attachmentSizeLabel: 'Maximale Vorschau-/Bildladegröße in Megabyte',
       showOptions: 'Optionen anzeigen'
-    },
-    hudModifier: {
-      title: 'Tippen, um das HUD aufzurufen',
-      description:
-        'Tippen Sie kurz auf ⌘ + Option (Mac) bzw. Strg + Alt (Windows/Linux), um das HUD aus jeder App nach vorn zu holen. Standardmäßig aus; gilt nur für dieses Gerät.',
-      permission:
-        'Erlauben Sie Hermes unter Systemeinstellungen → Datenschutz & Sicherheit → Eingabeüberwachung und versuchen Sie es erneut. Diese Geste zeichnet keine Tastenanschläge auf und nimmt Ihren Bildschirm nicht auf.',
-      unavailable:
-        'Das Hilfsprogramm für die HUD-Geste konnte nicht starten oder wurde unerwartet beendet. Versuchen Sie es erneut oder starten Sie Hermes neu. Das bestehende HUD-Tastenkürzel funktioniert innerhalb von Hermes weiterhin.',
-      missingHelper:
-        'In dieser Hermes-Installation fehlt das Hilfsprogramm für die HUD-Geste. Aktualisieren oder installieren Sie Hermes neu und versuchen Sie es erneut.',
-      unsupportedSession:
-        'Diese Desktop-Session unterstützt keine globalen Modifikator-Taps. Linux erfordert X11; Wayland wird nicht unterstützt.'
     },
     screenshot: {
       enabledTitle: 'Screenshot-Kurzbefehl',

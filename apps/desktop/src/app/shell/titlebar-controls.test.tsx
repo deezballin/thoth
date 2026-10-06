@@ -193,7 +193,7 @@ describe('titlebar app-action cluster', () => {
     cleanup()
   })
 
-  it('moves settings, layout, and HUD to the left when the appearance setting says left', () => {
+  it('moves settings and layout to the left when the appearance setting says left', () => {
     setTitlebarAppActionsSide('left')
     renderControls('/')
 
@@ -202,7 +202,6 @@ describe('titlebar app-action cluster', () => {
 
     expect(within(left).getByLabelText('Open settings')).toBeTruthy()
     expect(within(left).getByLabelText('Layout editor')).toBeTruthy()
-    expect(within(left).getByLabelText('HUD mode')).toBeTruthy()
     expect(within(right).queryByLabelText('Open settings')).toBeNull()
   })
 })

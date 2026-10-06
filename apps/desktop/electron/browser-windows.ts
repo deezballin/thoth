@@ -1,5 +1,5 @@
 // Popped-out in-app Browser windows. Same query-before-hash contract as
-// session-windows / hud-url: `?win=browser` MUST sit in the search string
+// session-windows: `?win=browser` MUST sit in the search string
 // before the '#', or HashRouter swallows it as part of the route.
 
 import { pathToFileURL } from 'node:url'

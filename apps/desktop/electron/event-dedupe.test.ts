@@ -27,11 +27,11 @@ test('re-fires once the window elapses', () => {
   assert.equal(isDup('turnDone:s1', 1000), false, 'window elapsed → fires again')
 })
 
-// #99717: the hidden app window under an open HUD claims the same reply late.
+// #99717: the hidden app window claims the same reply late.
 test('a spoken reply stays claimed long after the tick window, a beep does not', () => {
   const owns = createAmbientClaimArbiter(1000)
 
-  assert.equal(owns('speak:m1', 0), true, 'HUD renderer claims the reply')
+  assert.equal(owns('speak:m1', 0), true, 'hidden renderer claims the reply')
   assert.equal(owns('speak:m1', 5_000), false, 'app window claiming 5 s later stays quiet')
   assert.equal(owns('sound:turnDone:s1', 0), true)
   assert.equal(owns('sound:turnDone:s1', 5_000), true, 'beep keys still re-fire after the tick window')

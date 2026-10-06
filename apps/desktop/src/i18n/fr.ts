@@ -664,9 +664,6 @@ export const frOverrides = {
     muteHaptics: 'Couper les vibrations',
     unmuteHaptics: 'Réactiver les vibrations',
     openSettings: 'Ouvrir les paramètres',
-    enterHud: 'Mode HUD',
-    exitHud: 'Quitter le mode HUD',
-    resetHudLayout: 'Réinitialiser la taille et la position du HUD',
     layoutEditor: 'Éditeur de disposition',
     layoutEditorTitle: mod => `Éditeur de disposition — ${mod}-clic réinitialise la disposition`
   },
@@ -732,8 +729,6 @@ export const frOverrides = {
       'view.toggleSimpleMode': 'Activer ou désactiver le mode simple',
       'view.showFiles': "Afficher l'explorateur de fichiers",
       'view.showBrowser': 'Basculer le navigateur',
-      'view.toggleHud': 'Basculer le mode HUD',
-      'hud.snapToPointer': 'Déplacer le HUD vers le pointeur (global, lorsque le HUD est ouvert)',
       'view.showTerminal': 'Basculer le terminal',
       'view.newTerminal': 'Nouveau terminal',
       'view.nextTerminal': 'Terminal suivant',
@@ -847,7 +842,6 @@ export const frOverrides = {
       gatewayManagedUpdatesEmpty:
         'Ajoutez une connexion SSH dans Connexions enregistrées pour gérer ses mises à jour ici.',
       keyboardShortcuts: 'Raccourcis clavier',
-      hudGesture: 'Geste du HUD',
       screenCapture: "Capture d'écran",
       notificationAlerts: 'Alertes du bureau',
       notificationSounds: 'Sons',
@@ -1169,7 +1163,7 @@ export const frOverrides = {
       tabStripNever: 'Jamais',
       appActionsTitle: "Actions de l'application",
       appActionsDesc:
-        'Choisissez le côté de la barre de titre où placer Paramètres, Disposition et HUD. Le côté droit laisse de la place aux onglets à gauche.',
+        'Choisissez le côté de la barre de titre où placer Paramètres et Disposition. Le côté droit laisse de la place aux onglets à gauche.',
       appActionsLeft: 'À gauche',
       appActionsRight: 'À droite',
       terminalFontTitle: 'Police du terminal',
@@ -1712,19 +1706,6 @@ export const frOverrides = {
       attachmentSizeUnit: 'Mo',
       attachmentSizeLabel: 'Taille maximale de chargement des aperçus / images en mégaoctets',
       showOptions: 'Afficher les options'
-    },
-    hudModifier: {
-      title: 'Toucher pour afficher le HUD',
-      description:
-        'Appuyez puis relâchez ⌘ + Option sur Mac, ou Ctrl + Alt sous Windows/Linux, pour afficher le HUD depuis n’importe quelle application. Désactivé par défaut ; s’applique uniquement à cet appareil.',
-      permission:
-        'Autorisez Hermes dans Réglages Système → Confidentialité et sécurité → Surveillance de l’entrée, puis réessayez. Ce geste n’enregistre pas les frappes et ne capture pas votre écran.',
-      unavailable:
-        'L’assistant du geste HUD n’a pas pu démarrer ou s’est arrêté de manière inattendue. Réessayez ou redémarrez Hermes. Le raccourci HUD existant fonctionne toujours dans Hermes.',
-      missingHelper:
-        'Il manque l’assistant du geste HUD dans cette installation de Hermes. Mettez à jour ou réinstallez Hermes, puis réessayez.',
-      unsupportedSession:
-        'Cette session de bureau ne prend pas en charge les appuis globaux sur les touches de modification. Linux nécessite X11 ; Wayland n’est pas pris en charge.'
     },
     screenshot: {
       enabledTitle: "Raccourci de capture d'écran",

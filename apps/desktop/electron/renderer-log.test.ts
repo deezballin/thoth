@@ -27,14 +27,14 @@ function createWindowHarness() {
 
 describe('formatRendererConsoleLine', () => {
   it('formats the canonical Electron console-message event at error level', () => {
-    const line = formatRendererConsoleLine('hud', {
+    const line = formatRendererConsoleLine('quick', {
       level: 'error',
       message: 'Minified React error #310',
       sourceId: 'file:///app/index.js',
       lineNumber: 13
     })
 
-    expect(line).toBe('[renderer console:hud] Minified React error #310 (file:///app/index.js:13)')
+    expect(line).toBe('[renderer console:quick] Minified React error #310 (file:///app/index.js:13)')
   })
 
   it('drops a canonical non-error string level', () => {
@@ -69,7 +69,7 @@ describe('attachRendererConsoleCapture', () => {
     const secondCapture = createWindowHarness()
 
     attachRendererConsoleCapture(firstCapture.win, 'main', log)
-    attachRendererConsoleCapture(secondCapture.win, 'hud', log)
+    attachRendererConsoleCapture(secondCapture.win, 'quick', log)
 
     firstCapture.getHandler()?.({})
     secondCapture.getHandler()?.({})

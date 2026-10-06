@@ -203,7 +203,7 @@ describe('preview action request routing', () => {
 
 describe('window.read claim tolerance (#121609)', () => {
   beforeEach(() => {
-    setSessions([{ id: 'stored-a', title: 'HUD conversation', _lineage_root_id: 'root-a' } as SessionInfo])
+    setSessions([{ id: 'stored-a', title: 'Adopted conversation', _lineage_root_id: 'root-a' } as SessionInfo])
   })
 
   afterEach(() => {
@@ -215,8 +215,8 @@ describe('window.read claim tolerance (#121609)', () => {
   })
 
   it('claims when the window shows the conversation under its stored id while the backend asks about the runtime id', () => {
-    // The HUD state: active is the pre-handoff runtime (or nothing), but this
-    // window has the conversation selected and its runtime id lineage-maps.
+    // The adopted state: active is a runtime this window does not own (or
+    // nothing), but it has the conversation selected and the id lineage-maps.
     setSelectedStoredSessionId('stored-a')
 
     expect(
@@ -329,9 +329,9 @@ describe('window.read claim tolerance (#121609)', () => {
   })
 
   it('lets a shown-conversation window answer a window.read end to end without a resume', async () => {
-    // The filed repro: HUD mode / post-handoff main window — no runtime claim,
-    // only the stored selection. The request now answers (empty here, because
-    // the test window exposes no readWindowBelow bridge) instead of stalling.
+    // The filed repro: a window showing the conversation without a runtime
+    // claim, only the stored selection. The request now answers (empty here,
+    // because no readWindowBelow bridge exists) instead of stalling.
     setSelectedStoredSessionId('stored-a')
 
     const { handled, respond } = deliver('window.read', { session_id: 'root-a' }, 'runtime-x')

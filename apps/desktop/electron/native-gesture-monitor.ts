@@ -33,7 +33,7 @@ interface MonitorOptions<T> extends NativeGestureOptions {
   parseGesture: (value: Record<string, unknown>) => T | null
 }
 
-/** Bounded JSON-lines lifecycle shared by the passive screenshot and HUD helpers. */
+/** Bounded JSON-lines lifecycle shared by the passive screenshot helper. */
 export class NativeGestureMonitor<T> {
   private cleanup: (() => void) | undefined
 

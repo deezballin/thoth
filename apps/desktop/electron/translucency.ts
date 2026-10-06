@@ -34,7 +34,6 @@ export {
   glassMaterialsFor,
   glassSupportedOn,
   glassSurfaceKeep,
-  hudFrostFor,
   normalizeBook,
   normalizeMaterial,
   normalizeMode,

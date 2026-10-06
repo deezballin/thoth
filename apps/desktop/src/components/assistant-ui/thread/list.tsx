@@ -762,8 +762,8 @@ const ThreadMessageListInner: FC<ThreadMessageListProps> = ({
     [scrollToBottomUnlessSelecting, scrollSessionId, isHistorical, returnToLatest]
   )
 
-  // Waking from display: hidden (HUD mode hides the main window; OS hide does
-  // the same to any window): rAF and ResizeObserver may have been frozen, so
+  // Waking from display: hidden (an OS hide of any window does this): rAF and
+  // ResizeObserver may have been frozen, so
   // the virtualizer's measurements — and scrollTop itself — are stale. Active
   // turns disable Chromium's background throttling, which can keep visibility
   // pinned at `visible`; window focus is then the only foreground edge. If the

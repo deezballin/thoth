@@ -714,12 +714,12 @@ export function useGatewayBoot({
     // Best-effort: a missing preference means "default". Shared by boot + soft
     // switch.
     //
-    // Helper windows (the HUD) can carry an explicit profile override in their
-    // URL: the HUD is opened ON a conversation, and when that conversation
-    // belongs to a non-primary profile, adopting the primary here resolves the
-    // session id against the wrong backend — the HUD then falls back to the
-    // default profile's last session (#82285). The override wins over the
-    // stored preference; absent, behavior is unchanged.
+    // Helper windows can carry an explicit profile override in their URL: when
+    // the conversation they were opened on belongs to a non-primary profile,
+    // adopting the primary here resolves the session id against the wrong
+    // backend — the window then falls back to the default profile's last
+    // session (#82285). The override wins over the stored preference; absent,
+    // behavior is unchanged.
     async function getWindowBackend(startup = false): Promise<HermesConnection> {
       const profile = windowProfileOverride()
       const peer = isPeerInstanceWindow()
@@ -1453,8 +1453,8 @@ export function useGatewayBoot({
       let stage: 'resolving' | 'minting' | 'dialing' | 'connected' = 'resolving'
 
       try {
-        // A profile-pinned helper window (the HUD) dials its target profile's
-        // backend directly — ensureBackend spawns/reuses it from the pool.
+        // A profile-pinned helper window dials its target profile's backend
+        // directly — ensureBackend spawns/reuses it from the pool.
         // Full peers use the source/profile Electron pinned before loading.
         // Bounded like the reconnect path (#93454): a wedged main-process
         // round-trip must not hang "Starting Hermes…" forever. Initial boot

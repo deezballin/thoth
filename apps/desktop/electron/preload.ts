@@ -1,7 +1,6 @@
 import { contextBridge, ipcRenderer, webFrame, webUtils } from 'electron'
 
 import type { DesktopProfileRoute } from './desktop-profile'
-import type { HudModifierApi, HudModifierStatus } from './hud-modifier-types'
 import { customWindowControlsEnabled } from './window-controls'
 
 // Which translucency the OS can back. Asked synchronously because the renderer
@@ -12,8 +11,6 @@ import { customWindowControlsEnabled } from './window-controls'
 // "Desktop IPC bridge is unavailable"). No reply means no glass, which degrades
 // to an ordinary opaque window rather than a page thinned over nothing.
 const translucencySupport = ipcRenderer.sendSync('hermes:translucency:support')
-const hudWindowing = ipcRenderer.sendSync('hermes:hud:windowing')
-const hudNativeDrag = hudWindowing?.nativeDrag === true
 
 const launchFlags: { localModels?: boolean; guestOnboarding?: boolean } | undefined =
   ipcRenderer.sendSync('hermes:feature-flags')
@@ -120,77 +117,6 @@ contextBridge.exposeInMainWorld('hermesDesktop', {
       return () => ipcRenderer.removeListener('hermes:pet-overlay:control', listener)
     }
   },
-  // HUD mode: the chrome-free floating chat. A full app renderer (own gateway)
-  // sized as a floating bar, so it mounts the real composer. Main owns the
-  // window; `onChanged` keeps every window's toggle truthful.
-  hud: {
-    nativeDrag: hudNativeDrag,
-    windowing: {
-      clientPlacement: hudWindowing?.clientPlacement !== false,
-      controlDrag: hudWindowing?.controlDrag === true,
-      nativeDrag: hudNativeDrag,
-      solid: hudWindowing?.solid === true,
-      workspaceTransfer: hudWindowing?.workspaceTransfer === true
-    },
-    open: request => ipcRenderer.invoke('hermes:hud:open', request),
-    close: () => ipcRenderer.invoke('hermes:hud:close'),
-    setIgnoreMouse: ignore => ipcRenderer.send('hermes:hud:ignore-mouse', ignore),
-    beginMove: () => ipcRenderer.send('hermes:hud:begin-move'),
-    endMove: () => ipcRenderer.send('hermes:hud:end-move'),
-    moveBy: delta => ipcRenderer.send('hermes:hud:move-by', delta),
-    setWorkspaceTransfer: transferring => ipcRenderer.send('hermes:hud:workspace-transfer', transferring),
-    setBounds: bounds => ipcRenderer.send('hermes:hud:set-bounds', bounds),
-    resetLayout: () => ipcRenderer.invoke('hermes:hud:reset-layout'),
-    // Whether the band covers the window below the bar. Main pairs it with the
-    // user's translucency setting to decide the native frost (macOS vibrancy /
-    // Windows 11 DWM backdrop) — see hudFrostFor.
-    setFrost: showing => ipcRenderer.invoke('hermes:hud:frost', showing),
-    // The HUD tells main which session it is on; main hands that back to the
-    // app window when the HUD closes, so the app can re-home onto it.
-    setSession: sessionId => ipcRenderer.send('hermes:hud:session', sessionId),
-    onGoto: callback => {
-      const listener = (_event, sessionId) => callback(sessionId)
-      ipcRenderer.on('hermes:hud:goto', listener)
-
-      return () => ipcRenderer.removeListener('hermes:hud:goto', listener)
-    },
-    onChanged: callback => {
-      const listener = (_event, state) => callback(state)
-      ipcRenderer.on('hermes:hud:changed', listener)
-
-      return () => ipcRenderer.removeListener('hermes:hud:changed', listener)
-    },
-    // Linux only, and silent elsewhere: where the cursor is, in page
-    // coordinates, or null when it has left the window. Stands in for the
-    // mousemove that `setIgnoreMouseEvents(true, { forward: true })` delivers on
-    // macOS and Windows but not here.
-    onCursor: callback => {
-      const listener = (_event, point) => callback(point)
-      ipcRenderer.on('hermes:hud:cursor', listener)
-
-      return () => ipcRenderer.removeListener('hermes:hud:cursor', listener)
-    },
-    // Main's game-overlay watch: whether a fullscreen app (a game) is under
-    // the HUD, so the renderer can step back to the low-opacity overlay
-    // treatment while one owns the screen.
-    onGameOverlay: callback => {
-      const listener = (_event, state) => callback(state)
-      ipcRenderer.on('hermes:hud:game-overlay', listener)
-
-      return () => ipcRenderer.removeListener('hermes:hud:game-overlay', listener)
-    }
-  },
-  hudModifier: {
-    getSettings: () => ipcRenderer.invoke('hermes:hud-modifier:settings:get'),
-    setEnabled: enabled => ipcRenderer.invoke('hermes:hud-modifier:settings:set', enabled),
-    openPermissionSettings: () => ipcRenderer.invoke('hermes:hud-modifier:permission'),
-    onStatus: callback => {
-      const listener = (_event: Electron.IpcRendererEvent, status: HudModifierStatus) => callback(status)
-      ipcRenderer.on('hermes:hud-modifier:status', listener)
-
-      return () => ipcRenderer.removeListener('hermes:hud-modifier:status', listener)
-    }
-  } satisfies HudModifierApi,
   // macOS native screenshot gesture; captures require a main-issued request.
   screenshot:
     process.platform === 'darwin'

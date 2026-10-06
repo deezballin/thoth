@@ -3,7 +3,6 @@ import type { HermesSkin } from '@hermes/shared/skin'
 import type { TranslucencyState } from '@hermes/shared/translucency'
 
 import type { ScreenshotApi } from '../electron/command-screenshot-types'
-import type { HudModifierApi } from '../electron/hud-modifier-types'
 import type { MachineProfile } from '../electron/machine-profile'
 import type { HermesNotification } from '../electron/notification-types'
 import type { PoolLimits } from '../electron/pool-limits'
@@ -141,38 +140,8 @@ declare global {
         onState: (callback: (payload: PetOverlayStatePayload) => void) => () => void
         onControl: (callback: (payload: PetOverlayControl) => void) => () => void
       }
-      // HUD mode: the chrome-free floating chat. A FULL app renderer with its
-      // own gateway (like an instance window), sized and skinned as a floating
-      // bar — so it mounts the real composer rather than a lookalike. Main
-      // owns the window; `onChanged` keeps every window's toggle truthful.
-      hud?: {
-        nativeDrag: boolean
-        windowing?: {
-          clientPlacement: boolean
-          controlDrag: boolean
-          nativeDrag: boolean
-          solid: boolean
-          workspaceTransfer: boolean
-        }
-        open: (request?: { sessionId?: null | string; profile?: null | string }) => Promise<{ ok: boolean }>
-        close: () => Promise<{ ok: boolean }>
-        setIgnoreMouse: (ignore: boolean) => void
-        beginMove: () => void
-        endMove: () => void
-        moveBy: (delta: { width: number; height: number }) => void
-        setWorkspaceTransfer?: (transferring: boolean) => void
-        setBounds: (bounds: { x: number; y: number; width: number; height: number }) => void
-        resetLayout: () => Promise<{ ok: boolean }>
-        setFrost: (showing: boolean) => Promise<{ ok: boolean }>
-        setSession: (sessionId: null | string) => void
-        onGoto: (callback: (sessionId: string) => void) => () => void
-        onChanged: (callback: (state: { open: boolean; sessionId: null | string }) => void) => () => void
-        onCursor: (callback: (point: { x: number; y: number } | null) => void) => () => void
-        onGameOverlay: (callback: (state: { active: boolean; app: string }) => void) => () => void
-      }
       // macOS native screenshot gesture; absent on other platforms.
       screenshot?: ScreenshotApi
-      hudModifier?: HudModifierApi
       // Quick Entry: a global-hotkey mini composer window. Main owns the OS
       // shortcut registration + the persisted preference (it must restore the
       // shortcut on a cold launch without the renderer visiting Settings), so

@@ -174,12 +174,11 @@ export function windowHostsSession(
  * The window.read claim. window.read has no per-window pane, but its answer is
  * keyed to the ANSWERING window's bounds — "below" is measured from them — so
  * the only window that may answer is one showing the conversation. The strict
- * host check strands real states (#121609): the HUD shows the conversation
- * without holding it active (main holds the id on its behalf — hud-shell.tsx),
- * and after the HUD hands the conversation back the app window's active id
- * still names the pre-handoff runtime until a resume re-binds it (verified
- * live: only an explicit session resume restored the answer). So beyond the
- * strict checks, the asked id may resolve to a conversation this window
+ * host check strands real states (#121609): a window can show the conversation
+ * without holding the active id, and a window that adopted a running turn can
+ * hold a stale runtime id until a resume re-binds it (verified live: only an
+ * explicit session resume restored the answer). So beyond the strict checks,
+ * the asked id may resolve to a conversation this window
  * SHOWS: the selected stored session or a tile's stored session, matched
  * through lineageAliases (compression rotates the runtime tip under the
  * stored identity) and the session-state cache, which records which stored id

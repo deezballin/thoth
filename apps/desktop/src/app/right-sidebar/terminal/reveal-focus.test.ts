@@ -33,7 +33,7 @@ const wrapper = ({ children }: { children: ReactNode }) => createElement(MemoryR
 let unmountKeybinds: (() => void) | undefined
 
 // The contrib controller owns this wiring in the app, but importing it pulls
-// the whole app graph (every pane, bundled plugin, HUD) into a hook: minutes of
+// the whole app graph (every pane, bundled plugin) into a hook: minutes of
 // cold transform under the parallel ui run, which blew the 30s hook timeout in
 // CI. Wire the terminal slice here through the same production functions and
 // the same palette row the controller registers.

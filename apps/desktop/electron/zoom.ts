@@ -196,7 +196,7 @@ export function installZoomReassertOnNavigation(webContents, reassert) {
 }
 
 /**
- * Zoom-wiring decision per window kind. Chat windows (main + session + the HUD)
+ * Zoom-wiring decision per window kind. Chat windows (main + session)
  * keep global UI zoom; the pet overlay and the Quick Entry composer opt out
  * because they size their own OS window and inheriting zoom would crop or
  * overflow them.

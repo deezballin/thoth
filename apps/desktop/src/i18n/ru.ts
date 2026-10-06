@@ -319,8 +319,6 @@ export const ru = defineLocale({
     muteHaptics: 'Выключить вибрацию',
     unmuteHaptics: 'Включить вибрацию',
     openSettings: 'Открыть настройки',
-    enterHud: 'Режим HUD',
-    exitHud: 'Выйти из режима HUD',
     layoutEditor: 'Редактор раскладки',
     layoutEditorTitle: mod => `Редактор раскладки — ${mod}-клик сбрасывает раскладку`
   },
@@ -388,8 +386,6 @@ export const ru = defineLocale({
       'view.toggleSimpleMode': 'Переключить простой режим',
       'view.showFiles': 'Показать браузер файлов',
       'view.showBrowser': 'Переключить браузер',
-      'view.toggleHud': 'Включить / выключить режим HUD',
-      'hud.snapToPointer': 'Переместить HUD под курсор (глобально, пока HUD открыт)',
       'view.showTerminal': 'Показать / скрыть терминал',
       'view.newTerminal': 'Новый терминал',
       'view.nextTerminal': 'Следующий терминал',
@@ -493,7 +489,6 @@ export const ru = defineLocale({
       gatewayManagedUpdatesUnavailable: 'Нужна версия приложения с поддержкой управляемых обновлений SSH.',
       gatewayManagedUpdatesEmpty: 'Добавьте SSH в сохранённые подключения, чтобы управлять его обновлениями здесь.',
       keyboardShortcuts: 'Назначения клавиш',
-      hudGesture: 'Жест HUD',
       screenCapture: 'Захват экрана',
       notificationAlerts: 'Системные уведомления',
       notificationSounds: 'Звуки',
@@ -691,7 +686,7 @@ export const ru = defineLocale({
       tabStripAlways: 'Всегда',
       tabStripNever: 'Никогда',
       appActionsTitle: 'Действия приложения',
-      appActionsDesc: 'Где в заголовке окна сидят Настройки, Макет и HUD. Справа оставляют место для вкладок слева.',
+      appActionsDesc: 'Где в заголовке окна сидят Настройки и Макет. Справа оставляют место для вкладок слева.',
       appActionsLeft: 'Слева',
       appActionsRight: 'Справа',
       terminalFontTitle: 'Шрифт терминала',
@@ -1123,19 +1118,6 @@ export const ru = defineLocale({
       voiceShortcutHintTitle: 'Горячая клавиша записи голоса',
       voiceShortcutHintDesc:
         'Настройте горячую клавишу записи голоса в разделе «Настройки → Горячие клавиши» («Начать / остановить голосовой диалог»). Параметр voice.record_key действует только в CLI и TUI.'
-    },
-    hudModifier: {
-      title: 'Вызов HUD коротким нажатием',
-      description:
-        'Нажмите и отпустите ⌘ + Option на Mac или Ctrl + Alt на Windows/Linux, чтобы вызвать HUD из любого приложения. По умолчанию выключено; действует только на этом устройстве.',
-      permission:
-        'Разрешите Hermes в Системных настройках → Конфиденциальность и безопасность → Мониторинг ввода, затем повторите попытку. Жест не записывает нажатия клавиш и не снимает экран.',
-      unavailable:
-        'Вспомогательная программа жеста HUD не запустилась или неожиданно остановилась. Повторите попытку или перезапустите Hermes. Обычное сочетание HUD по-прежнему работает внутри Hermes.',
-      missingHelper:
-        'В этой установке Hermes отсутствует вспомогательная программа жеста HUD. Обновите или переустановите Hermes и повторите попытку.',
-      unsupportedSession:
-        'Этот сеанс рабочего стола не поддерживает глобальные нажатия модификаторов. В Linux требуется X11; Wayland не поддерживается.'
     },
     screenshot: {
       enabledTitle: 'Сочетание клавиш для снимка окна',

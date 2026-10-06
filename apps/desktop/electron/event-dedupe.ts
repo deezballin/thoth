@@ -33,7 +33,7 @@ export function createEventDeduper(intervalMs = DEDUPE_INTERVAL_MS) {
 
 // A `speak:<messageId>` cue is seconds of audio keyed by a durable backend
 // message id, not an instant beep: the peer's claim can arrive well past the
-// 1 s window (the app window hidden under an open HUD is throttled by Chromium
+// 1 s window (a hidden app window is throttled by Chromium
 // and its transcript subscription fires late), and the reply was read twice
 // (#99717). One reply is one claim for as long as a reply can plausibly play.
 export const SPEECH_CLAIM_TTL_MS = 10 * 60_000

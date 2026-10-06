@@ -89,7 +89,7 @@ export const SETTINGS_MANIFEST = {
     tabStrip: appearanceSetting('window-layout', ['tabs', 'tab bar', 'strip'], 'tabStrip'),
     appActions: appearanceSetting(
       'window-layout',
-      ['titlebar', 'settings gear', 'layout', 'HUD', 'left', 'right', 'tabs'],
+      ['titlebar', 'settings gear', 'layout', 'left', 'right', 'tabs'],
       'appActions'
     ),
     minimizeToTray: {
@@ -181,12 +181,6 @@ export const SETTINGS_MANIFEST = {
     }
   },
   keybinds: {
-    hudModifier: {
-      subpage: 'hud-gesture',
-      keywords: ['HUD', 'summon', 'modifier', 'tap', 'Ctrl', 'Alt', 'Command', 'Option'],
-      available: () => Boolean(window.hermesDesktop?.hudModifier),
-      copy: t => ({ label: t.settings.hudModifier.title, description: t.settings.hudModifier.description })
-    },
     screenshot: {
       subpage: 'screen-capture',
       keywords: ['screenshot', 'screen capture', 'window', 'attach', 'command keys'],

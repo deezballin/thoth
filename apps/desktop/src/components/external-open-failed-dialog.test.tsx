@@ -4,7 +4,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ExternalOpenFailedDialog } from './external-open-failed-dialog'
 
 const windowsMock = vi.hoisted(() => ({
-  isHudWindow: vi.fn(() => false),
   isBrowserWindow: vi.fn(() => false)
 }))
 
@@ -32,7 +31,6 @@ function fail(listener: unknown, url: string, message?: string, code?: 'missing-
 }
 
 afterEach(() => {
-  windowsMock.isHudWindow.mockReturnValue(false)
   windowsMock.isBrowserWindow.mockReturnValue(false)
   vi.restoreAllMocks()
   cleanup()
@@ -72,14 +70,5 @@ describe('ExternalOpenFailedDialog', () => {
 
     fail(listener, 'file:///tmp/gone.html', undefined, 'missing-file')
     expect(screen.getByText('File not found')).toBeTruthy()
-  })
-
-  it('renders nothing in a HUD window', () => {
-    installBridge()
-    windowsMock.isHudWindow.mockReturnValue(true)
-
-    const view = render(<ExternalOpenFailedDialog />)
-
-    expect(view.container.firstChild).toBeNull()
   })
 })

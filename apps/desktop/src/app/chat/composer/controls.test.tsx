@@ -3,7 +3,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import type { ChatBarState } from '@/app/chat/composer/types'
 import { I18nProvider } from '@/i18n'
-import { $hudMode } from '@/store/hud'
 import { applyWakeStartResult, applyWakeStatus, resetWakeWordState } from '@/store/wake-word'
 
 import { ComposerControls } from './controls'
@@ -58,16 +57,12 @@ async function expectShortcutTooltip(label: string, shortcut: string) {
 
 afterEach(() => {
   cleanup()
-  $hudMode.set(false)
 })
 
-// The HUD is a Spotlight bar a few hundred pixels wide: the voice controls
-// fold into one menu there, and the way out of HUD mode joins the row instead
-// of floating above the bar in a reserved strip. The docked composer keeps the
-// mic inline, with the other voice toggles fanned out of it on hover, and
-// shows no exit.
-describe('HUD mode', () => {
-  it('keeps the mic inline, fans the toggles on hover, and offers no exit in the docked composer', async () => {
+// The docked composer keeps the mic inline, with the other voice toggles
+// fanned out of it on hover.
+describe('voice controls', () => {
+  it('keeps the mic inline, fans the toggles on hover', async () => {
     renderControls()
 
     const mic = screen.getByLabelText('Voice dictation')
@@ -79,51 +74,23 @@ describe('HUD mode', () => {
 
     expect(await screen.findByLabelText('Read replies aloud')).toBeTruthy()
     expect(screen.getByLabelText('Wake word "hey hermes"')).toBeTruthy()
-    expect(screen.queryByLabelText('Exit HUD mode')).toBeNull()
-    expect(screen.queryByLabelText('Reset HUD size and position')).toBeNull()
     // No folded menu trigger — the fan's group shares the "Voice" name.
     expect(screen.queryByRole('button', { name: 'Voice' })).toBeNull()
-  })
-
-  it('folds them into one menu and offers the way out in the HUD', () => {
-    $hudMode.set(true)
-    renderControls()
-
-    expect(screen.getByLabelText('Voice')).toBeTruthy()
-    expect(screen.getByLabelText('Reset HUD size and position')).toBeTruthy()
-    expect(screen.getByLabelText('Exit HUD mode')).toBeTruthy()
-
-    // Folded away, not duplicated — the whole point is the row's width back.
-    expect(screen.queryByLabelText('Voice dictation')).toBeNull()
-    expect(screen.queryByLabelText('Read replies aloud')).toBeNull()
-  })
-
-  // A collapsed menu that looked idle while the mic was open would be a worse
-  // trade than the space it saves, so the trigger reports the live state.
-  it('reports a live voice state on the collapsed trigger', () => {
-    $hudMode.set(true)
-    renderControls({ voiceStatus: 'recording' })
-
-    expect(screen.getByLabelText('Stop dictation')).toBeTruthy()
-    expect(screen.queryByLabelText('Voice')).toBeNull()
   })
 })
 
 // A tile can be narrower than the controls cost, and the row is inside an
 // overflow-hidden surface — so anything that doesn't fold gets clipped off the
 // right edge, send button first. The ladder keeps going past `stacked`: voice
-// folds into the same menu the HUD uses, then the model pill drops. Send is
-// the last thing standing.
+// folds into one menu, then the model pill drops. Send is the last thing
+// standing.
 describe('narrow tiles', () => {
-  it('folds the voice controls into one menu without entering HUD mode', () => {
+  it('folds the voice controls into one menu', () => {
     renderControls({ foldVoice: true })
 
     expect(screen.getByLabelText('Voice')).toBeTruthy()
     expect(screen.queryByLabelText('Voice dictation')).toBeNull()
     expect(screen.queryByLabelText('Read replies aloud')).toBeNull()
-
-    // Folding is a width decision, not the HUD: no exit affordance appears.
-    expect(screen.queryByLabelText('Exit HUD mode')).toBeNull()
   })
 
   it('keeps Send at the tightest width, with everything else dropped', () => {

@@ -29,7 +29,6 @@ import { spawnSync } from 'node:child_process'
 import { isMain } from './utils.mjs'
 import { recordNativeInputs } from './prepared-native-deps.mjs'
 import { buildCommandScreenshotMonitor } from './build-command-screenshot-monitor.mjs'
-import { buildHudModifierMonitor } from './build-hud-modifier-monitor.mjs'
 import { parseArgs } from 'node:util'
 import { productOutput, withProduct, workspaceTool } from '../../../scripts/build/frontend-common.mjs'
 
@@ -739,7 +738,6 @@ export async function prepareDesktopNativeDependencies({ source, out, platform =
     stageNodePty({ source, out: product, platform, arch })
     stageGetWindows({ source, out: product, platform, arch })
     buildCommandScreenshotMonitor({ source, distDir: product, platform })
-    buildHudModifierMonitor({ source, distDir: product, platform, arch })
   }, { source })
   recordNativeInputs({ source, out, platform, arch, nativeToolchain })
   return { out }

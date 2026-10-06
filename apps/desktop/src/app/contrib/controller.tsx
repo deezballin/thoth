@@ -98,7 +98,7 @@ import { watchSessionPins } from '@/store/session-pin-sync'
 import { $botChatScopes } from '@/store/session-states'
 import { watchUnreadWriteGuard } from '@/store/session-unread-remote'
 import { $statusbarVisible } from '@/store/statusbar-prefs'
-import { isBrowserWindow, isHudWindow } from '@/store/windows'
+import { isBrowserWindow } from '@/store/windows'
 
 import { BrowserPopoutShell } from '../chat/browser-popout-shell'
 import type { SessionDragPayload } from '../chat/composer/inline-refs'
@@ -114,7 +114,6 @@ import {
   WorkspaceTabMenu
 } from '../chat/session-tile'
 import { AppContextMenu } from '../context-menu/app-context-menu'
-import { HudShell } from '../hud/hud-shell'
 import { $terminalTakeover, setTerminalTakeover } from '../right-sidebar/store'
 import { terminalPaletteToggle } from '../right-sidebar/terminal/reveal-focus'
 import { $workspaceIsPage, WORKSPACE_PAGE_HEADER_AREA } from '../routes'
@@ -147,7 +146,7 @@ import { WorkspacePageHeaderHostContext } from './workspace-page-header'
 // ONE render identity for the workspace pane — syncWorkspaceTitle re-registers
 // the contribution (new title) and a fresh closure would remount the chat.
 // The host context marks this subtree as the one whose zone paints
-// WORKSPACE_PAGE_HEADER_AREA; route tiles and the HUD render outside it.
+// WORKSPACE_PAGE_HEADER_AREA; route tiles render outside it.
 const renderWorkspacePane = () => (
   <WorkspacePageHeaderHostContext.Provider value={true}>
     <WiredPane part="chatRoutes" />
@@ -479,11 +478,10 @@ discoverBundledPlugins()
 hydrateContributedPanes()
 
 // Session + route (page) tiles: persisted splits register panes docked beside
-// main. A popped-out Browser and the HUD have no layout tree — registering
-// tiles there would still run, and preview-tile watching would try to dock
-// into a tree this window never renders (and, in the HUD, paint a webview
-// into the transparent overlay).
-if (!isBrowserWindow() && !isHudWindow()) {
+// main. A popped-out Browser has no layout tree — registering tiles there
+// would still run, and preview-tile watching would try to dock into a tree
+// this window never renders (and paint a webview into the transparent overlay).
+if (!isBrowserWindow()) {
   watchSessionTiles()
   startUnrestoredTileTitleBackfill()
   startTileBackendIdentityGuard()
@@ -803,19 +801,6 @@ registerPaneCloser('files', () =>
 export function ContribController() {
   const sidebarOpen = useStore($sidebarOpen)
   const statusbarVisible = useStore($statusbarVisible)
-
-  // HUD mode is the SAME app with its frame removed: the wiring (gateway,
-  // sessions, streams, submit) mounts identically, and only the shell around
-  // the chat surface differs. Branching here rather than at the window entry
-  // is what keeps the HUD's composer the real composer.
-  if (isHudWindow()) {
-    return (
-      <ContribWiring>
-        <AppContextMenu />
-        <HudShell />
-      </ContribWiring>
-    )
-  }
 
   if (isBrowserWindow()) {
     return (

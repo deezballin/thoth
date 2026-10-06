@@ -76,7 +76,6 @@ const SUBPAGE_ICONS: Record<string, IconComponent> = {
   gatewayDevices: Network,
   gatewayManagedUpdates: Download,
   keyboardShortcuts: Keyboard,
-  hudGesture: Keyboard,
   screenCapture: FileImage,
   notificationAlerts: Bell,
   notificationSounds: Volume2,

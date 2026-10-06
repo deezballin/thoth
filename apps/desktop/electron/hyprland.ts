@@ -70,7 +70,7 @@ interface HyprlandClient {
  *   - Ourselves. Dropped, and this is load-bearing rather than tidiness. On X11
  *     the list is true stacking order, so walking past our own window and
  *     taking the next one is what "below" means. Focus history is not stacking
- *     order: the HUD floats always-on-top while the user works in the app
+ *     order: an overlay floats always-on-top while the user works in the app
  *     beneath it, so the app we want to report is the focused one and WE are
  *     further down the list. Slicing after ourselves would skip straight past
  *     the answer and name something the user last touched ten minutes ago.

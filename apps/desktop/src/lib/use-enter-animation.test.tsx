@@ -65,7 +65,7 @@ describe('useEnterAnimation', () => {
 
   /**
    * Opacity on any keyframe, under a fill that holds while the document
-   * timeline is paused (alt-tab, HUD hide, an unfocused window), pins the
+   * timeline is paused (alt-tab, an unfocused window), pins the
    * node at that value — opening at 0 left subagent rows and thinking blocks
    * invisible (#105579). CSS already rests those surfaces at 0.67; the slide
    * is transform-only and fill is 'backwards', so the offset applies on the

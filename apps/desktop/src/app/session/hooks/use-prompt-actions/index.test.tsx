@@ -13,7 +13,6 @@ import { $composerAttachments, $composerDraft, type ComposerAttachment, setCompo
 import { $queuedPromptsBySession, getQueuedPrompts } from '@/store/composer-queue'
 import { requestGatewayForAgent } from '@/store/gateway'
 import { $goalsBySession, setSessionGoal } from '@/store/goals'
-import { $hudMode } from '@/store/hud'
 import { $notifications, clearNotifications } from '@/store/notifications'
 import { $cronRunReadOnlyVerdicts } from '@/store/read-only-transcript'
 import {
@@ -451,19 +450,13 @@ function renderedSeedTexts(seeds: Record<string, unknown>[]): string[] {
   })
 }
 
-// The HUD floats over the app the user is really working in, so the gateway
-// turns this flag into a per-turn hint: read the window underneath and work in
-// it, rather than reaching for Hermes's own browser and panes.
-describe('usePromptActions HUD surface', () => {
+describe('usePromptActions surface', () => {
   afterEach(() => {
     cleanup()
-    $hudMode.set(false)
     vi.restoreAllMocks()
   })
 
-  async function submitFrom(window: 'app' | 'hud') {
-    $hudMode.set(window === 'hud')
-
+  async function submitFromApp() {
     const submitted: (Record<string, unknown> | undefined)[] = []
 
     const requestGateway = vi.fn(async (method: string, params?: Record<string, unknown>) => {
@@ -484,12 +477,8 @@ describe('usePromptActions HUD surface', () => {
     return submitted[0]
   }
 
-  it('tags a message typed into the HUD', async () => {
-    expect(await submitFrom('hud')).toMatchObject({ surface: 'hud' })
-  })
-
   it('says nothing about the surface from the app window', async () => {
-    expect(await submitFrom('app')).not.toHaveProperty('surface')
+    expect(await submitFromApp()).not.toHaveProperty('surface')
   })
 })
 

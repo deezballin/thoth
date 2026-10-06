@@ -458,9 +458,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [profileKey])
 
   // Appearance is per-profile localStorage, and every desktop window is another
-  // renderer on the same origin — so a switch made in the HUD (or any peer
-  // window) only ever repainted the window it was made in. `storage` fires in
-  // the OTHER windows, which is exactly the set that needs to catch up.
+  // renderer on the same origin — so a switch made in one window only ever
+  // repainted that window. `storage` fires in the OTHER windows, which is
+  // exactly the set that needs to catch up.
   useEffect(() => {
     const onStorage = (event: StorageEvent) => {
       if (event.key && !APPEARANCE_KEYS.has(event.key)) {

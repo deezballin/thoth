@@ -22,7 +22,6 @@ import {
   revokeDiscardedAttachmentPreviews
 } from '@/store/composer'
 import { noteMessageSent } from '@/store/desktop-metrics'
-import { $hudMode } from '@/store/hud'
 import { clearNotifications, notify, notifyError } from '@/store/notifications'
 import { consumePendingCredentialWarning, requestDesktopOnboarding } from '@/store/onboarding'
 import { isCronRunReadOnly, isStoredTranscriptReadOnly } from '@/store/read-only-transcript'
@@ -959,12 +958,8 @@ export function useSubmitPrompt(deps: SubmitPromptDeps) {
           // Off-screen widget intent: the gateway types the persisted user
           // row display_kind=hidden so no client renders it as a bubble.
           ...(options?.displayKind === 'hidden' && { display_kind: 'hidden' }),
-          // Typed into the floating HUD, so the user is looking at another app
-          // rather than at Hermes. The gateway turns this into a per-turn hint
-          // to read the window underneath and work in it.
-          ...($hudMode.get() && { surface: 'hud' }),
           // A GPT-Live delegation: the text is a voice transcript and the reply
-          // will be spoken by the voice model. Wins over HUD for this turn.
+          // will be spoken by the voice model.
           ...(options?.surface && { surface: options.surface }),
           ...(options?.surface && options.voiceContext && { voice_context: options.voiceContext }),
           // A queue drain is a "run after" message, never a live-turn

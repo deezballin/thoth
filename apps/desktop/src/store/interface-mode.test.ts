@@ -156,11 +156,10 @@ describe('tiers', () => {
 
     const items = [
       { id: 'settings' },
-      { id: 'hud', tier: 'advanced' as const },
       { id: 'side', tier: 'simple' as const }
     ]
 
-    expect(items.filter(shownInMode('advanced')).map(item => item.id)).toEqual(['settings', 'hud'])
+    expect(items.filter(shownInMode('advanced')).map(item => item.id)).toEqual(['settings'])
     expect(items.filter(shownInMode('simple')).map(item => item.id)).toEqual(['settings', 'side'])
 
     expect($showsAdvancedChrome.get()).toBe(true)

@@ -145,13 +145,14 @@ export interface EnumerationFailure {
 export const enumerationFailed = <T>(result: EnumerationFailure | T): result is EnumerationFailure =>
   typeof result === 'object' && result !== null && 'reason' in result
 
-// Keep the native provider's failure detail shared by the tool and HUD log.
+// Keep the native provider's failure detail shared wherever the tool's
+// failures surface (log + renderer error surfaces).
 export function getWindowsFailureReason(detail: string, platform: string, arch: string): string {
   if (platform === 'win32' && arch === 'arm64') {
     return (
       `${detail}. On Windows ARM64, check that the installed get-windows package includes a working ` +
       'win32-arm64 native binding. If that binding is unavailable, use the x64 desktop build under Windows emulation, ' +
-      'or a build with a matching native binding. This affects both read_window_below and HUD window context.'
+      'or a build with a matching native binding. This affects read_window_below and window-context reporting.'
     )
   }
 
@@ -189,7 +190,7 @@ const loadGetWindows = (): Promise<GetWindowsModule | EnumerationFailure> => {
   // pre-gyp picks the host's slot, ignores the win32 binding sitting beside it,
   // and upstream's fail-soft path hands back no-op stubs. Enumeration then
   // reports "unavailable" on a machine that answers perfectly well, which is
-  // what silently disabled both read_window_below and the HUD's game overlay.
+  // what silently disabled read_window_below.
   // scripts/stage-native-deps.mjs writes a staged lib/windows.js that requires
   // the binding directly, so it is the more reliable of the two everywhere.
   getWindowsModule ??= (async () => {
@@ -289,9 +290,9 @@ async function enumerateViaGetWindows(titlesAvailable: boolean): Promise<Enumera
  *
  * Hyprland first, and only ever on Hyprland — its own IPC sees native Wayland
  * windows, which the X11 enumerator cannot, and it answers null everywhere
- * else so the established path stays the default. Shared by the
- * read_window_below tool and the HUD's game-overlay watch, so the two can
- * never disagree about what the screen looks like.
+ * else so the established path stays the default. Backs the
+ * read_window_below tool, so its answer and the log can never disagree
+ * about what the screen looks like.
  */
 export async function enumerateWindowsFrontToBack(
   selfPid: number,

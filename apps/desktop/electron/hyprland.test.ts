@@ -59,10 +59,10 @@ describe('parseHyprlandClients', () => {
     expect(parsed.map(w => w.app)).toEqual(['firefox', 'spotify', 'kitty'])
   })
 
-  // The HUD floats always-on-top while the user works underneath it, so it sits
+  // An overlay floats always-on-top while the user works underneath it, so it sits
   // well down a focus-ordered list. Keeping it in would make the caller skip
   // past the focused app — the very window it is trying to report.
-  it('leaves our own windows out, even when the HUD itself is focused', () => {
+  it('leaves our own windows out, even when our overlay is focused', () => {
     const parsed = parseHyprlandClients(
       payload(
         client({ class: 'hermes', focusHistoryID: 0, pid: SELF_PID }),

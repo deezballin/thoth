@@ -368,9 +368,6 @@ export const zh = defineLocale({
     muteHaptics: '关闭触感反馈',
     unmuteHaptics: '开启触感反馈',
     openSettings: '打开设置',
-    enterHud: 'HUD 模式',
-    exitHud: '退出 HUD 模式',
-    resetHudLayout: '重置 HUD 大小和位置',
     layoutEditor: '布局编辑器',
     layoutEditorTitle: mod => `布局编辑器 — ${mod} 点击重置布局`
   },
@@ -540,7 +537,6 @@ export const zh = defineLocale({
       gatewayManagedUpdatesUnavailable: '远程更新需要支持托管 SSH 更新的桌面版本。',
       gatewayManagedUpdatesEmpty: '请在已保存的连接中添加 SSH 连接，即可在此管理更新。',
       keyboardShortcuts: '按键绑定',
-      hudGesture: 'HUD 手势',
       screenCapture: '屏幕捕获',
       notificationAlerts: '桌面通知',
       notificationSounds: '声音',
@@ -818,7 +814,7 @@ export const zh = defineLocale({
       tabStripAlways: '始终',
       tabStripNever: '从不',
       appActionsTitle: '应用操作',
-      appActionsDesc: '设置、布局和 HUD 放在标题栏左侧还是右侧。选右侧可给标签留出左边空间。',
+      appActionsDesc: '设置、布局放在标题栏左侧还是右侧。选右侧可给标签留出左边空间。',
       appActionsLeft: '左侧',
       appActionsRight: '右侧',
       terminalFontTitle: '终端字体',
@@ -1341,15 +1337,6 @@ export const zh = defineLocale({
       voiceShortcutHintDesc:
         '请在“设置 → 键盘快捷键”中设置语音录制快捷键（“开始 / 停止语音对话”）。voice.record_key 配置项仅适用于 CLI 和 TUI。',
       showOptions: '显示选项'
-    },
-    hudModifier: {
-      title: '轻按唤出 HUD',
-      description:
-        '在 Mac 上按下并松开 ⌘ + Option，在 Windows/Linux 上按下并松开 Ctrl + Alt，即可从任意应用将 HUD 置于前台。默认关闭，仅适用于此设备。',
-      permission: '请在系统设置 → 隐私与安全性 → 输入监控中允许 Hermes，然后重试。此手势不会记录按键或截取屏幕。',
-      unavailable: 'HUD 手势辅助程序无法启动或意外停止。请重试或重启 Hermes。Hermes 内原有的 HUD 快捷键仍可使用。',
-      missingHelper: '此 Hermes 安装缺少 HUD 手势辅助程序。请更新或重新安装 Hermes，然后重试。',
-      unsupportedSession: '此桌面会话不支持全局修饰键轻按事件。Linux 需要 X11；不支持 Wayland。'
     },
     screenshot: {
       enabledTitle: '截图快捷键',

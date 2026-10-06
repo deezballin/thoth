@@ -29,8 +29,8 @@ export const COMPOSER_COMPACT_PILL_PX = 560
 // against that row's real cost: menu ~24 + surface padding 16 + the cluster
 // (~190; ~218 mid-turn with the queue button).
 //
-// At 260 the three voice toggles fold into the one menu HUD mode already
-// uses, clearing the mid-turn worst case with margin. Each stage sits clear
+// At 260 the three voice toggles fold into one menu, clearing the mid-turn
+// worst case with margin. Each stage sits clear
 // of the floor below it rather than arriving the instant the previous one
 // gives out — the mistake COMPOSER_COMPACT_PILL_PX documents.
 export const COMPOSER_FOLD_VOICE_PX = 260

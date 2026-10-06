@@ -33,7 +33,6 @@ export const zhHantChrome = {
     muteHaptics: '靜音觸感回饋',
     unmuteHaptics: '開啟觸感回饋',
     openSettings: '開啟設定',
-    resetHudLayout: '重設 HUD 大小和位置'
   },
 
   sidebar: {

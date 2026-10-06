@@ -554,11 +554,9 @@ export function useComposerDraft({
     }
   }, [activeQueueSessionKey]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // The HUD handoff's two verbs. Entering HUD mode flushes this editor's text
-  // into the shared stash so the HUD's composer boots with it; leaving repaints
-  // from the stash so whatever the HUD typed (or sent, clearing it) is what the
-  // app window shows. The per-session swap effect above can't cover either one:
-  // the session scope doesn't change, so it never re-consults the stash.
+  // Flush this editor's text into the shared stash, or repaint from it. The
+  // per-session swap effect above can't cover either verb: the session scope
+  // doesn't change, so it never re-consults the stash.
   const syncDraft = (mode: ComposerDraftSyncMode) => {
     if (mode === 'flush') {
       window.clearTimeout(draftPersistTimerRef.current)

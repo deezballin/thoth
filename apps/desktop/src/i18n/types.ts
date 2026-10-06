@@ -677,9 +677,6 @@ export interface Translations {
     muteHaptics: string
     unmuteHaptics: string
     openSettings: string
-    enterHud: string
-    exitHud: string
-    resetHudLayout: string
     layoutEditor: string
     layoutEditorTitle: (modifier: string) => string
   }
@@ -1157,14 +1154,6 @@ export interface Translations {
       voiceShortcutHintTitle: string
       voiceShortcutHintDesc: string
       showOptions: string
-    }
-    hudModifier: {
-      title: string
-      description: string
-      permission: string
-      unavailable: string
-      missingHelper: string
-      unsupportedSession: string
     }
     screenshot: {
       enabledTitle: string

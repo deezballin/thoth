@@ -394,9 +394,9 @@ function publishDraftTitle(key: string, title: string): void {
  *
  * Drafts are per-renderer state backed by shared localStorage, and the map
  * above is read exactly once at module load. Two windows on the same session
- * (HUD mode ⇄ the app window) therefore diverge the moment either one types:
- * whichever window mounted first keeps its stale copy forever, so text typed
- * in the HUD is simply gone when you return to the app.
+ * therefore diverge the moment either one types: whichever window mounted
+ * first keeps its stale copy forever, so text typed in one window is simply
+ * gone when you return to the other.
  *
  * Merge, don't clobber — the local map may hold attachments (never persisted)
  * that the incoming text-only snapshot can't know about.
@@ -433,15 +433,14 @@ if (typeof window !== 'undefined') {
  * Push a composer's live text into the shared stash (`flush`), or repaint it
  * from the stash (`reload`).
  *
- * Both halves of the HUD handoff need this. The stash is the only draft state
- * two windows share, but a mounted composer only consults it when its session
- * scope changes — so entering HUD mode has to flush the app window's in-editor
- * text down to the stash before the HUD boots and reads it, and leaving has to
- * repaint the app's editor from whatever the HUD left behind (usually empty,
- * because the HUD sent it).
+ * Two windows sharing a session need this. The stash is the only draft state
+ * they share, but a mounted composer only consults it when its session scope
+ * changes — so a window taking the session over has to flush the previous
+ * window's in-editor text down to the stash first, and the window receiving
+ * it back repaints its editor from whatever the other left behind.
  *
  * Dispatched synchronously, unlike the focus bus: the flush must complete
- * before the HUD window is created.
+ * before the receiving window mounts its composer.
  */
 const DRAFT_SYNC_EVENT = 'hermes:composer-draft-sync'
 

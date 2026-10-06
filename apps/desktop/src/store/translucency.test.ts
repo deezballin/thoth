@@ -351,8 +351,8 @@ describe('cross-window sync', () => {
 })
 
 // The store must actually CONSULT isChatWindow, not merely export it: glass
-// rewrites page-level surfaces, and the HUD / pet overlay / quick entry own
-// their own backgrounds. Driving window.location.search proves the wiring.
+// rewrites page-level surfaces, and the pet overlay / quick entry own their
+// own backgrounds. Driving window.location.search proves the wiring.
 describe('glass is confined to chat windows', () => {
   const setSearch = (search: string) => {
     Object.defineProperty(window, 'location', {
@@ -370,7 +370,7 @@ describe('glass is confined to chat windows', () => {
   })
 
   it('does not thin surfaces in a special-purpose window', () => {
-    setSearch('?win=hud')
+    setSearch('?win=quick')
     setTranslucency(60)
     setTranslucencyMode('glass')
 
@@ -379,12 +379,12 @@ describe('glass is confined to chat windows', () => {
     expect(document.documentElement.hasAttribute('data-hermes-glass')).toBe(false)
   })
 
-  // The HUD paints its band from the app's field mix, so it needs the setting
-  // and the tint number even though its surfaces must not be rewritten. The
-  // two flags are what keep those separable: keying the band off
-  // `data-hermes-glass` would silently never match.
+  // A special-purpose window still needs the setting and the tint number even
+  // though its surfaces must not be rewritten. The two flags keep those
+  // separable: keying consumers off `data-hermes-glass` would silently never
+  // match.
   it('still publishes the live setting and the tint to a special-purpose window', () => {
-    setSearch('?win=hud')
+    setSearch('?win=quick')
     setTranslucency(60)
     setTranslucencyMode('glass')
 
@@ -393,7 +393,7 @@ describe('glass is confined to chat windows', () => {
   })
 
   it('withdraws both flags when glass is switched off', () => {
-    setSearch('?win=hud')
+    setSearch('?win=quick')
     setTranslucency(60)
     setTranslucencyMode('glass')
     setTranslucencyMode('clear')
@@ -412,7 +412,7 @@ describe('glass is confined to chat windows', () => {
 })
 
 // Glass rewrites page surfaces, which is only correct in a real chat window.
-// The HUD, pet overlay, quick entry and wake indicator are transparent
+// The pet overlay, quick entry and wake indicator are transparent
 // special-purpose windows that own their own backgrounds.
 describe('isChatWindow', () => {
   it('accepts the primary window and secondary session windows', () => {
@@ -423,7 +423,7 @@ describe('isChatWindow', () => {
   })
 
   it('rejects every special-purpose window kind', () => {
-    for (const win of ['hud', 'pet', 'quick-entry', 'wake', 'anything-new']) {
+    for (const win of ['pet', 'quick-entry', 'wake', 'anything-new']) {
       expect(isChatWindow(`?win=${win}`), win).toBe(false)
     }
   })

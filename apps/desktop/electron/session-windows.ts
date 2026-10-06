@@ -67,8 +67,8 @@ function chatWindowWebPreferences(preloadPath: string) {
 // onboarding overlays and the global session sidebar. `watch=1` marks a
 // spectator window (e.g. a running subagent's session): the renderer resumes it
 // lazily so the gateway never builds an agent just to stream into it.
-// `profile` names the backend the window must boot against (same carry as the
-// HUD's buildHudWindowUrl): without it a pop-out/watch window adopts the
+// `profile` names the backend the window must boot against: without it a
+// pop-out/watch window adopts the
 // PRIMARY profile and resolves the session id against the wrong backend
 // (#82768, #61286). Absent → unchanged primary adoption.
 function buildSessionWindowUrl(

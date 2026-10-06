@@ -665,9 +665,6 @@ export const esOverrides = {
     muteHaptics: 'Silenciar háptica',
     unmuteHaptics: 'Activar háptica',
     openSettings: 'Abrir configuración',
-    enterHud: 'Modo HUD',
-    exitHud: 'Salir del modo HUD',
-    resetHudLayout: 'Restablecer el tamaño y la posición del HUD',
     layoutEditor: 'Editor de diseño',
     layoutEditorTitle: mod => `Editor de diseño — clic ${mod} restablece el diseño`
   },
@@ -733,8 +730,6 @@ export const esOverrides = {
       'view.toggleSimpleMode': 'Activar o desactivar el modo simple',
       'view.showFiles': 'Mostrar explorador de archivos',
       'view.showBrowser': 'Alternar navegador',
-      'view.toggleHud': 'Alternar modo HUD',
-      'hud.snapToPointer': 'Mover HUD al puntero (global, mientras el HUD esté abierto)',
       'view.showTerminal': 'Mostrar terminal',
       'view.newTerminal': 'Nuevo terminal',
       'view.nextTerminal': 'Siguiente terminal',
@@ -848,7 +843,6 @@ export const esOverrides = {
       gatewayManagedUpdatesEmpty:
         'Añade una conexión SSH en Conexiones guardadas para gestionar sus actualizaciones aquí.',
       keyboardShortcuts: 'Atajos de teclado',
-      hudGesture: 'Gesto del HUD',
       screenCapture: 'Captura de pantalla',
       notificationAlerts: 'Alertas de escritorio',
       notificationSounds: 'Sonidos',
@@ -1165,7 +1159,7 @@ export const esOverrides = {
       tabStripNever: 'Nunca',
       appActionsTitle: 'Acciones de la app',
       appActionsDesc:
-        'Dónde se colocan Configuración, Diseño y HUD en la barra de título. A la derecha deja espacio para pestañas a la izquierda.',
+        'Dónde se colocan Configuración y Diseño en la barra de título. A la derecha deja espacio para pestañas a la izquierda.',
       appActionsLeft: 'Izquierda',
       appActionsRight: 'Derecha',
       terminalFontTitle: 'Fuente de terminal',
@@ -1706,19 +1700,6 @@ export const esOverrides = {
       attachmentSizeUnit: 'MB',
       attachmentSizeLabel: 'Tamaño máximo de vista previa / carga de imagen en megabytes',
       showOptions: 'Mostrar opciones'
-    },
-    hudModifier: {
-      title: 'Pulsar para mostrar el HUD',
-      description:
-        'Pulsa y suelta ⌘ + Opción en Mac, o Ctrl + Alt en Windows/Linux, para traer el HUD al frente desde cualquier app. Desactivado por defecto; se aplica solo a este dispositivo.',
-      permission:
-        'Permite Hermes en Ajustes del Sistema → Privacidad y seguridad → Monitorización de entrada y vuelve a intentarlo. Este gesto no registra pulsaciones de teclas ni captura tu pantalla.',
-      unavailable:
-        'El asistente del gesto del HUD no pudo iniciarse o se detuvo de forma inesperada. Reinténtalo o reinicia Hermes. El atajo del HUD existente sigue funcionando dentro de Hermes.',
-      missingHelper:
-        'A esta instalación de Hermes le falta el asistente del gesto del HUD. Actualiza o reinstala Hermes y vuelve a intentarlo.',
-      unsupportedSession:
-        'Esta sesión de escritorio no admite pulsaciones globales de teclas modificadoras. Linux requiere X11; Wayland no es compatible.'
     },
     screenshot: {
       enabledTitle: 'Atajo de captura de pantalla',

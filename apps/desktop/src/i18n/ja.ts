@@ -341,7 +341,6 @@ export const ja = defineLocale({
     muteHaptics: '触覚フィードバックをオフ',
     unmuteHaptics: '触覚フィードバックをオン',
     openSettings: '設定を開く',
-    resetHudLayout: 'HUD のサイズと位置をリセット'
   },
 
   language: {
@@ -425,7 +424,6 @@ export const ja = defineLocale({
       gatewayManagedUpdatesUnavailable: 'リモート更新には、管理対象 SSH の更新に対応したデスクトップ版が必要です。',
       gatewayManagedUpdatesEmpty: '保存済みの接続に SSH 接続を追加すると、ここで更新を管理できます。',
       keyboardShortcuts: 'キー割り当て',
-      hudGesture: 'HUDジェスチャー',
       screenCapture: '画面キャプチャ',
       notificationAlerts: 'デスクトップ通知',
       notificationSounds: 'サウンド',
@@ -658,7 +656,7 @@ export const ja = defineLocale({
       tabStripNever: '表示しない',
       appActionsTitle: 'アプリ操作',
       appActionsDesc:
-        '設定・レイアウト・HUD をタイトルバーの左右どちらに置くか。右にするとタブ用のスペースが左に残ります。',
+        '設定・レイアウトをタイトルバーの左右どちらに置くか。右にするとタブ用のスペースが左に残ります。',
       appActionsLeft: '左',
       appActionsRight: '右',
       terminalFontTitle: 'ターミナルフォント',
@@ -1059,19 +1057,6 @@ export const ja = defineLocale({
       voiceShortcutHintTitle: '音声録音ショートカット',
       voiceShortcutHintDesc:
         '「設定 → キーボードショートカット」で音声録音ショートカット（「Start / stop voice conversation」）を設定します。voice.record_key は CLI と TUI 専用です。'
-    },
-    hudModifier: {
-      title: 'キーをタップして HUD を呼び出す',
-      description:
-        'Mac では ⌘ + Option、Windows/Linux では Ctrl + Alt を押して離すと、どのアプリからでも HUD を前面に表示できます。初期設定はオフで、このデバイスにのみ適用されます。',
-      permission:
-        'システム設定 → プライバシーとセキュリティ → 入力監視で Hermes を許可し、再試行してください。このジェスチャーはキー入力の記録や画面の撮影を行いません。',
-      unavailable:
-        'HUD ジェスチャーヘルパーを起動できなかったか、予期せず停止しました。再試行するか Hermes を再起動してください。Hermes 内の既存の HUD ショートカットは引き続き使用できます。',
-      missingHelper:
-        'この Hermes には HUD ジェスチャーヘルパーが含まれていません。Hermes を更新または再インストールしてから再試行してください。',
-      unsupportedSession:
-        'このデスクトップセッションはグローバルな修飾キータップに対応していません。Linux では X11 が必要です。Wayland には対応していません。'
     },
     screenshot: {
       enabledTitle: 'スクリーンショットのショートカット',

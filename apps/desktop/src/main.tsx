@@ -49,16 +49,12 @@ if (import.meta.env.MODE !== 'production' || import.meta.env.VITE_PERF_PROBE ===
 
 const winParam = new URLSearchParams(window.location.search).get('win')
 
-if (winParam === 'hud') {
-  document.title = 'Hermes HUD'
-}
-
 // The `?win=` kinds whose Electron window is `transparent: true` and so paints
 // nothing but its own surface over the user's desktop. `secondary` (a session
 // window) and `browser` are ordinary opaque windows and are deliberately not
 // in here. index.html's pre-paint script skips exactly this list — keep the
 // two in step.
-const TRANSPARENT_WINDOWS = new Set(['hud', 'overlay', 'quick', 'wake'])
+const TRANSPARENT_WINDOWS = new Set(['overlay', 'quick', 'wake'])
 
 // Each transparent root used to force its host layers see-through when it
 // MOUNTED. That is far too late: `styles.css` above paints the theme's opaque

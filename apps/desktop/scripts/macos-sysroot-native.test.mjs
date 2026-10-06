@@ -10,10 +10,7 @@ const env = { ...process.env, SDKROOT: '' }
 const xcrun = args => execFileSync('xcrun', args, { encoding: 'utf8', env }).trim()
 const sdkVersion = sdk => xcrun(['--sdk', sdk, '--show-sdk-version']).split('.').map(Number)
 const compareVersions = (a, b) => a.map((n, i) => n - (b[i] ?? 0)).find(d => d !== 0) ?? 0
-const helpers = [
-  ['build-command-screenshot-monitor.mjs', 'native/command-screenshot-monitor'],
-  ['build-hud-modifier-monitor.mjs', 'native/darwin-universal/hud-modifier-monitor']
-]
+const helpers = [['build-command-screenshot-monitor.mjs', 'native/command-screenshot-monitor']]
 
 // An installed SDK other than the default, older so the active linker accepts
 // it (a newer one is the very mismatch #113708 is about). Null when the host
@@ -32,7 +29,7 @@ function olderInstalledSdk(defaultSdk) {
   return null
 }
 
-test.skipIf(process.platform !== 'darwin')('builds both universal helpers under every SDK selection rung', () => {
+test.skipIf(process.platform !== 'darwin')('builds the universal helper under every SDK selection rung', () => {
   const dir = mkdtempSync(resolve(tmpdir(), 'hermes-sdk-builds-'))
 
   try {

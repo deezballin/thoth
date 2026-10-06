@@ -129,7 +129,7 @@ test('does not reveal a destroyed window', () => {
   assert.equal(harness.scheduledCallback, null)
 })
 
-// The pet overlay reveals with showInactive() and the HUD with show() + focus(),
+// The pet overlay reveals with showInactive() and other windows with show() + focus(),
 // so the fallback has to run the caller's action rather than a plain show().
 test('the fallback runs the caller reveal action, not a plain show', () => {
   const actions: string[] = []
@@ -158,7 +158,7 @@ test('the fallback runs the caller reveal action, not a plain show', () => {
   assert.deepEqual(actions, ['showInactive', 'revealed'])
 })
 
-// The HUD hides the main window from onRevealed — whichever path wins, that
+// A reveal path hides the main window from onRevealed — whichever path wins, that
 // side effect has to happen exactly once.
 test('onRevealed side effects run once when both paths fire', () => {
   const harness = createHarness()
@@ -288,7 +288,7 @@ test('a main-frame load failure before reveal fires onRevealFailed once and disa
 
   // The main frame failed: did-finish-load never fires, so no fallback is
   // scheduled — without the failure branch nothing would ever happen again.
-  harness.emit('did-fail-load', {}, -3, 'ABORTED', 'file:///hud', true)
+  harness.emit('did-fail-load', {}, -3, 'ABORTED', 'file:///fail', true)
 
   assert.equal(harness.failures.length, 1)
   assert.match(harness.failures[0]!, /main frame/)
@@ -331,7 +331,7 @@ test('a crash or load failure AFTER reveal leaves the window alone', () => {
   // Post-reveal, the window's own lifecycle owns recovery — the reveal
   // controller must not resurrect its failure branch for a shown window.
   harness.emit('render-process-gone', {}, { reason: 'crashed' })
-  harness.emit('did-fail-load', {}, -3, 'ABORTED', 'file:///hud', true)
+  harness.emit('did-fail-load', {}, -3, 'ABORTED', 'file:///fail', true)
 
   assert.deepEqual(harness.failures, [])
   assert.equal(harness.revealCalls, 1)

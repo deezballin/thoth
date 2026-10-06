@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { linuxOzoneBackend } from './hud-windowing'
+import { linuxOzoneBackend } from './ozone-backend'
 import { wslgLaunchArgs } from './wslg-launch'
 
 const env = { WSL_DISTRO_NAME: 'Ubuntu', WAYLAND_DISPLAY: 'wayland-0', DISPLAY: ':0' }

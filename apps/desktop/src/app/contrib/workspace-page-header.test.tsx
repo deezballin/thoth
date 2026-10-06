@@ -94,7 +94,7 @@ describe('workspace page header host', () => {
     expect(mounts).toBe(1)
   })
 
-  it('renders inline and registers nothing outside the host (the HUD shape)', () => {
+  it('renders inline and registers nothing outside the host', () => {
     const { container } = render(
       <ContribWiringContext.Provider value={wiring(probe)}>
         <WiredPane part="chatRoutes" />
