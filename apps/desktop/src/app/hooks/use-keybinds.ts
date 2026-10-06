@@ -29,7 +29,6 @@ import { composerFocusKeysAllowed, isComposerFocusSoftCombo, typeToFocusChar } f
 import { stepReasoningEffort, writeSessionReasoningEffort } from '@/lib/reasoning-step'
 import { openWorktreeDialog } from '@/store/coding-status'
 import { $commandPaletteOpen, openCommandPalettePage, toggleCommandPalette } from '@/store/command-palette'
-import { recordAction, recordDislike } from '@/store/desktop-metrics'
 import {
   $findInPage,
   findNext as findNextMatch,
@@ -480,8 +479,6 @@ export function useKeybinds(deps: KeybindRuntimeDeps): void {
 
         if (step.type === 'set') {
           setBinding(capturing, step.combos)
-        } else {
-          recordDislike('cancelled', 'keybind_capture')
         }
 
         endCapture()
@@ -585,8 +582,6 @@ export function useKeybinds(deps: KeybindRuntimeDeps): void {
         if (handler() === false && keybindAction(actionId)?.passthrough) {
           continue
         }
-
-        recordAction(actionId, 'shortcut')
 
         return
       }

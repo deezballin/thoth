@@ -208,7 +208,7 @@ export function getEnvVars(profile?: null | string): Promise<Record<string, EnvV
   })
 }
 
-// `providerSetup`: the caller is connecting a model provider, so shared metrics count the save as a
+// `providerSetup`: the caller is connecting a model provider, so the backend records the save as a
 // provider setup even when a tool panel uses the same key (Gemini, xAI...).
 export function setEnvVar(
   key: string,

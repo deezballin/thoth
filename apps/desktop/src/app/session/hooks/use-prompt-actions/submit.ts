@@ -21,7 +21,6 @@ import {
   mainComposerScope,
   revokeDiscardedAttachmentPreviews
 } from '@/store/composer'
-import { noteMessageSent } from '@/store/desktop-metrics'
 import { clearNotifications, notify, notifyError } from '@/store/notifications'
 import { consumePendingCredentialWarning, requestDesktopOnboarding } from '@/store/onboarding'
 import { isCronRunReadOnly, isStoredTranscriptReadOnly } from '@/store/read-only-transcript'
@@ -35,7 +34,7 @@ import {
   setMessages,
   touchSessionActivity
 } from '@/store/session'
-import { $sessionStates, $sessionTiles } from '@/store/session-states'
+import { $sessionStates } from '@/store/session-states'
 import type { SessionInfo } from '@/types/hermes'
 
 import {
@@ -986,7 +985,6 @@ export function useSubmitPrompt(deps: SubmitPromptDeps) {
 
         try {
           // A bot's chat is a tile scoped to the `bots` workspace; the primary chat is Sessions mode.
-          noteMessageSent($sessionTiles.get().find(tile => tile.runtimeId === sessionId)?.workspaceMode ?? 'sessions')
 
           const submitted = await withSessionNotFoundResume(
             sessionId,

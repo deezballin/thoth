@@ -15,7 +15,6 @@ import { CONVERSATION_LEASE, READ_ALOUD_LEASE, syncTtsLease } from '@/lib/tts-le
 import { toLiveHistory } from '@/lib/voice-live'
 import { $voiceConversationStartRequest, takeVoiceConversationStart } from '@/store/composer'
 import { resetBrowseState } from '@/store/composer-input-history'
-import { recordFeatureUse } from '@/store/desktop-metrics'
 import { $gateway } from '@/store/gateway'
 import { notify, notifyError } from '@/store/notifications'
 import { $voiceLiveStatus, refreshVoiceLiveStatus, selectedVoiceChatMode } from '@/store/voice-live'
@@ -273,7 +272,6 @@ export function useComposerVoice({
 
     setLiveEngineActive(live)
     setVoiceConversationActive(true)
-    recordFeatureUse('voice_conversation')
   }, [t])
 
   useEffect(() => {

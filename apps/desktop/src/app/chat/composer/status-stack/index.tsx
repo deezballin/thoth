@@ -11,7 +11,6 @@ import { BillingBanner } from '@/components/billing-banner'
 import { composerDockCard } from '@/components/chat/composer-dock'
 import { StatusSection } from '@/components/chat/status-section'
 import { usePaneVisible } from '@/components/pane-shell/pane-visibility'
-import { SharedMetricsConsentStrip } from '@/components/shared-metrics/consent-strip'
 import { Button } from '@/components/ui/button'
 import { Codicon } from '@/components/ui/codicon'
 import { GlyphSpinner } from '@/components/ui/glyph-spinner'
@@ -33,7 +32,6 @@ import {
 import { $interfaceMode, shownInMode, type Tiered } from '@/store/interface-mode'
 import { $previewStatusBySession, dismissPreviewArtifact } from '@/store/preview-status'
 import { $sessionControlBySession, refreshSessionControl } from '@/store/session-control'
-import { $sharedMetricsConsent, sharedMetricsOfferPending } from '@/store/shared-metrics'
 import { $threadScrolledUpBySession } from '@/store/thread-scroll'
 import { $retainedTodosBySession } from '@/store/todos'
 import { openSessionInNewWindow } from '@/store/windows'
@@ -136,8 +134,6 @@ export function ComposerStatusStack({ onSubmit, queue, sessionId }: ComposerStat
   )
 
   const billing = useStore($billingBlock)
-  const sharedMetricsConsent = useStore($sharedMetricsConsent)
-  const sharedMetricsOffer = sharedMetricsOfferPending(sharedMetricsConsent)
 
   const isStructuredSupported = controlEntry?.capability === 'supported'
 
@@ -218,10 +214,6 @@ export function ComposerStatusStack({ onSubmit, queue, sessionId }: ComposerStat
   // (not as a composer-disable) so slash commands stay usable.
   if (billing && sessionId && billing.sessionId === sessionId) {
     sections.push({ key: 'billing', node: <BillingBanner sessionId={sessionId} /> })
-  }
-
-  if (sharedMetricsOffer) {
-    sections.push({ key: 'shared-metrics', node: <SharedMetricsConsentStrip /> })
   }
 
   const hasControlContent = Boolean(
