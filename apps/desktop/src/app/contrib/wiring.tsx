@@ -38,7 +38,6 @@ import { emitGatewayEvent } from '@/contrib/events'
 import { translateNow } from '@/i18n'
 import { type ChatMessage, chatMessageText } from '@/lib/chat-messages'
 import { isMessagingSource } from '@/lib/session-source'
-import { activateWakeIndicator } from '@/lib/wake-indicator'
 import { playWakeSound } from '@/lib/wake-sound'
 import { $billingSettingsRequest } from '@/store/billing-block'
 import { $desktopBoot } from '@/store/boot'
@@ -873,7 +872,6 @@ export function ContribWiring({ children }: { children: ReactNode }) {
         // Audible confirmation that the wake registered, before voice capture
         // starts. Gated by the shared sound-mute toggle.
         playWakeSound()
-        activateWakeIndicator()
 
         // Multi-profile routing: a wake phrase enrolled by another profile
         // re-homes the gateway to that profile first (live swap — same path

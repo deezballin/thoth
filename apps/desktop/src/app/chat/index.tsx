@@ -12,7 +12,6 @@ import { sessionShouldHaveTranscript } from '@/app/session/hooks/use-session-act
 import { Thread } from '@/components/assistant-ui/thread'
 import { TranscriptWindowProvider } from '@/components/assistant-ui/thread/transcript-window'
 import { Backdrop } from '@/components/Backdrop'
-import { COMPOSER_HEART_CONFIG, HeartField } from '@/components/chat/vibe-hearts'
 import { usePaneGroup, usePaneVisible } from '@/components/pane-shell/pane-visibility'
 import { $hoveredTreeGroup, $sessionTileDragging, $sessionTileEdgeHover } from '@/components/pane-shell/tree/store'
 import { PromptOverlays } from '@/components/prompt-overlays'
@@ -855,16 +854,6 @@ const ChatViewContent = memo(function ChatViewContent({
             <ResumeExhaustedOverlay onRetryResume={onRetryResume} sessionId={routedSessionId} />
           )}
           {showChatBar && <ScrollToBottomButton sessionId={activeSessionId} />}
-          {/* Vibe hearts rise from the composer. Fired by the core `reaction`
-              event, gated by Settings → Appearance → Vibe Hearts. */}
-          <HeartField
-            className="absolute inset-x-0 z-30"
-            config={COMPOSER_HEART_CONFIG}
-            style={{
-              top: 0,
-              bottom: 'calc(var(--composer-measured-height) + 0.25rem)'
-            }}
-          />
           {/* A session drag hovering an EDGE hands the visual to the zone
               target; the link overlay shows only for the center region. */}
           <ChatDropOverlay kind={overlayKind} />

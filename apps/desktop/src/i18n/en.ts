@@ -1187,9 +1187,6 @@ export const en: Translations = {
       fileBrowserTitle: 'File Browser',
       fileBrowserDesc:
         'Show the file browser beside the chat when a workspace is open. The titlebar toggle changes this too.',
-      vibeHeartsTitle: 'Vibe Hearts',
-      vibeHeartsDesc:
-        'Floating hearts when you say thanks, ily, good bot, or send a heart. Separate from Message Reactions above.',
       embedsTitle: 'Inline Embeds',
       embedsDesc:
         'Rich previews load from third-party sites (YouTube, X, …). Ask shows a placeholder until you allow each one; Always loads them automatically; Off keeps plain links.',

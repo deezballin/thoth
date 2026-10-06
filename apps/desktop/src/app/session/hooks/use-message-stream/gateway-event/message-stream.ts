@@ -1,6 +1,5 @@
 import type { BillingBlock } from '@hermes/shared'
 
-import { burstVibeHearts } from '@/components/chat/vibe-hearts'
 import { reportFirstBuildTurnComplete } from '@/components/onboarding-chat/first-build'
 import { translateNow } from '@/i18n'
 import { coerceGatewayText, coerceThinkingText } from '@/lib/chat-runtime'
@@ -204,12 +203,6 @@ export function handleMessageStreamEvent(ctx: GatewayEventContext): boolean {
   }
 
   if (event.type === 'reaction') {
-    // Core-detected affection (ily / <3 / good bot) on the user's message.
-    // Play hearts only for the visible session so background turns stay quiet.
-    if (isActiveEvent && (payload?.kind ?? 'vibe') === 'vibe') {
-      burstVibeHearts()
-    }
-
     return true
   }
 

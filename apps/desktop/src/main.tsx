@@ -54,7 +54,7 @@ const winParam = new URLSearchParams(window.location.search).get('win')
 // window) and `browser` are ordinary opaque windows and are deliberately not
 // in here. index.html's pre-paint script skips exactly this list — keep the
 // two in step.
-const TRANSPARENT_WINDOWS = new Set(['overlay', 'quick', 'wake'])
+const TRANSPARENT_WINDOWS = new Set(['overlay', 'quick'])
 
 // Each transparent root used to force its host layers see-through when it
 // MOUNTED. That is far too late: `styles.css` above paints the theme's opaque
@@ -72,8 +72,6 @@ if (winParam && TRANSPARENT_WINDOWS.has(winParam)) {
 
 if (winParam === 'quick') {
   void import('./app/quick-entry/quick-entry-root').then(({ mountQuickEntry }) => mountQuickEntry())
-} else if (winParam === 'wake') {
-  void import('./app/wake-indicator/wake-indicator-root').then(({ mountWakeIndicator }) => mountWakeIndicator())
 } else {
   // CSS animations do not inherit Chromium's JS-loop pause policy. Mirror the
   // main window's visibility state to :root so decorative infinite

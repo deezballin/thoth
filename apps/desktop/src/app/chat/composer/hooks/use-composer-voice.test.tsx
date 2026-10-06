@@ -48,11 +48,6 @@ vi.mock('@/lib/tts-lease', () => ({
   syncTtsLease: vi.fn(async () => undefined)
 }))
 
-vi.mock('@/lib/wake-indicator', () => ({
-  clearWakeIndicator: vi.fn(),
-  syncWakeIndicatorWithVoice: vi.fn(() => false)
-}))
-
 vi.mock('@/store/composer', () => ({
   $voiceConversationStartRequest: { get: () => null },
   takeVoiceConversationStart: vi.fn(() => false)

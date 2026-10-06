@@ -1223,9 +1223,6 @@ export const frOverrides = {
       fileBrowserTitle: 'Navigateur de fichiers',
       fileBrowserDesc:
         "Affiche le navigateur de fichiers à côté du chat lorsqu'un espace de travail est ouvert. Le bouton de la barre de titre modifie aussi ce réglage.",
-      vibeHeartsTitle: "Cœurs d'ambiance",
-      vibeHeartsDesc:
-        "Des cœurs flottants apparaissent lorsque vous dites merci, « je t'aime », « good bot » ou envoyez un cœur. Cette option est indépendante des réactions aux messages ci-dessus.",
       embedsTitle: 'Intégrations en ligne',
       embedsDesc:
         "Les aperçus enrichis se chargent depuis des sites tiers (YouTube, X, …). Demander affiche un espace réservé jusqu'à ce que vous autorisiez chacun ; Toujours les charge automatiquement ; Désactivé conserve les liens simples.",

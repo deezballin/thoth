@@ -977,8 +977,6 @@ export interface Translations {
       composerPopoutDesc: string
       fileBrowserTitle: string
       fileBrowserDesc: string
-      vibeHeartsTitle: string
-      vibeHeartsDesc: string
       embedsTitle: string
       embedsDesc: string
       embedsAsk: string

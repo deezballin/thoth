@@ -75,16 +75,6 @@ contextBridge.exposeInMainWorld('hermesDesktop', {
     toggleMaximize: () => ipcRenderer.send('hermes:window-control', 'toggle-maximize'),
     close: () => ipcRenderer.send('hermes:window-control', 'close')
   },
-  wakeIndicator: {
-    getState: () => ipcRenderer.invoke('hermes:wake-indicator:get'),
-    setState: state => ipcRenderer.send('hermes:wake-indicator:set', state),
-    onState: callback => {
-      const listener = (_event, state) => callback(state)
-      ipcRenderer.on('hermes:wake-indicator:state', listener)
-
-      return () => ipcRenderer.removeListener('hermes:wake-indicator:state', listener)
-    }
-  },
   chatOnboarding: {
     grow: request => ipcRenderer.send('hermes:chat-onboarding:grow', request),
     soloBoot: () => ipcRenderer.send('hermes:chat-onboarding:solo-boot')

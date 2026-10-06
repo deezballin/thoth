@@ -13,7 +13,6 @@ import {
 } from '@/lib/spoken-reply'
 import { CONVERSATION_LEASE, READ_ALOUD_LEASE, syncTtsLease } from '@/lib/tts-lease'
 import { toLiveHistory } from '@/lib/voice-live'
-import { clearWakeIndicator, syncWakeIndicatorWithVoice } from '@/lib/wake-indicator'
 import { $voiceConversationStartRequest, takeVoiceConversationStart } from '@/store/composer'
 import { resetBrowseState } from '@/store/composer-input-history'
 import { recordFeatureUse } from '@/store/desktop-metrics'
@@ -100,7 +99,6 @@ export function useComposerVoice({
   // that stale closure does not silently drop the next voice turn.
   const busyRef = useRef(busy)
   busyRef.current = busy
-  const ownsWakeIndicatorRef = useRef(false)
   const previousSessionIdRef = useRef(sessionId)
   const voiceStartRequest = useStore($voiceConversationStartRequest)
 
@@ -284,26 +282,6 @@ export function useComposerVoice({
       void refreshVoiceLiveStatus().catch(() => undefined)
     }
   }, [voiceConversationActive])
-
-  // eslint-disable-next-line no-restricted-syntax -- ownership token used only by unmount cleanup
-  useEffect(() => {
-    if (target !== 'main') {
-      return
-    }
-
-    if (syncWakeIndicatorWithVoice(voiceConversationActive, conversation.status)) {
-      ownsWakeIndicatorRef.current = voiceConversationActive
-    }
-  }, [conversation.status, target, voiceConversationActive])
-
-  useEffect(
-    () => () => {
-      if (ownsWakeIndicatorRef.current) {
-        clearWakeIndicator()
-      }
-    },
-    []
-  )
 
   // The `composer.voice` hotkey toggles the conversation. Starting
   // with STT unconfigured lets the conversation surface its own "configure

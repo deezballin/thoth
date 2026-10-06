@@ -1220,9 +1220,6 @@ export const deOverrides = {
       fileBrowserTitle: 'Dateibrowser',
       fileBrowserDesc:
         'Zeigt den Dateibrowser neben dem Chat, wenn ein Arbeitsbereich geöffnet ist. Der Schalter in der Titelleiste ändert diese Einstellung ebenfalls.',
-      vibeHeartsTitle: 'Vibe-Herzen',
-      vibeHeartsDesc:
-        'Schwebende Herzen, wenn Sie danke, ilu, guter Bot sagen oder ein Herz senden. Unabhängig von den Nachrichten-Reaktionen oben.',
       embedsTitle: 'Inline-Embeds',
       embedsDesc:
         'Reichhaltige Vorschauen werden von Drittanbieter-Sites geladen (YouTube, X, …). „Fragen“ zeigt einen Platzhalter, bis Sie jede einzelne erlauben; „Immer“ lädt sie automatisch; „Aus“ belässt einfache Links.',

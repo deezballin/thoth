@@ -66,7 +66,6 @@ import {
   TRANSLUCENCY_SUPPORTED
 } from '@/store/translucency'
 import { $userBubbleTransparency, setUserBubbleTransparency } from '@/store/user-bubble-transparency'
-import { $vibeHeartsEnabled, setVibeHeartsEnabled } from '@/store/vibe-hearts-enabled'
 import { $zoomPercent, setZoomPercent } from '@/store/zoom'
 import { getBaseColors, useTheme } from '@/themes/context'
 import { installVscodeThemeFromMarketplace } from '@/themes/install'
@@ -435,7 +434,6 @@ export function AppearanceSettings({ subpage }: AppearanceSettingsProps = {}) {
   const textDirection = useStore($textDirection)
   const reactionsEnabled = useStore($reactionsEnabled)
   const toursEnabled = useStore($toursEnabled)
-  const vibeHeartsEnabled = useStore($vibeHeartsEnabled)
   const backdrop = useStore($backdrop)
   const introSplash = useStore($introSplash)
   const showModelPricing = useStore($showModelPricing)
@@ -983,7 +981,6 @@ export function AppearanceSettings({ subpage }: AppearanceSettingsProps = {}) {
             />
           )}
 
-
           {show('general') && (
             <ToggleRow
               checked={toursEnabled}
@@ -991,16 +988,6 @@ export function AppearanceSettings({ subpage }: AppearanceSettingsProps = {}) {
               id={settingElementId(ids.tours)}
               label={a.toursTitle}
               onChange={setToursEnabled}
-            />
-          )}
-
-          {show('chat-display') && (
-            <ToggleRow
-              checked={vibeHeartsEnabled}
-              description={a.vibeHeartsDesc}
-              id={settingElementId(ids.vibeHearts)}
-              label={a.vibeHeartsTitle}
-              onChange={setVibeHeartsEnabled}
             />
           )}
 

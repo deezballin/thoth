@@ -10,7 +10,6 @@ import type { KeepAwakeMode } from '../electron/power-save'
 import type { UpdateRunReport } from '../electron/updater/update-metrics'
 import type { GrowRequest } from '../electron/window-growth'
 
-import type { WakeIndicatorState } from './lib/wake-indicator'
 import type {
   QuickEntryStatePush,
   QuickEntryStatus,
@@ -116,11 +115,6 @@ declare global {
         minimize: () => void
         toggleMaximize: () => void
         close: () => void
-      }
-      wakeIndicator?: {
-        getState: () => Promise<WakeIndicatorState>
-        setState: (state: WakeIndicatorState) => void
-        onState: (callback: (state: WakeIndicatorState) => void) => () => void
       }
       chatOnboarding?: {
         grow: (request: GrowRequest) => void

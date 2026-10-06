@@ -1220,9 +1220,6 @@ export const esOverrides = {
       fileBrowserTitle: 'Explorador de archivos',
       fileBrowserDesc:
         'Muestra el explorador de archivos junto al chat cuando hay un espacio de trabajo abierto. El botón de la barra de título también cambia este ajuste.',
-      vibeHeartsTitle: 'Corazones de vibra',
-      vibeHeartsDesc:
-        'Corazones flotantes cuando dices gracias, te quiero, buen bot o envías un corazón. Independiente de las reacciones a mensajes de arriba.',
       embedsTitle: 'Contenido incrustado',
       embedsDesc:
         'Las vistas previas enriquecidas se cargan desde sitios de terceros (YouTube, X, …). Preguntar muestra un marcador de posición hasta que permitas cada una; Siempre las carga automáticamente; Desactivado conserva los enlaces simples.',

@@ -56,7 +56,6 @@ vi.mock('@/lib/tts-lease', () => ({
   READ_ALOUD_LEASE: 'read-aloud',
   syncTtsLease: vi.fn(async () => undefined)
 }))
-vi.mock('@/lib/wake-indicator', () => ({ clearWakeIndicator: vi.fn(), syncWakeIndicatorWithVoice: vi.fn() }))
 vi.mock('@/lib/voice-live', () => ({ toLiveHistory: vi.fn(() => []) }))
 vi.mock('@/store/notifications', () => ({ notify: vi.fn(), notifyError: vi.fn() }))
 vi.mock('@/store/voice-live', async () => {

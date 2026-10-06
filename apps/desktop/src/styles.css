@@ -64,7 +64,7 @@
 
 /* Pause continuous animations only when the window is hidden/minimized, not
    merely unfocused. main.tsx owns this attribute for the primary window;
-   wake/pet overlays retain their purpose-built visibility behavior. */
+   overlays retain their purpose-built visibility behavior. */
 :root[data-renderer-animations-paused]
   :is(
     .shimmer,
