@@ -5,11 +5,11 @@ user docs: `website/docs/user-guide/features/skills.md`, `curator.md`.
 
 ## Two surfaces
 
-- **`skills/`** — built-in, loadable by default, organised by category (`skills/github/`, `skills/mlops/`).
+- **`skills/`** — built-in, loadable by default, organised by category (e.g. `skills/software-development/github/`).
 - **`optional-skills/`** — heavier/niche skills shipped but NOT active; installed via
   `hermes skills install official/<category>/<skill>` (adapter `tools/skills_hub_official.py`
-  `OptionalSkillSource`). Categories: `autonomous-ai-agents, blockchain, communication, creative,
-  devops, email, health, mcp, migration, mlops, productivity, research, security, web-development`.
+  `OptionalSkillSource`). Categories: `communication, creative, dogfood, productivity, research,
+  software-development`.
 
 Reviewing a skill PR: check the target directory — heavy-dep or niche skills go to `optional-skills/`.
 

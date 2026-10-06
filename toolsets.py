@@ -78,8 +78,7 @@ TOOLSETS = {
     "search": _ts("Web search only (no content extraction/scraping)", ["web_search"]),
     "x_search": _ts(
         "Search X (Twitter) posts and threads via xAI's built-in x_search Responses "
-        "tool. Read-only public X discovery; use the xurl skill for authenticated X "
-        "API reads and account actions. Available when xAI credentials are configured "
+        "tool. Read-only public X discovery. Available when xAI credentials are configured "
         "(SuperGrok OAuth or XAI_API_KEY). Off by default; enable in `hermes tools` → "
         "X (Twitter) Search.",
         ["x_search"],

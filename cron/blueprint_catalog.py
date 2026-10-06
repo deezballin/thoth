@@ -111,14 +111,13 @@ CATALOG: List[AutomationBlueprint] = [
         prompt_template=(
             "Produce a concise morning briefing for the user: today's calendar "
             "events, the local weather, and any urgent items. When Gmail/Google "
-            "Calendar are connected, follow the google-workspace skill's "
-            "references/daily-brief.md procedure (exact day window, conflict "
-            "detection, meeting prep, mail-to-meeting links). Keep it short and "
+            "Calendar are connected, use them for the exact day window, conflict "
+            "detection, meeting prep, and mail-to-meeting links. Keep it short and "
             "scannable. If no data sources are connected, give a brief "
             "good-morning with the date and offer to connect calendar/email."
         ),
         slots=[_TIME("08:00"), _DELIVER],
-        skills=("google-workspace",),
+        skills=(),
         tags=("daily", "briefing"),
     ),
     AutomationBlueprint(
@@ -149,7 +148,7 @@ CATALOG: List[AutomationBlueprint] = [
             ),
             _DELIVER,
         ],
-        skills=("email-inbox-triage",),
+        skills=(),
         tags=("email", "monitor"),
     ),
     AutomationBlueprint(
@@ -160,12 +159,12 @@ CATALOG: List[AutomationBlueprint] = [
         category="weekly",
         schedule_template="{minute} {hour} * * {dow}",
         prompt_template=(
-            "Run the weekly-review-planning skill's procedure for the user: "
+            "Review the week for the user: "
             "review the completed week and coming 1-2 weeks across connected "
             "calendar, tasks, notes, and email; surface commitments, stalled "
             "projects, and waiting items; build a capacity-aware plan for next "
             "week. Recommendations and drafts only — no mutations without "
-            "approval. Keep the output in the skill's seven-section shape."
+            "approval. Keep the output in a seven-section shape."
         ),
         slots=[
             _TIME("18:00"),
@@ -176,7 +175,7 @@ CATALOG: List[AutomationBlueprint] = [
             ),
             _DELIVER,
         ],
-        skills=("weekly-review-planning",),
+        skills=(),
         tags=("weekly", "review"),
     ),
     AutomationBlueprint(
@@ -299,13 +298,13 @@ CATALOG: List[AutomationBlueprint] = [
         category="general",
         schedule_template="0 */{interval_h} * * *",
         prompt_template=(
-            "Load the product-price-monitor skill and run the tick for this "
-            "watch: {item}. Alert condition: {condition}. Compare the "
+            "Run the tick for this watch: {item}. Alert condition: {condition}. "
+            "Compare the "
             "normalized all-in price/availability against stored state, "
             "suppress duplicate alerts, and never overwrite last-known-good "
             "state with a failed fetch. If no condition is met, respond with "
-            "[SILENT]. On the first run, execute the skill's setup phase "
-            "first: pin the exact item, verify one live fetch, and write the "
+            "[SILENT]. The first run executes the setup phase first: pin the "
+            "exact item, verify one live fetch, and write the "
             "watch contract state file."
         ),
         slots=[
@@ -326,7 +325,7 @@ CATALOG: List[AutomationBlueprint] = [
             ),
             _DELIVER,
         ],
-        skills=("product-price-monitor",),
+        skills=(),
         tags=("prices", "shopping", "travel", "monitor"),
     ),
     AutomationBlueprint(
@@ -337,13 +336,13 @@ CATALOG: List[AutomationBlueprint] = [
         category="general",
         schedule_template="{minute} {hour} * * {dow}",
         prompt_template=(
-            "Load the competitor-news-monitor skill and run the tick for this "
-            "watch: companies {companies}; event categories {categories}. "
+            "Run the tick for this watch: companies {companies}; event "
+            "categories {categories}. "
             "Collect incrementally from the last cutoff, deduplicate by "
             "underlying event, score materiality against the watch contract, "
             "and deliver a cited digest of material events only. If there are "
-            "no material events, respond with [SILENT]. On the first run, "
-            "execute the skill's setup phase first: freeze the watchlist, "
+            "no material events, respond with [SILENT]. The first run "
+            "executes the setup phase first: freeze the watchlist, "
             "build source coverage, and write the watch contract state file."
         ),
         slots=[
@@ -365,7 +364,7 @@ CATALOG: List[AutomationBlueprint] = [
             ),
             _DELIVER,
         ],
-        skills=("competitor-news-monitor",),
+        skills=(),
         tags=("competitors", "news", "monitor", "research"),
     ),
     AutomationBlueprint(

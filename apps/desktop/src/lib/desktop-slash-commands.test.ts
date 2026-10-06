@@ -366,7 +366,7 @@ describe('rankSkillCommands', () => {
     { text: '/research-paper-writing' },
     { text: '/work' },
     { text: '/ship-it' },
-    { text: '/manim-video' },
+    { text: '/github' },
     { text: '/docx' }
   ]
 
@@ -374,7 +374,7 @@ describe('rankSkillCommands', () => {
     '/research': { usage: 60, origin: 'local' as const },
     '/research-paper-writing': { usage: 0, origin: 'bundled' as const },
     '/work': { usage: 172, origin: 'local' as const },
-    '/manim-video': { usage: 0, origin: 'bundled' as const },
+    '/github': { usage: 0, origin: 'bundled' as const },
     '/docx': { usage: 0, origin: 'local' as const }
   }
 
@@ -383,7 +383,7 @@ describe('rankSkillCommands', () => {
       '/work',
       '/research',
       '/docx',
-      '/manim-video',
+      '/github',
       '/research-paper-writing',
       '/ship-it'
     ])

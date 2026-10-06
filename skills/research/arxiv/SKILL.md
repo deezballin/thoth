@@ -8,7 +8,6 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [Research, Arxiv, Papers, Academic, Science, API]
-    related_skills: [pdf]
 ---
 
 # arXiv Research

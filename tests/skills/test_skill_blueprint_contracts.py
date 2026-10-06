@@ -10,18 +10,6 @@ from cron.blueprint_catalog import CATALOG, fill_blueprint, get_blueprint
 REPO = Path(__file__).resolve().parents[2]
 
 
-@pytest.mark.parametrize("key,skill", [
-    ("morning-brief", "google-workspace"), ("important-mail", "email-inbox-triage"),
-    ("weekly-review", "weekly-review-planning"), ("price-watch", "product-price-monitor"),
-])
-def test_task_blueprint_loads_procedure(key, skill):
-    blueprint = get_blueprint(key)
-    assert blueprint is not None, key
-    assert skill in blueprint.skills
-    if key == "weekly-review":
-        assert skill in fill_blueprint(blueprint, {})["prompt"]
-
-
 def test_every_blueprint_skill_is_bundled():
     bundled = {path.parent.name for path in (REPO / "skills").rglob("SKILL.md")}
     for blueprint in CATALOG:
@@ -49,7 +37,6 @@ def test_price_watch_fills_and_persists_with_chosen_cadence(hours, tmp_path, mon
     created = jobs.create_job(**spec)
     saved = jobs.get_job(created["id"])
     assert saved is not None
-    assert "product-price-monitor" in saved["skills"]
     assert saved["deliver"] == "local"
     for text in ("https://example.test/widget", "below 42 credits", "[SILENT]"):
         assert text in saved["prompt"], text

@@ -9,7 +9,6 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [diagrams, svg, visualization, education, physics, chemistry, engineering]
-    related_skills: [architecture-diagram, excalidraw]
 ---
 
 # Concept Diagrams

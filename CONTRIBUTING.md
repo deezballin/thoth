@@ -598,10 +598,10 @@ Gateway and messaging sessions never collect secrets in-band; they instruct the 
 - The skill can still be useful if the user skips setup, but may degrade gracefully
 
 **When to declare command prerequisites:**
-- The skill relies on a CLI tool that may not be installed (e.g., `himalaya`, `openhue`, `ddgs`)
+- The skill relies on a CLI tool that may not be installed (e.g., `gh`, `curl`, `ddgs`)
 - Treat command checks as guidance, not discovery-time hiding
 
-See `skills/gifs/gif-search/` and `skills/email/himalaya/` for examples.
+See `skills/media/gif-search/` and `skills/software-development/github/` for examples.
 
 ### Skill authoring standards (HARDLINE)
 
