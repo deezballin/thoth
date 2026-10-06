@@ -20,7 +20,10 @@ it('publishes the feature flags answered by main before the renderer starts', as
   const registration = host.exposeInMainWorld.mock.calls.find(([name]): boolean => name === 'hermesDesktop')
 
   expect(registration).toBeDefined()
-  expect(registration![1]).toMatchObject({ localModelsEnabled: true, guestOnboardingEnabled: true })
+  expect(registration![1]).toMatchObject({ localModelsEnabled: true })
+  // The guest-onboarding launch flag stays main-process-only (it is stamped
+  // onto spawned backends); the renderer bridge no longer publishes it.
+  expect(registration![1]).not.toHaveProperty('guestOnboardingEnabled')
   expect(host.sendSync).toHaveBeenCalledWith('hermes:feature-flags')
 })
 

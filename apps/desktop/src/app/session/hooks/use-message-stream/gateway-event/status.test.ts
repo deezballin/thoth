@@ -6,13 +6,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { $notifications } from '@/store/notifications'
-import { requestDesktopOnboarding } from '@/store/onboarding'
 
 import { handleStatusEvent } from './status'
 import type { GatewayEventContext } from './types'
 
 vi.mock('@/store/native-notifications', () => ({ dispatchNativeNotification: vi.fn() }))
-vi.mock('@/store/onboarding', () => ({ requestDesktopOnboarding: vi.fn() }))
 
 const OWNED_REFUSAL =
   'Session 20260909_095312_6b93f5 already has a live owner (tui, pid 32977, lease age 22m). ' +
@@ -47,7 +45,6 @@ function errorContext(message: string, code?: string) {
 
 afterEach(() => {
   $notifications.set([])
-  vi.mocked(requestDesktopOnboarding).mockClear()
 })
 
 describe('gateway `error` event → error card + toast', () => {
@@ -77,26 +74,39 @@ describe('gateway `error` event → error card + toast', () => {
     expect(toast.action).toBeUndefined()
   })
 
-  it('routes a blank install to onboarding on the gateway code, whatever the sentence says', () => {
+  it('keeps a blank-install failure as a plain toast instead of routing anywhere', () => {
     // agent init with no usable provider: the gateway stamps code=provider_not_configured
-    // (tui_gateway/server.py). The fix for this chat is setup, so the user must land there and
-    // not on a toast — even after the sentence is reworded again.
-    const { ctx } = errorContext(
+    // (tui_gateway/server.py). With no desktop setup surface left, the server's own
+    // sentence is what the user reads — even after the wording changes again.
+    const { ctx, failAssistantMessage } = errorContext(
       'Hermes could not start the assistant. Details: something new we never matched.',
       'provider_not_configured'
     )
 
     handleStatusEvent(ctx)
 
-    expect(requestDesktopOnboarding).toHaveBeenCalledTimes(1)
+    const toast = $notifications.get()[0]
+
+    expect(toast.message).toBe('Hermes could not start the assistant. Details: something new we never matched.')
+    expect(failAssistantMessage).toHaveBeenCalledWith(
+      'sess-1',
+      'Hermes could not start the assistant. Details: something new we never matched.',
+      1_700_000_100,
+      null
+    )
   })
 
-  it('does not route an unrelated failure to onboarding', () => {
-    const { ctx } = errorContext('Hermes could not finish this turn. Try again.')
+  it('does not classify an unrelated failure', () => {
+    const { ctx, failAssistantMessage } = errorContext('Hermes could not finish this turn. Try again.')
 
     handleStatusEvent(ctx)
 
-    expect(requestDesktopOnboarding).not.toHaveBeenCalled()
+    expect(failAssistantMessage).toHaveBeenCalledWith(
+      'sess-1',
+      'Hermes could not finish this turn. Try again.',
+      1_700_000_100,
+      null
+    )
   })
 
   it("keeps the server's own plain copy as the toast message when no code was recovered", () => {

@@ -188,8 +188,8 @@ export function runtimeReadinessDisplay(status: RuntimeReadinessResult | null): 
   }
 
   // Credentials exist but runtime resolution failed. Calling that "needs
-  // setup" sends users back through onboarding for provider/quota failures
-  // that setup cannot repair; the reason tooltip carries the specific cause.
+  // setup" offers no repair path for provider/quota failures only a backend
+  // change can fix; the reason tooltip carries the specific cause.
   return status.checksDisagree ? 'unavailable' : 'needs_setup'
 }
 

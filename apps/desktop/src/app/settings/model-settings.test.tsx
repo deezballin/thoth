@@ -28,9 +28,6 @@ const saveMoaModels = vi.fn()
 const setEnvVar = vi.fn()
 const getHermesConfigRecord = vi.fn()
 const saveHermesConfig = vi.fn()
-const startManualLocalEndpoint = vi.fn()
-const startManualOnboarding = vi.fn()
-const startManualProviderOAuth = vi.fn()
 let profileSwitchHandler: (() => void) | null = null
 
 // Keep the real read-origin helpers (WeakMap peek/bind) live: the shared
@@ -50,12 +47,6 @@ vi.mock('@/hermes', async () => ({
   getHermesConfigRecord: () => getHermesConfigRecord(),
   saveHermesConfig: (config: unknown) => saveHermesConfig(config),
   setApiRequestProfile: () => {}
-}))
-
-vi.mock('@/store/onboarding', () => ({
-  startManualLocalEndpoint: (...args: unknown[]) => startManualLocalEndpoint(...args),
-  startManualOnboarding: (...args: unknown[]) => startManualOnboarding(...args),
-  startManualProviderOAuth: (...args: unknown[]) => startManualProviderOAuth(...args)
 }))
 
 vi.mock('../hooks/use-on-profile-switch', () => ({
@@ -135,7 +126,7 @@ describe('ModelSettings profile scope', () => {
 
 describe('ModelSettings', () => {
   it.each(['custom', 'local', 'custom:lab'])(
-    'opens local endpoint setup when %s has no inventory row',
+    'offers no desktop setup action when %s has no inventory row',
     async provider => {
       getGlobalModelInfo.mockResolvedValueOnce({ provider, model: '' })
       getGlobalModelOptions.mockResolvedValueOnce({ providers: [] })
@@ -147,31 +138,22 @@ describe('ModelSettings', () => {
       expect(providerSelect.textContent).toContain(provider)
       expect(screen.queryByText(/undefined/)).toBeNull()
       expect(screen.queryByText(/signs in through your browser/)).toBeNull()
-
-      fireEvent.click(await screen.findByRole('button', { name: 'Set up provider' }))
-
-      expect(startManualLocalEndpoint).toHaveBeenCalledOnce()
-      expect(startManualLocalEndpoint).toHaveBeenCalledWith(null, 'leverage-ai')
-      expect(startManualOnboarding).not.toHaveBeenCalled()
-      expect(startManualProviderOAuth).not.toHaveBeenCalled()
+      expect(screen.queryByRole('button', { name: /Set up/ })).toBeNull()
     }
   )
 
-  it('opens the generic provider picker for an unknown provider with no inventory row', async () => {
+  it('offers no setup button for an unknown provider with no inventory row', async () => {
     getGlobalModelInfo.mockResolvedValueOnce({ provider: 'retired-provider', model: '' })
     getGlobalModelOptions.mockResolvedValueOnce({ providers: [] })
 
     renderModelSettings('leverage-ai')
 
-    fireEvent.click(await screen.findByRole('button', { name: 'Set up provider' }))
+    await screen.findAllByRole('combobox')
 
-    expect(startManualOnboarding).toHaveBeenCalledOnce()
-    expect(startManualOnboarding).toHaveBeenCalledWith(undefined, 'leverage-ai')
-    expect(startManualLocalEndpoint).not.toHaveBeenCalled()
-    expect(startManualProviderOAuth).not.toHaveBeenCalled()
+    expect(screen.queryByRole('button', { name: /Set up/ })).toBeNull()
   })
 
-  it('deep-links a known OAuth provider row into its scoped setup flow', async () => {
+  it('offers no desktop setup flow for a known OAuth provider row', async () => {
     getGlobalModelInfo.mockResolvedValueOnce({ provider: 'anthropic', model: '' })
     getGlobalModelOptions.mockResolvedValueOnce({
       providers: [
@@ -187,11 +169,9 @@ describe('ModelSettings', () => {
 
     renderModelSettings('leverage-ai')
 
-    fireEvent.click(await screen.findByRole('button', { name: 'Set up Anthropic' }))
+    await screen.findAllByRole('combobox')
 
-    expect(startManualProviderOAuth).toHaveBeenCalledWith('anthropic', 'leverage-ai')
-    expect(startManualLocalEndpoint).not.toHaveBeenCalled()
-    expect(startManualOnboarding).not.toHaveBeenCalled()
+    expect(screen.queryByRole('button', { name: 'Set up Anthropic' })).toBeNull()
   })
 
   it('replaces the selected provider and model when the active profile changes', async () => {

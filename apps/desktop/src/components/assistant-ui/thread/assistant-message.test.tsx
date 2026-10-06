@@ -20,7 +20,6 @@ import { formatTimelineRange, formatTimelineTimestamp } from './timestamp'
 import { Thread } from '.'
 
 const requestFreshSession = vi.hoisted(() => vi.fn())
-const startManualProviderOAuth = vi.hoisted(() => vi.fn())
 const requestModelMenuToggle = vi.hoisted(() => vi.fn<() => boolean>(() => true))
 
 vi.mock('@/app/chat/composer/focus', async importOriginal => ({
@@ -31,11 +30,6 @@ vi.mock('@/app/chat/composer/focus', async importOriginal => ({
 vi.mock('@/store/profile', async importOriginal => ({
   ...(await importOriginal<Record<string, unknown>>()),
   requestFreshSession: () => requestFreshSession()
-}))
-
-vi.mock('@/store/onboarding', async importOriginal => ({
-  ...(await importOriginal<Record<string, unknown>>()),
-  startManualProviderOAuth: (...args: unknown[]) => startManualProviderOAuth(...args)
 }))
 
 // Timeline timestamps render only when `display.timestamps` is enabled.
@@ -52,7 +46,6 @@ stubThreadEnvironment()
 afterEach(() => {
   cleanup()
   requestFreshSession.mockClear()
-  startManualProviderOAuth.mockClear()
   requestModelMenuToggle.mockReset().mockReturnValue(true)
 })
 
@@ -461,15 +454,14 @@ describe('switch provider on a live session (#95066)', () => {
 })
 
 describe('expired OAuth grant recovery', () => {
-  it('explains the expiry and re-runs that provider sign-in in one click', async () => {
+  it('explains the expiry and keeps Retry as the only action', async () => {
     render(<Harness assistant={oauthExpiredMessage()} />)
 
     expect(await screen.findByText(/Nous Portal sign-in has expired/)).toBeTruthy()
-    // Signing in changes the outcome, so Retry stays as the follow-up click.
+    // Signing in through the desktop surface is gone (CLI `hermes setup`),
+    // so Retry stays as the follow-up click.
     expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy()
-
-    screen.getByRole('button', { name: 'Sign in to Nous Portal again' }).click()
-    expect(startManualProviderOAuth).toHaveBeenCalledWith('nous', undefined)
+    expect(screen.queryByRole('button', { name: 'Sign in to Nous Portal again' })).toBeNull()
   })
 })
 

@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { $desktopBoot } from '@/store/boot'
 import { $gatewaySwitching } from '@/store/gateway-switch'
-import { $desktopOnboarding } from '@/store/onboarding'
 import { setGatewayState } from '@/store/session'
 
 import { BootFailureOverlay } from './boot-failure-overlay'
@@ -34,17 +33,6 @@ function resetStores() {
     running: false,
     timestamp: Date.now(),
     visible: false
-  })
-  $desktopOnboarding.set({
-    configured: true,
-    flow: { status: 'idle' },
-    mode: 'oauth',
-    providers: null,
-    reason: null,
-    requested: false,
-    firstRunSkipped: false,
-    manual: false,
-    localEndpoint: false,
   })
 }
 

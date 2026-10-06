@@ -22,7 +22,6 @@ import {
   revokeDiscardedAttachmentPreviews
 } from '@/store/composer'
 import { clearNotifications, notify, notifyError } from '@/store/notifications'
-import { consumePendingCredentialWarning, requestDesktopOnboarding } from '@/store/onboarding'
 import { isCronRunReadOnly, isStoredTranscriptReadOnly } from '@/store/read-only-transcript'
 import {
   $activeSessionId,
@@ -52,7 +51,6 @@ import {
   acquireSubmitInFlight,
   type GatewayRequest,
   inlineErrorMessage,
-  isProviderSetupError,
   isSessionBusyError,
   isSessionNotOwnedError,
   isTargetSessionBusy,
@@ -259,23 +257,6 @@ export function useSubmitPrompt(deps: SubmitPromptDeps) {
       if (isVoicePlaybackActive()) {
         markVoicePlaybackInterrupted()
         stopVoicePlayback()
-      }
-
-      // The gateway already told us this profile has no usable provider (a
-      // credential warning arrived with the session's runtime info, deferred
-      // instead of popping onboarding on the mere profile switch). The user
-      // is now actually trying to chat — THIS is the moment to open
-      // onboarding, before a send the gateway said will fail. The draft
-      // stays in the composer; once a provider is configured they just hit
-      // Enter again.
-      if (!options?.fromQueue) {
-        const deferredCredentialWarning = consumePendingCredentialWarning()
-
-        if (deferredCredentialWarning) {
-          requestDesktopOnboarding(deferredCredentialWarning)
-
-          return false
-        }
       }
 
       // Barged mid-speech (here or via the voice loop's VAD)? Flag the submit
@@ -1125,12 +1106,6 @@ export function useSubmitPrompt(deps: SubmitPromptDeps) {
           }),
           targetStoredSessionId
         )
-
-        if (targetIsCurrentView() && isProviderSetupError(err)) {
-          requestDesktopOnboarding(copy.providerCredentialRequired)
-
-          return false
-        }
 
         if (targetIsCurrentView()) {
           notifyError(err, copy.promptFailed)

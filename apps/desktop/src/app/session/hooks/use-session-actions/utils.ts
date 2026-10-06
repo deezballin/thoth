@@ -16,7 +16,6 @@ import { parseErrorSurface } from '@/lib/error-surface'
 import { isMessagingSource, normalizeSessionSource } from '@/lib/session-source'
 import { isLiveTailReplyId } from '@/lib/spoken-reply'
 import { reconcileApprovalModeForProfile } from '@/store/approval-mode'
-import { requestDesktopOnboardingForCredentialWarning } from '@/store/onboarding'
 import { $activeGatewayProfile, $profiles, normalizeProfileKey } from '@/store/profile'
 import { $projectTree } from '@/store/projects'
 import {
@@ -2421,8 +2420,6 @@ export function applyRuntimeInfo(
   if (info.approval_mode !== undefined) {
     reconcileApprovalModeForProfile($activeGatewayProfile.get(), info.approval_mode)
   }
-
-  requestDesktopOnboardingForCredentialWarning(info.credential_warning)
 
   reportInstallMethodWarning(info.install_warning)
 

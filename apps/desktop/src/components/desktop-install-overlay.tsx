@@ -29,7 +29,7 @@ import { FirstRunRemoteSetup } from './remote-setup/first-run'
  * shows itself only when main.ts reports an in-flight bootstrap (state.active)
  * OR an error from a completed-failed bootstrap (state.error). When the
  * bootstrap finishes successfully the overlay fades out and the rest of the
- * app (existing onboarding overlay -> main UI) takes over.
+ * app (the main UI) takes over.
  *
  * Subscribes to two channels:
  *   - getBootstrapState()           -- initial snapshot on mount
@@ -44,7 +44,7 @@ import { FirstRunRemoteSetup } from './remote-setup/first-run'
  * they're expected to come back as skipped=true (install.ps1 short-circuits
  * them under -NonInteractive). The post-install configuration flow that
  * those stages cover (API key, model, persona, gateway autostart) is handled
- * by the existing DesktopOnboardingOverlay, NOT by the install overlay.
+ * by Settings, NOT by the install overlay.
  */
 
 interface DesktopInstallOverlayProps {
@@ -339,7 +339,7 @@ export function DesktopInstallOverlay({ enabled = true }: DesktopInstallOverlayP
       })
       .catch(() => {
         // Older Electron build without the IPC handler -- bootstrap UI just
-        // stays empty, app falls through to existing onboarding flow.
+        // stays empty, app falls through to the main UI.
       })
 
     const off = desktop.onBootstrapEvent(ev => setState(prev => applyEvent(prev, ev)))

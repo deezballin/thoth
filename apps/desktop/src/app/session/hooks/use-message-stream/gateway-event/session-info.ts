@@ -4,7 +4,6 @@ import { modelOptionsQueryKey } from '@/lib/model-options'
 import { reconcileApprovalModeForProfile } from '@/store/approval-mode'
 import { clearSettledClarifyRequest } from '@/store/clarify'
 import { reconcileSessionCompacting } from '@/store/compaction'
-import { requestDesktopOnboardingForCredentialWarning } from '@/store/onboarding'
 import { followActiveSessionCwd } from '@/store/projects'
 import { clearAllPrompts } from '@/store/prompts'
 import {
@@ -482,8 +481,6 @@ export function handleSessionInfoEvent(ctx: GatewayEventContext): boolean {
         compressions: usage.compressions
       }))
     }
-
-    requestDesktopOnboardingForCredentialWarning(payload?.credential_warning)
 
     if (apply) {
       reportInstallMethodWarning(payload?.install_warning)

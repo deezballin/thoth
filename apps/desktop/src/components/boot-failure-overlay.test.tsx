@@ -4,7 +4,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { en } from '@/i18n/en'
 import { $desktopBoot } from '@/store/boot'
 import { $notifications } from '@/store/notifications'
-import { $desktopOnboarding } from '@/store/onboarding'
 
 import { BootFailureOverlay } from './boot-failure-overlay'
 
@@ -66,17 +65,6 @@ const remoteToken = {
 }
 
 beforeEach(() => {
-  $desktopOnboarding.set({
-    configured: true,
-    flow: { status: 'idle' },
-    mode: 'oauth',
-    providers: null,
-    reason: null,
-    requested: false,
-    firstRunSkipped: false,
-    manual: false,
-    localEndpoint: false,
-  })
   failBoot()
 })
 

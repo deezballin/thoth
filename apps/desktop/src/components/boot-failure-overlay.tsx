@@ -16,7 +16,6 @@ import { openExternalLink } from '@/lib/external-link'
 import { ChevronLeft, ExternalLink, FileText, Loader2, LogIn, RefreshCw, SlidersHorizontal, Wrench } from '@/lib/icons'
 import { $desktopBoot } from '@/store/boot'
 import { notify, notifyError } from '@/store/notifications'
-import { $desktopOnboarding } from '@/store/onboarding'
 
 import { classifyLocalBootFailure, type LocalBootFailureCopy, localBootFailureCopy } from './boot-failure-cause'
 import type { RemoteReauth } from './boot-failure-reauth'
@@ -90,7 +89,6 @@ function BootFailureModal({
 
 export function BootFailureOverlay() {
   const boot = useStore($desktopBoot)
-  const onboarding = useStore($desktopOnboarding)
   const { t } = useI18n()
   const [busy, setBusy] = useState<BusyAction>(null)
   const [logs, setLogs] = useState<string[]>([])
@@ -113,10 +111,6 @@ export function BootFailureOverlay() {
   const [dismissedError, setDismissedError] = useState<string | null>(null)
 
   const visible = Boolean(boot.error) && boot.error !== dismissedError && !boot.running
-  // While first-run onboarding owns the picker/flow we let it surface its own
-  // progress; the recovery overlay is for hard failures, which it covers via a
-  // higher z-index regardless of onboarding state.
-  const suppressed = onboarding.flow.status !== 'idle' && onboarding.flow.status !== 'error'
 
   useEffect(() => {
     setDismissedError(current => (boot.running || current !== boot.error ? null : current))
@@ -220,7 +214,7 @@ export function BootFailureOverlay() {
     }
   }, [boot.error, visible])
 
-  if (!visible || suppressed) {
+  if (!visible) {
     return null
   }
 

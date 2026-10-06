@@ -36,11 +36,9 @@ import {
   resolveMediaPlaybackSrc,
   validImageDimensions
 } from '@/lib/media'
-import { isOnboardingEnabled } from '@/lib/onboarding-enabled'
 import { previewTargetFromMarkdownHref } from '@/lib/preview-targets'
 import { remarkSoftBreaks } from '@/lib/remark-soft-breaks'
 import { sessionRefFromMarkdownHref } from '@/lib/session-refs'
-import { isDirectiveInProgress } from '@/lib/transcript-directives'
 import { cn } from '@/lib/utils'
 import { useForcedTextDirection } from '@/store/text-direction'
 
@@ -50,7 +48,6 @@ import { detectEmbed, extractAlert, MarkdownAlert, RichCodeBlock, UrlEmbed } fro
 import { ResizableMarkdownTable, ResizableMarkdownTh } from './markdown-table'
 import { paragraphPlainText, TranscriptDirectiveLeaf, useResolvedParagraph } from './transcript-directive'
 
-const onboardingEnabled = isOnboardingEnabled()
 
 // Math rendering plugin (KaTeX). Configured once at module scope — the
 // plugin is stateless beyond its internal cache so re-creating per-render
@@ -599,18 +596,6 @@ function MarkdownParagraph({
         )}
       </>
     )
-  }
-
-  // Directive-in-progress: while the message is still streaming, a paragraph
-  // that begins with `::` is a directive whose closing shape hasn't fully
-  // arrived (directives always sit alone in their own paragraph — FLOW.md),
-  // so it can't be claimed yet. Rendering the plain <p> here is the raw-text
-  // flash (`::ask{question="Wha…`) that snaps into a card on settle — hold
-  // the slot empty instead. Once streaming ends this branch is dead, so a
-  // SETTLED malformed/unclaimed directive still shows as prose (an authoring
-  // bug the user should see).
-  if (onboardingEnabled && streaming && plain !== null && isDirectiveInProgress(plain)) {
-    return null
   }
 
   return (

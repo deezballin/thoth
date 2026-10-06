@@ -46,7 +46,6 @@ import {
   formatErrorDiagnostics,
   formatLimitReset,
   formatResetClock,
-  isOAuthReauthSurface,
   scheduledRetryDelayMs
 } from '@/lib/error-surface'
 import { errorCardText } from '@/lib/error-surface-copy'
@@ -68,7 +67,6 @@ import { useEnterAnimation } from '@/lib/use-enter-animation'
 import { cn } from '@/lib/utils'
 import { playSpeechText, stopVoicePlayback } from '@/lib/voice-playback'
 import { notifyError } from '@/store/notifications'
-import { startManualProviderOAuth } from '@/store/onboarding'
 import { $activeGatewayProfile, normalizeProfileKey, requestFreshSession } from '@/store/profile'
 import { sessionApprovalRequest } from '@/store/prompts'
 import { requestSendDiagnostics } from '@/store/send-diagnostics'
@@ -828,22 +826,9 @@ const ErrorRecoveryActions: FC = () => {
   // One table decides which buttons this failure gets (lib/error-surface.ts).
   const plan = errorRecoveryPlan(surface)
 
-  // An expired/revoked OAuth grant (HTTP 401 on nous / openai-codex / ...):
-  // the one-click fix is re-running that provider's sign-in, which the
-  // onboarding overlay already owns end to end (device code → poll →
-  // reload.env → model confirm). Scoped to the gateway profile the failed
-  // session runs on, so a Bot profile's grant is renewed, not the primary's.
+  // The gateway profile the failed session runs on (Bot / secondary profiles
+  // resolve their own owner paths below rather than the primary's).
   const gatewayProfile = useStore($activeGatewayProfile)
-
-  const signInAgain = useCallback(() => {
-    if (!isOAuthReauthSurface(surface)) {
-      return
-    }
-
-    triggerHaptic('submit')
-    const key = normalizeProfileKey(gatewayProfile)
-    startManualProviderOAuth(surface.provider, key === 'default' ? undefined : key)
-  }, [gatewayProfile, surface])
 
   // Reveal a local folder through Electron; `logsRoot` is the profile's
   // HERMES_HOME/logs, and its parent is the Hermes data folder itself (what
@@ -922,12 +907,6 @@ const ErrorRecoveryActions: FC = () => {
       {plan.startNewSession && (
         <button className="aui-error-action" onClick={startNewSession} type="button">
           {copy.errorStartNewSession}
-        </button>
-      )}
-      {plan.signInAgain && isOAuthReauthSurface(surface) && (
-        <button className="aui-error-action" onClick={signInAgain} type="button">
-          <KeyRound className="size-3" />
-          {copy.errorSignInAgain(surface.providerLabel || surface.provider)}
         </button>
       )}
       {plan.updateApiKey && inRouter && (

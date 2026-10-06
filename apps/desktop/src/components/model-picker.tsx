@@ -21,7 +21,6 @@ import {
 import type { LocalModelLoadProgress, LocalRuntimeJob } from '@/types/hermes'
 
 import type { HermesGateway } from '../hermes'
-import { startManualOnboarding } from '../store/onboarding'
 
 import { InlineNotice } from './notifications'
 import { Button } from './ui/button'
@@ -41,12 +40,11 @@ interface ModelPickerDialogProps {
   ownerConnectionId?: null | string
   profile?: string
   /** Desktop route profile for provider setup; `profile` may be the backend-side target. */
-  setupProfile?: string
   request?: <T>(method: string, params?: Record<string, unknown>) => Promise<T>
   /**
    * Optional class for DialogContent. Use it to lift the picker onto a higher
    * rung of the overlay ladder when it opens over another fixed overlay (the
-   * desktop onboarding overlay, say) — on the default modal rung it renders
+   * fixed overlay — on the default modal rung it renders
    * underneath and blocks pointer events.
    */
   contentClassName?: string
@@ -63,7 +61,6 @@ export function ModelPickerDialog({
   ownerConnectionId,
   profile = 'default',
   request,
-  setupProfile,
   contentClassName
 }: ModelPickerDialogProps): ReactElement {
   const { t } = useI18n()
@@ -154,20 +151,6 @@ export function ModelPickerDialog({
     selectModel(provider, model)
   }
 
-  // Open the full onboarding provider selector to add/switch a provider.
-  // Reuses the entire onboarding flow (OAuth rows, API-key form, device-code,
-  // model-confirm) instead of duplicating provider UI here. Closes the picker
-  // so the onboarding overlay isn't rendered underneath it.
-  const addProvider = () => {
-    const ownerProfile = setupProfile ?? profile
-
-    startManualOnboarding(
-      undefined,
-      ownerConnectionId !== undefined ? { connectionId: ownerConnectionId, profile: ownerProfile } : ownerProfile
-    )
-    onOpenChange(false)
-  }
-
   const enterSlug = () => {
     setSlugEntry(true)
     searchRef.current?.focus()
@@ -217,9 +200,6 @@ export function ModelPickerDialog({
         <DialogFooter className="flex-row items-center justify-end gap-2 bg-card p-3">
           <Button className="mr-auto" onClick={enterSlug} variant="ghost">
             {copy.addCustomModelAction}
-          </Button>
-          <Button onClick={addProvider} variant="ghost">
-            {copy.addProvider}
           </Button>
           <Button onClick={() => onOpenChange(false)} variant="outline">
             {t.common.cancel}
@@ -293,8 +273,6 @@ function ModelResults({
   }
 
   // Only configured providers (those with curated models) are selectable
-  // here. Switching to a NOT-yet-configured provider goes through the
-  // "Add provider" footer button, which opens the full onboarding selector.
   // The local provider sits behind the --local launch flag (strict: staged
   // models on disk don't show without it). Module-level read — a launch flag
   // can't change mid-session.

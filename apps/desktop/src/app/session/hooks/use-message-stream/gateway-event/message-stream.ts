@@ -1,6 +1,5 @@
 import type { BillingBlock } from '@hermes/shared'
 
-import { reportFirstBuildTurnComplete } from '@/components/onboarding-chat/first-build'
 import { translateNow } from '@/i18n'
 import { coerceGatewayText, coerceThinkingText } from '@/lib/chat-runtime'
 import { playCompletionSound } from '@/lib/completion-sound'
@@ -344,10 +343,6 @@ export function handleMessageStreamEvent(ctx: GatewayEventContext): boolean {
       typeof payload?.status === 'string' ? payload.status : undefined,
       payload?.response_reused === true
     )
-
-    // Onboarding's first build: between turns is the only moment Setup may
-    // put a check-in into that session (no-op everywhere else).
-    reportFirstBuildTurnComplete(sessionId, finalText)
 
     // Structured billing wall forwarded by the gateway (out of credits /
     // payment required) — cache it + raise a billing-specific toast.

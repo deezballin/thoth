@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { textWithoutReferenceLines } from '@/components/assistant-ui/reference-kinds'
 import { type ChatMessage, type ChatMessagePart, chatMessageText, textPart } from '@/lib/chat-messages'
 import { $approvalModes, approvalModeForProfile } from '@/store/approval-mode'
-import { $desktopOnboarding, consumePendingCredentialWarning } from '@/store/onboarding'
 import { $activeGatewayProfile } from '@/store/profile'
 import {
   $currentBranch,
@@ -74,50 +73,6 @@ describe('applyRuntimeInfo approval mode', () => {
 
     expect(approvalModeForProfile('work')).toBe('smart')
     expect(approvalModeForProfile('default')).toBe('smart')
-  })
-})
-
-const initialOnboardingState = $desktopOnboarding.get()
-
-describe('applyRuntimeInfo credential warnings', () => {
-  beforeEach(() => {
-    consumePendingCredentialWarning()
-    $desktopOnboarding.set({ ...initialOnboardingState, reason: null, requested: false })
-  })
-
-  afterEach(() => {
-    consumePendingCredentialWarning()
-    $desktopOnboarding.set(initialOnboardingState)
-  })
-
-  it('defers the empty-key warning to submit time instead of popping onboarding on switch', () => {
-    const warning = "No API key configured for provider 'openrouter'. First message will fail."
-
-    applyRuntimeInfo({ credential_warning: warning })
-
-    // Merely switching to (or activating a session on) the unconfigured
-    // profile must NOT open the blocking overlay…
-    expect($desktopOnboarding.get()).toMatchObject({ reason: null, requested: false })
-    // …but the warning is staged for the submit path to consume.
-    expect(consumePendingCredentialWarning()).toBe(warning)
-    // Consuming clears it — the next submit doesn't double-fire.
-    expect(consumePendingCredentialWarning()).toBeNull()
-  })
-
-  it('a warning-free session event clears the stash (profile healed or switched away)', () => {
-    applyRuntimeInfo({
-      credential_warning: "No API key configured for provider 'openrouter'. First message will fail."
-    })
-    applyRuntimeInfo({ model: 'gpt-5' })
-
-    expect(consumePendingCredentialWarning()).toBeNull()
-  })
-
-  it('ignores an auxiliary-provider warning', () => {
-    applyRuntimeInfo({ credential_warning: 'OPENROUTER_API_KEY not set' })
-
-    expect($desktopOnboarding.get()).toMatchObject({ reason: null, requested: false })
-    expect(consumePendingCredentialWarning()).toBeNull()
   })
 })
 

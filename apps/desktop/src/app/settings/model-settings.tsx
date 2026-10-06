@@ -36,7 +36,6 @@ import { cn } from '@/lib/utils'
 import { $customModels, withCustomModels } from '@/store/custom-models'
 import { setMainModelAssignment } from '@/store/model-assignment'
 import { notify, notifyError, readableError } from '@/store/notifications'
-import { startManualLocalEndpoint, startManualOnboarding, startManualProviderOAuth } from '@/store/onboarding'
 
 import { hermesConfigCacheWriter, invalidateHermesConfig, useHermesConfigRecord } from '../hooks/use-config-record'
 import { useOnProfileSwitch } from '../hooks/use-on-profile-switch'
@@ -268,7 +267,7 @@ export function ModelSettings({ onMainModelChanged, scopeProfile, subpage }: Mod
   // switch (provider differs from the new main). Cleared on next switch/reset.
   const [switchStaleAux, setSwitchStaleAux] = useState<StaleAuxAssignment[]>([])
   // Inline API-key entry for picking an unconfigured `api_key` provider in
-  // place — mirrors the onboarding ApiKeyForm but scoped to the model picker.
+  // place, scoped to the model picker.
   const [apiKeyDraft, setApiKeyDraft] = useState('')
   const [activating, setActivating] = useState(false)
 
@@ -425,7 +424,7 @@ export function ModelSettings({ onMainModelChanged, scopeProfile, subpage }: Mod
 
   // An unconfigured provider was picked: no credentials yet, so there are no
   // models to choose. `api_key` providers can be activated inline (paste key);
-  // OAuth / external flows hand off to the onboarding sign-in.
+  // OAuth / external flows are set up through the CLI (`hermes setup`).
   const needsSetup = !!selectedProvider && !isProviderReady(selectedProviderRow)
   const setupIsApiKey = needsSetup && selectedProviderRow?.auth_type === 'api_key' && !!selectedProviderRow?.key_env
 
@@ -708,32 +707,6 @@ export function ModelSettings({ onMainModelChanged, scopeProfile, subpage }: Mod
     }
   }, [apiKeyDraft, m.loadFailed, scopeProfile, selectedProviderRow, setCaughtError])
 
-  // OAuth / external providers can't be activated with a pasted key — hand off
-  // to the shared onboarding flow scoped to this provider's real sign-in. The
-  // custom / local endpoint is NOT an OAuth provider, so it gets the dedicated
-  // local-endpoint form (URL + optional API key) instead of being dead-ended
-  // on the OAuth picker (the original "booted back to the first screen" loop).
-  const startProviderSetup = useCallback(() => {
-    const rowSlug = selectedProviderRow?.slug.trim() ?? ''
-    const slug = rowSlug || selectedProvider.trim()
-
-    if (!slug) {
-      return
-    }
-
-    const lower = slug.toLowerCase()
-
-    if (lower === 'custom' || lower === 'local' || lower.startsWith('custom:')) {
-      startManualLocalEndpoint(null, scopeProfile)
-    } else if (rowSlug) {
-      startManualProviderOAuth(rowSlug, scopeProfile)
-    } else {
-      // An absent row has no trustworthy auth metadata. Open the generic
-      // provider picker instead of deep-linking an unknown or stale slug.
-      startManualOnboarding(undefined, scopeProfile)
-    }
-  }, [scopeProfile, selectedProvider, selectedProviderRow])
-
   const applyMainModel = useCallback(async () => {
     if (!selectedProvider || !selectedModel) {
       return
@@ -985,11 +958,7 @@ export function ModelSettings({ onMainModelChanged, scopeProfile, subpage }: Mod
                     {activating ? 'Activating...' : 'Activate'}
                   </Button>
                 </>
-              ) : (
-                <Button onClick={startProviderSetup} size="sm" variant="textStrong">
-                  {m.setUpProvider(selectedProviderRow?.name ?? m.setupProviderFallback)}
-                </Button>
-              )
+              ) : null
             ) : (
               <>
                 <ModelSelect

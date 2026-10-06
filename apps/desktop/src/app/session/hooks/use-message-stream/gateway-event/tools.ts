@@ -1,5 +1,4 @@
 import { isPreviewableTarget, toolPreviewOutcome } from '@/components/assistant-ui/tool/fallback-model'
-import { reportFirstBuildToolComplete } from '@/components/onboarding-chat/first-build'
 import { toolCallOwnerMessageId } from '@/lib/chat-messages'
 import { invalidateSlashCompletions } from '@/lib/slash-completion-cache'
 import { refreshBackgroundProcesses } from '@/store/composer-status'
@@ -86,10 +85,6 @@ export function handleToolEvent(ctx: GatewayEventContext): boolean {
           record(sessionId, previewTarget, state?.cwd ?? '', storedSessionIdForRuntimeId(sessionId) ?? sessionId)
         }
       }
-
-      // Onboarding's first build paces its check-ins off real work done
-      // (no-op in every other session).
-      reportFirstBuildToolComplete(sessionId)
 
       // A pending clarify blocks the turn, so the first tool.complete after
       // one is the clarify resolving — drop the "needs input" flag here so

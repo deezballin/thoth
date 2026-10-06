@@ -12,10 +12,6 @@ const disconnectOAuthProvider = vi.fn()
 const getEnvVars = vi.fn()
 const revealEnvVar = vi.fn()
 const setEnvVar = vi.fn()
-const startManualProviderOAuth = vi.fn()
-const startManualLocalEndpoint = vi.fn()
-const onboarding = atom({ manual: false })
-
 vi.mock('@/store/profile', () => ({
   $activeGatewayProfile: atom('alpha'),
   $profiles: atom([]),
@@ -32,12 +28,6 @@ vi.mock('@/hermes', () => ({
   listOAuthProviders: (...args: unknown[]) => listOAuthProviders(...args),
   revealEnvVar: (key: string, profile?: string) => revealEnvVar(key, profile),
   setEnvVar: (key: string, value: string, profile?: string) => setEnvVar(key, value, profile)
-}))
-
-vi.mock('@/store/onboarding', () => ({
-  $desktopOnboarding: onboarding,
-  startManualProviderOAuth: (...args: unknown[]) => startManualProviderOAuth(...args),
-  startManualLocalEndpoint: (reason: null | string) => startManualLocalEndpoint(reason)
 }))
 
 // Load once at module scope so no test's 15s budget pays the heavy transform
@@ -81,7 +71,6 @@ function keyVar(patch: Partial<EnvVarInfo> = {}): EnvVarInfo {
 }
 
 beforeEach(() => {
-  onboarding.set({ manual: false })
   getEnvVars.mockResolvedValue({})
   disconnectOAuthProvider.mockResolvedValue({ ok: true, provider: 'nous' })
   revealEnvVar.mockResolvedValue({ value: 'old-secret' })
@@ -153,15 +142,13 @@ describe('ProvidersSettings', () => {
     }
   })
 
-  it('uses the settings target for account reads, removal and sign-in', async () => {
+  it('uses the settings target for account reads and removal', async () => {
     $settingsScopeOverride.set('beta')
 
     try {
       await renderProvidersSettings()
       expect(getEnvVars).toHaveBeenCalledWith('beta')
       expect(listOAuthProviders).toHaveBeenCalledWith('beta')
-      fireEvent.click(await screen.findByText('Nous Portal'))
-      expect(startManualProviderOAuth).toHaveBeenCalledWith('nous', 'beta')
       fireEvent.click(await screen.findByRole('button', { name: 'Remove Nous Portal' }))
       fireEvent.click(await screen.findByRole('button', { name: 'Disconnect' }))
       await waitFor(() => expect(disconnectOAuthProvider).toHaveBeenCalledWith('nous', 'beta'))
@@ -445,22 +432,5 @@ describe('ProvidersSettings', () => {
     expect(await screen.findByText('Zebra blurb')).toBeTruthy()
     expect(screen.queryByText('Acme blurb')).toBeNull()
     await waitFor(() => expect(Element.prototype.scrollIntoView).toHaveBeenCalled())
-  })
-
-  it('offers a Local / custom endpoint entry in the API-keys tab that opens the custom-endpoint flow', async () => {
-    // Regression: the composer pill and the providers "have an API key"
-    // affordance both dead-end on the env-var-driven key catalog, which never
-    // lists a custom endpoint — so without this row there is no reachable
-    // Desktop GUI path to add one. See issue #62817.
-    getEnvVars.mockResolvedValue({})
-    listOAuthProviders.mockResolvedValue({ providers: [] })
-
-    render(<ProvidersSettings onClose={vi.fn()} onViewChange={vi.fn()} view="keys" />)
-
-    const row = await screen.findByText('Local / custom endpoint')
-
-    fireEvent.click(row)
-
-    await waitFor(() => expect(startManualLocalEndpoint).toHaveBeenCalledWith(null))
   })
 })

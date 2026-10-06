@@ -13,8 +13,6 @@ import {
 
 import { useTourMarker } from '@/app/chat/tour-marker'
 import { composerFloatingStrip, composerInputBacking } from '@/components/chat/composer-dock'
-import { $chatOnboardingSolo, $chatOnboardingThreadIds } from '@/components/onboarding-chat/assembly'
-import { OnboardingSkip } from '@/components/onboarding-chat/skip'
 import { Button } from '@/components/ui/button'
 import { Slot as ContribSlot } from '@/contrib/react/slot'
 import { useI18n } from '@/i18n'
@@ -205,16 +203,8 @@ export function ChatBar({
   // queue uses the stored-session fallback key (prompts can queue pre-resume).
   const statusSessionId = sessionId ?? null
 
-  // The guide uses the setup profile's inference route; the model pill and
-  // git controls would expose settings unrelated to its conversational steps.
-  // Solo covers startup before the guide's session ids are known.
-  const onboardingThreadIds = useStore($chatOnboardingThreadIds)
-  const chatOnboardingSolo = useStore($chatOnboardingSolo)
-  const guidedChat = chatOnboardingSolo || (sessionId != null && onboardingThreadIds.includes(sessionId))
-  // The git row (branch / worktree / PR / review) is the coding instrument the
-  // guide already hides; Simple mode hides it for the same reason, everywhere.
   const showsAdvancedChrome = useStore($showsAdvancedChrome)
-  const codingRowShown = !guidedChat && showsAdvancedChrome
+  const codingRowShown = showsAdvancedChrome
 
   const composerTourMarker = useTourMarker('composer')
 
@@ -1145,7 +1135,6 @@ export function ChatBar({
       disabled={disabled}
       foldVoice={foldVoice}
       hasComposerPayload={hasComposerPayload}
-      hideModelPill={guidedChat}
       minimal={minimal}
       onDictate={dictate}
       onQueue={queueDraft}
@@ -1319,7 +1308,6 @@ export function ChatBar({
           <div className={cn(composerFloatingStrip, 'px-[5px] pb-1.5 empty:hidden')}>
             <ActionBadges sessionId={statusSessionId} />
             <SuggestionPills sessionId={statusSessionId} />
-            <OnboardingSkip />
           </div>
           {/* Session-scoped status stack (todos, subagents, background tasks,
               queue). An in-flow dock child: the dock is bottom-anchored, so it
@@ -1420,13 +1408,11 @@ export function ChatBar({
               />
             )}
             <div className="relative w-full rounded-[inherit]">
-              {!guidedChat && (
-                <StatusDrawerToggle
-                  collapsed={statusDrawerCollapsed}
-                  controls={`${statusDrawerId} ${codingDrawerId}`}
-                  onToggle={toggleStatusDrawer}
-                />
-              )}
+              <StatusDrawerToggle
+                collapsed={statusDrawerCollapsed}
+                controls={`${statusDrawerId} ${codingDrawerId}`}
+                onToggle={toggleStatusDrawer}
+              />
               <div
                 className={cn(
                   // grid-cols-[minmax(0,1fr)]: the implicit `auto` column sized

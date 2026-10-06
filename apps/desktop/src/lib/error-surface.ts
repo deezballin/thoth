@@ -249,7 +249,6 @@ export interface ErrorRecoveryPlan {
   /** Settings → Keys deep link (auth, api_key). */
   updateApiKey: boolean
   /** Re-run the provider's OAuth sign-in (auth, oauth). */
-  signInAgain: boolean
   /** Open the live session model menu (switches THIS session via
    *  model.switch); Settings → Models deep link fallback when no chat surface
    *  is on screen. */
@@ -287,7 +286,6 @@ export function errorRecoveryPlan(surface: ErrorSurface | null | undefined): Err
     // where fixing the credential changes the outcome and Retry is the
     // natural second click.
     retry: !surface || surface.retryable || oauthReauth || apiKeyRejected,
-    signInAgain: oauthReauth,
     startNewSession: false,
     switchProvider: surface != null && SWITCH_PROVIDER_LAYERS.includes(surface.layer),
     updateApiKey: apiKeyRejected

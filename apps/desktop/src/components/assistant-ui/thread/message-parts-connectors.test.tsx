@@ -101,7 +101,7 @@ afterEach(() => {
   vi.clearAllMocks()
 })
 
-describe('manage_connections routing outside guided onboarding', () => {
+describe('manage_connections routing in chat sessions', () => {
   it('renders the operation card for a plain chat session', async () => {
     const Fallback = MESSAGE_PARTS_COMPONENTS.tools.Fallback
     setSessionOwnerHint(STORED_ID, OWNER)
