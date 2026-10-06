@@ -862,9 +862,6 @@ export const zh = defineLocale({
       modelPricingDesc: '在模型选择器中显示每百万 token 的输入、输出和缓存读取价格。',
       reactionsTitle: '消息回应',
       reactionsDesc: 'iMessage 风格的表情回应 — 你可以给消息添加回应，Hermes 也能回应你的消息。',
-      tipsTitle: '应用内提示',
-      tipsDesc: '偶尔显示来自应用和 Hermes 的提示，每条提示只出现一次。开始使用满30天后自动关闭，你可以重新开启。',
-      tipsReset: (count: number) => `再次显示 ${count} 条提示`,
       toursTitle: '引导导览',
       toursDesc: '让 Hermes 逐步高亮每个位置，带你熟悉应用。开始使用满30天后自动关闭，你可以重新开启。',
       composerPopoutTitle: '悬浮输入框',
@@ -5093,58 +5090,6 @@ export const zh = defineLocale({
       systemNote: platform => `↻ 已移交到 ${platform} — 随时可在此处恢复。`,
       failed: error => `移交失败：${error}`,
       timedOut: '等待网关超时。`hermes gateway` 是否正在运行？'
-    }
-  },
-
-  tips: {
-    close: '不再显示这条提示',
-    items: {
-      'new-session': {
-        title: '从头开始',
-        text: '新对话拥有独立的上下文、终端和工作目录。'
-      },
-      skills: {
-        title: '教一次就够',
-        text: '技能是一组说明文件，Hermes 会在需要时自行加载。'
-      },
-      messaging: {
-        title: '离开电脑也能用',
-        text: '接入 Telegram、Discord、Slack 等 — 同一个智能体，同一份记忆。'
-      },
-      artifacts: {
-        title: 'Hermes 做过的一切',
-        text: '所有会话里的图片、文件和链接，都汇总在这里。'
-      },
-      cron: {
-        title: '会自己运行的任务',
-        text: '让一条提示按小时、按夜间，或按 cron 表达式定时执行。'
-      },
-      'command-palette': {
-        title: '一个输入框搞定一切',
-        text: '会话、设置、技能和命令都能从命令面板找到。'
-      },
-      profiles: {
-        title: '配置文件彼此独立',
-        text: '每个都是独立的 Hermes — 自己的密钥、记忆和会话。'
-      },
-      'composer-mentions': {
-        title: '附件与命令',
-        text: '输入 @ 把文件带入对话，输入 / 运行命令。'
-      },
-      'local-runtime-update': {
-        title: '本地引擎有可用更新',
-        text: '更新运行本地模型的引擎。正在进行的本地请求可能会中断。',
-        action: '立即更新'
-      },
-      'local-setup': {
-        title: '这台电脑可以本地运行模型',
-        text: '你的硬件可以运行本地模型。对话不离开你的电脑，而且完全免费。',
-        action: '立即设置'
-      },
-      'right-pane': {
-        title: '工作面板',
-        text: '文件、终端、审阅和内置浏览器都在侧边面板里。'
-      }
     }
   },
 

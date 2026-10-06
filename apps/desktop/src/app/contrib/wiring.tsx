@@ -34,7 +34,6 @@ import {
 import { RemoteDisplayBanner } from '@/components/remote-display-banner'
 import { SendDiagnosticsHost } from '@/components/send-diagnostics-dialog'
 import { SharedMetricsConsentDialog } from '@/components/shared-metrics/consent-dialog'
-import { TipHost } from '@/components/tips'
 import { emitGatewayEvent } from '@/contrib/events'
 import { translateNow } from '@/i18n'
 import { type ChatMessage, chatMessageText } from '@/lib/chat-messages'
@@ -1480,11 +1479,6 @@ export function ContribWiring({ children }: { children: ReactNode }) {
       {/* Fallback modal when opening an external URL fails — carries the URL
           so a dead system-browser click is never silent. */}
       <ExternalOpenFailedDialog />
-
-      {/* In-app tips. Renders nothing until the app is quiet and has something
-          to point at, and nothing at all once they're off or all retired. The
-          Browser windows have none of the surfaces a tip talks about. */}
-      {!isBrowserWindow() && <TipHost />}
 
       {/* Single persistent xterm host chasing the terminal pane's slot rect.
           Browser windows have no terminal pane, so they have nothing to chase. */}

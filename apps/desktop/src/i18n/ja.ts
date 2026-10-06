@@ -706,10 +706,6 @@ export const ja = defineLocale({
       reactionsTitle: 'メッセージリアクション',
       reactionsDesc:
         'iMessage風の絵文字タップバック — メッセージにリアクションでき、Hermesもあなたのメッセージにリアクションします。',
-      tipsTitle: 'アプリ内ヒント',
-      tipsDesc:
-        'アプリや Hermes からのヒントをときどき表示します。各ヒントは一度だけ表示されます。利用開始から30日後に自動でオフになりますが、再びオンにできます。',
-      tipsReset: (count: number) => `${count}件のヒントをもう一度表示`,
       toursTitle: 'ガイドツアー',
       toursDesc:
         '各ステップを強調しながら、Hermes がアプリを案内します。利用開始から30日後に自動でオフになりますが、再びオンにできます。',
@@ -4153,58 +4149,6 @@ export const ja = defineLocale({
       systemNote: platform => `↻ ${platform} に引き継ぎました — いつでもここで再開できます。`,
       failed: error => `引き継ぎに失敗しました: ${error}`,
       timedOut: 'ゲートウェイの待機がタイムアウトしました。`hermes gateway` は起動していますか？'
-    }
-  },
-
-  tips: {
-    close: 'このヒントを今後表示しない',
-    items: {
-      'new-session': {
-        title: '新しく始める',
-        text: '新しいチャットは、専用のコンテキスト・ターミナル・作業ディレクトリを持ちます。'
-      },
-      skills: {
-        title: '一度教えれば覚えます',
-        text: 'スキルは手順書のフォルダで、必要な場面で Hermes が自分で読み込みます。'
-      },
-      messaging: {
-        title: 'デスクを離れても Hermes',
-        text: 'Telegram、Discord、Slack などに接続。同じエージェント、同じ記憶のままです。'
-      },
-      artifacts: {
-        title: 'Hermes が作ったものすべて',
-        text: '全セッションの画像・ファイル・リンクを一箇所にまとめています。'
-      },
-      cron: {
-        title: '自動で動く仕事',
-        text: 'プロンプトを毎時・毎晩、または cron 式で実行できます。'
-      },
-      'command-palette': {
-        title: 'すべてはこの一箇所から',
-        text: 'セッション、設定、スキル、コマンドはすべてパレットから呼び出せます。'
-      },
-      profiles: {
-        title: 'プロファイルは独立しています',
-        text: 'それぞれが独自のキー・メモリ・セッションを持つ、別の Hermes です。'
-      },
-      'composer-mentions': {
-        title: 'ファイルとコマンド',
-        text: '@ でファイルを会話に取り込み、/ でコマンドを実行できます。'
-      },
-      'local-runtime-update': {
-        title: 'ローカルエンジンの更新があります',
-        text: 'ローカルモデルを実行するエンジンを更新します。実行中のローカルリクエストが中断される場合があります。',
-        action: '今すぐ更新'
-      },
-      'local-setup': {
-        title: 'このマシンはローカルでモデルを実行できます',
-        text: 'お使いのハードウェアでローカルモデルを動かせます。会話はこのコンピュータから出ず、料金もかかりません。',
-        action: 'セットアップ'
-      },
-      'right-pane': {
-        title: '作業用ペイン',
-        text: 'ファイル、ターミナル、レビュー、アプリ内ブラウザはサイドペインにまとまっています。'
-      }
     }
   },
 

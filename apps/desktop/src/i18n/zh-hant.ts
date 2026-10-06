@@ -123,6 +123,5 @@ export const zhHant = defineLocale({
   prompts: zhHantChat.prompts,
   desktop: zhHantChat.desktop,
   errors: zhHantDiagnostics.errors,
-  tips: zhHantChat.tips,
   ui: zhHantCommon.ui
 })

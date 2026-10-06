@@ -1,5 +1,5 @@
 const featureFlags = {
-  /** Local-models GUI surfaces (settings pane, pickers, statusbar, tips). */
+  /** Local-models GUI surfaces (settings pane, pickers, statusbar). */
   localModels: ({ argv }) =>
     process.platform === 'win32' ||
     process.platform === 'darwin' ||

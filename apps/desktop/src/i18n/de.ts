@@ -1211,10 +1211,6 @@ export const deOverrides = {
       reactionsTitle: 'Nachrichten-Reaktionen',
       reactionsDesc:
         'Emoji-Tapbacks im iMessage-Stil – reagieren Sie auf Nachrichten, und Hermes kann auf Ihre reagieren.',
-      tipsTitle: 'In-App-Tipps',
-      tipsDesc:
-        'Eine kleine Blase, die auf einen Teil der App zeigt und gelegentlich im Leerlauf sowie von Hermes erscheint, wenn es hilft. Beim Schließen wird sie für immer ausgeblendet.',
-      tipsReset: (count: number) => `${count} geschlossene ${count === 1 ? 'Blase' : 'Blasen'} zurückholen`,
       toursTitle: 'Geführte Touren',
       toursDesc:
         'Lassen Sie sich von Hermes durch die App führen – der Bildschirm wird abgedunkelt und jeder Schritt hervorgehoben.',
@@ -6065,57 +6061,6 @@ export const deOverrides = {
       failed: error => `Übergabe fehlgeschlagen: ${error}`,
       timedOut: 'Zeitüberschreitung beim Warten auf das Gateway. Läuft `hermes gateway`?',
       startMessaging: 'Messaging starten'
-    }
-  },
-  tips: {
-    close: 'Diesen Tip nicht mehr zeigen',
-    items: {
-      'new-session': {
-        title: 'Frisch loslegen',
-        text: 'Ein neuer Chat bekommt seinen eigenen Context, sein eigenes Terminal und Arbeitsverzeichnis.'
-      },
-      skills: {
-        title: 'Einmal beibringen',
-        text: 'Skills sind Ordner mit Anweisungen, die Hermes lädt, wenn die Arbeit danach verlangt.'
-      },
-      messaging: {
-        title: 'Hermes abseits Ihres Schreibtischs',
-        text: 'Verbinden Sie Telegram, Discord, Slack und mehr – derselbe Agent, dasselbe Gedächtnis.'
-      },
-      artifacts: {
-        title: 'Alles, was Hermes gemacht hat',
-        text: 'Bilder, Dateien und Links aus jeder Session, an einem Ort indexiert.'
-      },
-      cron: {
-        title: 'Arbeit, die von selbst läuft',
-        text: 'Planen Sie einen Prompt stündlich, nächtlich oder nach einem Cron-Ausdruck.'
-      },
-      'command-palette': {
-        title: 'Eine Box für alles',
-        text: 'Sessions, Einstellungen, Skills und Befehle gehorchen alle der Palette.'
-      },
-      profiles: {
-        title: 'Profile sind getrennt',
-        text: 'Jedes ist sein eigenes Hermes — eigene Schlüssel, eigenes Gedächtnis, eigene Sessions.'
-      },
-      'composer-mentions': {
-        title: 'Anhängen und befehlen',
-        text: 'Geben Sie @ ein, um eine Datei in die Konversation zu holen, oder /, um einen Befehl auszuführen.'
-      },
-      'local-runtime-update': {
-        title: 'Ein Update für die lokale Engine ist verfügbar',
-        text: 'Aktualisieren Sie die Engine, die Ihre lokalen Modelle ausführt. Laufende lokale Anfragen können unterbrochen werden.',
-        action: 'Jetzt aktualisieren'
-      },
-      'local-setup': {
-        title: 'Dieses Gerät kann Modelle lokal ausführen',
-        text: 'Ihre Hardware kann ein lokales Modell ausführen. Chats bleiben auf Ihrem Computer und kosten nichts.',
-        action: 'Einrichten'
-      },
-      'right-pane': {
-        title: 'Der Arbeitsbereich',
-        text: 'Dateien, Terminal, Review und der In-App-Browser teilen sich die rechte Seite.'
-      }
     }
   },
   errors: {

@@ -3,7 +3,6 @@ import { closeAgentTerminalByProc } from '@/app/right-sidebar/terminal/terminals
 import { applyDesktopLayoutPreset, revealDesktopPane } from '@/store/pane-focus'
 import { reactionOverlayScope, recordAgentReaction } from '@/store/reactions-local'
 import { setMessages } from '@/store/session'
-import { $tipsEnabled, type ActiveTip, agentTipId, showTip } from '@/store/tips'
 
 import type { GatewayEventContext } from './types'
 
@@ -17,31 +16,6 @@ const DESKTOP_BRIDGE_HANDLERS: Record<string, (ctx: GatewayEventContext) => void
     // Agent closed its own read-only tab via the desktop-gated close_terminal tool.
     // The process is untouched — this only drops the view.
     closeAgentTerminalByProc(payload?.process_id ?? '')
-  },
-
-  'tip.show': ({ payload, isActiveEvent }) => {
-    // tip tool: point the accent bubble at something and say one line about
-    // it. Fire-and-forget — a tip is not a question, and blocking the turn on
-    // one would stall the sentence the agent is in the middle of, so there is
-    // nothing to answer and a refusal is simply a bubble that never appears.
-    // Active session only: a background turn must never paint on the user's
-    // screen (desktop AGENTS.md: offer, don't hijack).
-    const selector = typeof payload?.selector === 'string' ? payload.selector : ''
-    const text = typeof payload?.text === 'string' ? payload.text : ''
-
-    // A tip with nothing to point at is just a notification, and the app
-    // already has those. Dropping it here also stops a malformed event from
-    // replacing a rotation tip with a bubble that dismisses itself a frame
-    // later.
-    if ($tipsEnabled.get() && isActiveEvent && selector && text) {
-      showTip({
-        side: (payload?.side as ActiveTip['side']) ?? 'top',
-        targets: [selector],
-        text,
-        tipId: agentTipId(selector, text),
-        title: typeof payload?.title === 'string' ? payload.title : undefined
-      })
-    }
   },
 
   'pane.reveal': ({ payload, isActiveEvent }) => {
@@ -130,7 +104,7 @@ const DESKTOP_BRIDGE_HANDLERS: Record<string, (ctx: GatewayEventContext) => void
   }
 }
 
-/** Desktop-surface bridge events: agent terminal streaming, tips, pane
+/** Desktop-surface bridge events: agent terminal streaming, pane
  *  reveal, layouts and message reactions. The read-back REQUESTS the agent
  *  blocks on (terminal/preview/window/tour) live in `server-requests.ts`. */
 export function handleDesktopBridgeEvent(ctx: GatewayEventContext): boolean {

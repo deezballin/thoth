@@ -66,7 +66,6 @@ vi.mock('@/store/session', async () => {
 vi.mock('@/app/right-sidebar/terminal/agent-terminal-stream', () => ({ writeAgentTerminalChunk: vi.fn() }))
 vi.mock('@/app/right-sidebar/terminal/terminals', () => ({ closeAgentTerminalByProc: vi.fn() }))
 vi.mock('@/store/pane-focus', () => ({ applyDesktopLayoutPreset: vi.fn(), revealDesktopPane: vi.fn() }))
-vi.mock('@/store/tips', () => ({ $tipsEnabled: { get: () => false }, agentTipId: vi.fn(), showTip: vi.fn() }))
 vi.mock('@/app/contrib/hooks/use-background-sync', () => ({ resetLiveRuntimeTracking: vi.fn() }))
 vi.mock('@/hermes', () => ({ resetSidebarBatchCapability: vi.fn() }))
 vi.mock('@/lib/query-client', () => ({ invalidateProfileScopedQueries: vi.fn() }))

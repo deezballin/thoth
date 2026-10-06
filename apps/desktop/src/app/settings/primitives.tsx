@@ -250,7 +250,7 @@ export function ToggleRow({
   )
 }
 
-// A quiet follow-up under a row's description ("Show 9 tips again", "Reset")
+// A quiet follow-up under a row's description ("Reset", "Show again")
 // — the one place a row's secondary action lives, so it never floats beside
 // or under the control.
 export function RowFootnoteAction({ children, onClick }: { children: ReactNode; onClick: () => void }) {

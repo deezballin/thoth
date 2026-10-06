@@ -37,7 +37,6 @@ import { $sessionListDensity, type SessionListDensity, setSessionListDensity } f
 import { $tabStripDefault, setTabStripDefault, type TabStripDefault } from '@/store/tabstrip-prefs'
 import { $textDirection, setTextDirection, TEXT_DIRECTIONS, type TextDirection } from '@/store/text-direction'
 import { $hideThreadTimeline, setHideThreadTimeline } from '@/store/thread-timeline'
-import { $spentTipCount, $tipsEnabled, resetTips, setTipsEnabled } from '@/store/tips'
 import {
   $titlebarAppActionsSide,
   setTitlebarAppActionsSide,
@@ -435,9 +434,7 @@ export function AppearanceSettings({ subpage }: AppearanceSettingsProps = {}) {
   const userBubbleTransparency = useStore($userBubbleTransparency)
   const textDirection = useStore($textDirection)
   const reactionsEnabled = useStore($reactionsEnabled)
-  const tipsEnabled = useStore($tipsEnabled)
   const toursEnabled = useStore($toursEnabled)
-  const spentTips = useStore($spentTipCount)
   const vibeHeartsEnabled = useStore($vibeHeartsEnabled)
   const backdrop = useStore($backdrop)
   const introSplash = useStore($introSplash)
@@ -986,20 +983,6 @@ export function AppearanceSettings({ subpage }: AppearanceSettingsProps = {}) {
             />
           )}
 
-          {show('general') && (
-            <ToggleRow
-              below={
-                // A tip shows once (✕ or timer), so this is the only way to a
-                // second lap. It appears once there is something to bring back.
-                spentTips > 0 && <RowFootnoteAction onClick={resetTips}>{a.tipsReset(spentTips)}</RowFootnoteAction>
-              }
-              checked={tipsEnabled}
-              description={a.tipsDesc}
-              id={settingElementId(ids.tips)}
-              label={a.tipsTitle}
-              onChange={setTipsEnabled}
-            />
-          )}
 
           {show('general') && (
             <ToggleRow

@@ -119,7 +119,6 @@ describe('settings subpage routing', () => {
     expect(new Set(targets.map(target => target.id)).size).toBe(targets.length)
     expect(targets.map(target => target.label)).toEqual(
       expect.arrayContaining([
-        'In-App Tips',
         'Guided Tours',
         'Keep computer awake',
         'Auto-archive stale chats',

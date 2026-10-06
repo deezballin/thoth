@@ -1211,10 +1211,6 @@ export const esOverrides = {
       reactionsTitle: 'Reacciones a mensajes',
       reactionsDesc:
         'Reacciones emoji estilo iMessage — reacciona a los mensajes, y Hermes puede reaccionar a los tuyos.',
-      tipsTitle: 'Consejos en la app',
-      tipsDesc:
-        'Sugerencias ocasionales de la app y de Hermes. Cada consejo aparece una vez. Se desactiva automáticamente tras tus primeros 30 días; puedes volver a activarlo.',
-      tipsReset: (count: number) => `Volver a mostrar ${count} ${count === 1 ? 'consejo' : 'consejos'}`,
       toursTitle: 'Recorridos guiados',
       toursDesc:
         'Deja que Hermes resalte cada paso mientras te guía por la app. Se desactiva automáticamente tras tus primeros 30 días; puedes volver a activarlo.',
@@ -6056,57 +6052,6 @@ export const esOverrides = {
       timedOut:
         'Hermes no pudo llegar a tu conexión de mensajería. Iníciala desde Configuración → Mensajería y vuelve a intentar el traspaso.',
       startMessaging: 'Iniciar mensajería'
-    }
-  },
-  tips: {
-    close: 'No volver a mostrar este consejo',
-    items: {
-      'new-session': {
-        title: 'Empieza de cero',
-        text: 'Un chat nuevo tiene su propio contexto, terminal y directorio de trabajo.'
-      },
-      skills: {
-        title: 'Enséñale una vez',
-        text: 'Las skills son carpetas de instrucciones que Hermes carga cuando el trabajo las necesita.'
-      },
-      messaging: {
-        title: 'Hermes lejos de tu escritorio',
-        text: 'Conecta Telegram, Discord, Slack y más: el mismo agente, la misma memoria.'
-      },
-      artifacts: {
-        title: 'Todo lo que ha creado Hermes',
-        text: 'Imágenes, archivos y enlaces de cada sesión, indexados en un solo lugar.'
-      },
-      cron: {
-        title: 'Trabajo que se ejecuta solo',
-        text: 'Programa un prompt cada hora, cada noche o con una expresión cron.'
-      },
-      'command-palette': {
-        title: 'Un cuadro para todo',
-        text: 'Sesiones, configuración, skills y comandos responden a la paleta.'
-      },
-      profiles: {
-        title: 'Los perfiles son independientes',
-        text: 'Cada uno es su propio Hermes: sus propias claves, su propia memoria, sus propias sesiones.'
-      },
-      'composer-mentions': {
-        title: 'Adjunta y ordena',
-        text: 'Escribe @ para traer un archivo a la conversación y / para ejecutar un comando.'
-      },
-      'local-runtime-update': {
-        title: 'Hay una actualización del motor local',
-        text: 'Actualiza el motor que ejecuta tus modelos locales. Las solicitudes locales activas pueden interrumpirse.',
-        action: 'Actualizar ahora'
-      },
-      'local-setup': {
-        title: 'Este equipo puede ejecutar modelos localmente',
-        text: 'Tu hardware puede servir un modelo local. Los chats se quedan en tu equipo y no cuestan nada.',
-        action: 'Configurarlo'
-      },
-      'right-pane': {
-        title: 'El panel de trabajo',
-        text: 'Archivos, terminal, revisión y el navegador integrado comparten el lado derecho.'
-      }
     }
   },
   errors: {

@@ -65,7 +65,6 @@ export const SETTINGS_MANIFEST = {
       ['resume', 'reopen', 'launch', 'startup', 'last chat', 'session'],
       'resumeLastSession'
     ),
-    tips: appearanceSetting('general', ['tips', 'hints', 'coach marks', 'onboarding', 'help'], 'tips'),
     tours: appearanceSetting('general', ['tour', 'walkthrough', 'guide', 'onboarding', 'help'], 'tours'),
     theme: appearanceSetting('theme', ['color mode', 'skin', 'light', 'dark'], 'theme'),
     uiScale: appearanceSetting('typography', ['zoom', 'size'], 'uiScale'),
@@ -268,7 +267,7 @@ const manifestKeyForView = (view: SettingsView): ManifestViewKey | undefined => 
 
 const kebab = (key: string) => key.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`)
 
-/** The deep-link id of a manifest row: `settingId('appearance', 'tips') === 'appearance.tips'`. */
+/** The deep-link id of a manifest row: `settingId('appearance', 'tours') === 'appearance.tours'`. */
 export const settingId = (view: ManifestViewKey, key: string) => `${view}.${kebab(key)}`
 
 /** Notification kinds are generated from the store's kind list, so their ids are looked up by kind. */
@@ -277,7 +276,7 @@ export const notificationKindSettingId = (kind: (typeof NATIVE_NOTIFICATION_KIND
 
 type SettingIds = { readonly [V in ManifestViewKey]: { readonly [K in keyof (typeof SETTINGS_MANIFEST)[V]]: string } }
 
-/** `SETTING_IDS.appearance.tips === 'appearance.tips'` — the id a row carries and a palette hit targets. */
+/** `SETTING_IDS.appearance.tours === 'appearance.tours'` — the id a row carries and a palette hit targets. */
 export const SETTING_IDS = Object.fromEntries(
   (Object.keys(SETTINGS_MANIFEST) as ManifestViewKey[]).map(view => [
     view,

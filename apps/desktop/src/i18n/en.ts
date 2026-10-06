@@ -1179,10 +1179,6 @@ export const en: Translations = {
       modelPricingDesc: 'Show input, output, and cache-read prices per million tokens in the model picker.',
       reactionsTitle: 'Message Reactions',
       reactionsDesc: 'iMessage-style emoji tapbacks — react to messages, and Hermes can react to yours.',
-      tipsTitle: 'In-App Tips',
-      tipsDesc:
-        'Occasional hints from the app and Hermes. Each tip appears once. Turns off automatically after your first 30 days; you can turn it back on.',
-      tipsReset: (count: number) => `Show ${count} ${count === 1 ? 'tip' : 'tips'} again`,
       toursTitle: 'Guided Tours',
       toursDesc:
         'Let Hermes spotlight each step as it guides you through the app. Turns off automatically after your first 30 days; you can turn it back on.',
@@ -5547,58 +5543,6 @@ export const en: Translations = {
       timedOut:
         "Hermes couldn't reach your messaging connection. Start it from Settings → Messaging, then try the handoff again.",
       startMessaging: 'Start messaging'
-    }
-  },
-
-  tips: {
-    close: "Don't show this tip again",
-    items: {
-      'new-session': {
-        title: 'Start fresh',
-        text: 'A new chat gets its own context, terminal and working directory.'
-      },
-      skills: {
-        title: 'Teach it once',
-        text: 'Skills are folders of instructions Hermes loads when the work calls for them.'
-      },
-      messaging: {
-        title: 'Hermes away from your desk',
-        text: 'Connect Telegram, Discord, Slack and more — same agent, same memory.'
-      },
-      artifacts: {
-        title: 'Everything Hermes made',
-        text: 'Images, files and links from every session, indexed in one place.'
-      },
-      cron: {
-        title: 'Work that runs itself',
-        text: 'Schedule a prompt hourly, nightly, or on a cron expression.'
-      },
-      'command-palette': {
-        title: 'One box for everything',
-        text: 'Sessions, settings, skills and commands all answer to the palette.'
-      },
-      profiles: {
-        title: 'Profiles are separate',
-        text: 'Each one is its own Hermes — own keys, own memory, own sessions.'
-      },
-      'composer-mentions': {
-        title: 'Attach and command',
-        text: 'Type @ to bring a file into the conversation, / to run a command.'
-      },
-      'local-runtime-update': {
-        title: 'A local engine update is available',
-        text: 'Update the engine that runs your local models. Active local requests may be interrupted.',
-        action: 'Update now'
-      },
-      'local-setup': {
-        title: 'This machine can run models locally',
-        text: 'Your hardware can serve a local model. Chats stay on your computer and cost nothing.',
-        action: 'Set it up'
-      },
-      'right-pane': {
-        title: 'The working pane',
-        text: 'Files, terminal, review and the in-app browser share the right side.'
-      }
     }
   },
 

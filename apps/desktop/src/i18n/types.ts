@@ -6,7 +6,6 @@
 // fall back to English while new keys remain type-checked.
 
 import type { ErrorCodeKey } from '@/lib/error-surface'
-import type { TipId } from '@/lib/tips/catalog'
 
 /** The locales compiled into the app (`TRANSLATIONS`). */
 export type BundledLocale = 'en' | 'zh' | 'zh-hant' | 'ja' | 'ar' | 'ru' | 'fr' | 'de' | 'es'
@@ -972,9 +971,6 @@ export interface Translations {
       modelPricingDesc: string
       reactionsTitle: string
       reactionsDesc: string
-      tipsTitle: string
-      tipsDesc: string
-      tipsReset: (count: number) => string
       toursTitle: string
       toursDesc: string
       composerPopoutTitle: string
@@ -4608,17 +4604,6 @@ export interface Translations {
       failed: (error: string) => string
       timedOut: string
       startMessaging: string
-    }
-  }
-
-  tips: {
-    close: string
-    /** Keyed by `TipId`, so a new tip without copy is a type error. Plus the
-     *  campaign tips, which live outside the rotation's catalog: they carry
-     *  a button, and `action` is its label. */
-    items: Record<TipId, { title: string; text: string }> & {
-      'local-runtime-update': { title: string; text: string; action: string }
-      'local-setup': { title: string; text: string; action: string }
     }
   }
 

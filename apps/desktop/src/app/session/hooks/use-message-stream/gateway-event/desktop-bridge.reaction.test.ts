@@ -21,11 +21,6 @@ vi.mock('@/store/reactions-local', async () => {
   }
 })
 vi.mock('@/store/session', () => ({ setMessages: vi.fn() }))
-vi.mock('@/store/tips', () => ({
-  $tipsEnabled: { get: () => false },
-  agentTipId: vi.fn(),
-  showTip: vi.fn()
-}))
 
 const AGENT_THUMBS_UP = [{ emoji: '👍', author: 'agent' }]
 

@@ -1214,11 +1214,6 @@ export const frOverrides = {
         "Affiche les prix d'entrée, de sortie et de lecture du cache par million de jetons dans le sélecteur de modèle.",
       reactionsTitle: 'Réactions aux messages',
       reactionsDesc: 'Réactions emoji façon iMessage — réagissez aux messages, et Hermes peut réagir aux vôtres.',
-      tipsTitle: "Astuces dans l'application",
-      tipsDesc:
-        "Une petite bulle désigne occasionnellement une partie de l'application lorsque vous êtes inactif ou lorsque Hermes peut vous aider. Fermer une astuce la masque définitivement.",
-      tipsReset: (count: number) =>
-        `Réafficher ${count} astuce${count === 1 ? '' : 's'} fermée${count === 1 ? '' : 's'}`,
       toursTitle: 'Visites guidées',
       toursDesc:
         "Laissez Hermes vous guider dans l'application en assombrissant l'écran et en mettant chaque étape en évidence.",
@@ -6077,57 +6072,6 @@ export const frOverrides = {
       failed: error => `Échec du transfert : ${error}`,
       timedOut: "Délai d'expiration en attendant la Gateway. `hermes gateway` est-il en cours d'exécution ?",
       startMessaging: 'Démarrer la messagerie'
-    }
-  },
-  tips: {
-    close: 'Ne plus afficher cette astuce',
-    items: {
-      'new-session': {
-        title: 'Repartir de zéro',
-        text: 'Une nouvelle conversation dispose de son propre contexte, terminal et dossier de travail.'
-      },
-      skills: {
-        title: 'Apprenez-lui une seule fois',
-        text: "Les compétences sont des dossiers d'instructions que Hermes charge lorsque le travail le nécessite."
-      },
-      messaging: {
-        title: 'Hermes loin de votre bureau',
-        text: 'Connectez Telegram, Discord, Slack et plus encore : même agent, même mémoire.'
-      },
-      artifacts: {
-        title: 'Tout ce que Hermes a créé',
-        text: 'Images, fichiers et liens de chaque session, indexés au même endroit.'
-      },
-      cron: {
-        title: "Du travail qui s'exécute tout seul",
-        text: 'Planifiez une invite toutes les heures, chaque nuit ou avec une expression cron.'
-      },
-      'command-palette': {
-        title: 'Une seule zone pour tout faire',
-        text: 'Sessions, paramètres, compétences et commandes sont accessibles depuis la palette.'
-      },
-      profiles: {
-        title: 'Les profils sont séparés',
-        text: 'Chacun possède son propre Hermes, avec ses clés, sa mémoire et ses sessions.'
-      },
-      'composer-mentions': {
-        title: 'Joindre et commander',
-        text: 'Saisissez @ pour joindre un fichier à la conversation, ou / pour exécuter une commande.'
-      },
-      'local-runtime-update': {
-        title: 'Une mise à jour du moteur local est disponible',
-        text: 'Mettez à jour le moteur qui exécute vos modèles locaux. Les requêtes locales actives peuvent être interrompues.',
-        action: 'Mettre à jour maintenant'
-      },
-      'local-setup': {
-        title: 'Cette machine peut exécuter des modèles en local',
-        text: 'Votre matériel peut servir un modèle local. Les conversations restent sur votre ordinateur et ne coûtent rien.',
-        action: 'Configurer'
-      },
-      'right-pane': {
-        title: 'Le volet de travail',
-        text: "Les fichiers, le terminal, la revue et le navigateur intégré partagent le côté droit de l'application."
-      }
     }
   },
   errors: {
