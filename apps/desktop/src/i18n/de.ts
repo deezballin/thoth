@@ -156,8 +156,6 @@ export const deOverrides = {
       matchesElsewhere: (count: number) => `${count} weitere${count === 1 ? 'r' : ''} Treffer in anderen Gruppen.`,
       showAllMatches: 'Alle Treffer anzeigen',
       segmentNoMatch: (segment: string) => `Kein Treffer in ${segment}, daher werden alle Treffer angezeigt.`,
-      freeTierNote: 'Verbindungen bleiben auf diesem Computer, bis Sie sich anmelden.',
-      signInLine: 'Melden Sie sich bei Nous an, um verwaltete Apps zu nutzen.',
       signIn: 'Anmelden',
       managedUnavailable: 'Verwaltete Apps sind für dieses Konto noch nicht verfügbar.',
       writeFailed: 'Diese Änderung wurde nicht gespeichert.',
@@ -2277,20 +2275,6 @@ export const deOverrides = {
       perMonth: (amount: string) => `${amount}/Monat`,
       creditsPerMonth: (amount: string) => `${amount} Credits/Monat`,
       usageLabel: (label: string) => `${label}-Nutzung`,
-      freeTier: {
-        signIn: 'Anmelden',
-        title: 'Sie nutzen den kostenlosen Nous-Tarif',
-        message: 'Melden Sie sich mit einem Nous-Konto an, um weitere Modelle und Tools freizuschalten.',
-        caption:
-          'Läuft mit nous/welcome, Konnektoren inklusive. Nach der Anmeldung bleiben Ihre Konnektoren erhalten, und Sie erhalten die kontopflichtigen Tools sowie alle weiteren Modelle.',
-        name: 'Nous · kostenloser Tarif',
-        footnote:
-          'Der kostenlose Tarif hat kein Guthaben und nichts zu bezahlen. Zahlung und Nutzung werden angezeigt, sobald Sie sich mit einem Nous-Konto anmelden.',
-        plan: 'Kostenloser Tarif',
-        model: 'Modell',
-        connectors: 'Konnektoren',
-        included: 'Inklusive'
-      },
       amountValidation: {
         reloadTo: 'Aufladen auf',
         greaterThanThreshold: 'Der Aufladebetrag muss größer als der Schwellenwert sein.',
@@ -4885,75 +4869,6 @@ export const deOverrides = {
     startChatting: 'Loslegen',
     docs: provider => `${provider}-Doku`
   },
-  freeTier: {
-    providerRowTitle: 'Nous · Gratis-Tarif',
-    providerRowPitch: 'Melden Sie sich mit einem Nous-Konto an, um mehr Modelle und Tools freizuschalten.',
-    readyTitle: 'Hermes ist bereit.',
-    readyCaption: 'Kostenlos · Verbindungen inklusive',
-    begin: 'Loslegen',
-    signInInstead: 'Stattdessen mit einem Nous-Konto anmelden',
-    otherProviders: 'Andere Anbieter',
-    stripTitle: 'Kostenlose Nous-Inferenz und Verbindungen sind jetzt verfügbar.',
-    stripBody: 'Öffnen Sie die Modellauswahl, um sie auszuprobieren, oder melden Sie sich mit einem Nous-Konto an.',
-    openModelPicker: 'Modellauswahl öffnen',
-    dismiss: 'Ausblenden',
-    providerName: 'Nous',
-    statusLabel: model => `Nous · ${model}`,
-    signIn: 'Anmelden',
-    signInHeading: 'Melden Sie sich mit einem Nous-Konto an, um mehr Modelle und Tools freizuschalten.',
-    settingUp: 'Kostenlose Inferenz wird eingerichtet…',
-    codeBody: 'Geben Sie diesen Code in Ihrem Browser ein, um die Anmeldung abzuschließen.',
-    copyLink: 'Link kopieren',
-    doNotShare: 'Diesen Code nicht weitergeben.',
-    waiting: 'Warten auf Anmeldung…',
-    finishingHeading: 'Anmeldung wird abgeschlossen…',
-    finishingBody: 'Im Browser bestätigt. Ihre Konto-Tokens werden abgerufen.',
-    signedInAs: email => `Angemeldet als ${email}`,
-    signedIn: 'Angemeldet.',
-    completedBody: 'Ihr Konto hat jetzt Zugriff auf Inferenz und Tools.',
-    defaultModel: 'Standardmodell',
-    change: 'Ändern',
-    done: 'Fertig',
-    notNow: 'Nicht jetzt',
-    tryAgain: 'Erneut versuchen',
-    startAgain: 'Neu starten',
-    didNotComplete: 'Anmeldung nicht abgeschlossen',
-    rejectedBody: 'Die Anmeldung wurde im Browser abgelehnt. Sie bleiben im kostenlosen Tarif.',
-    supersededBody: 'Ein neuerer Anmeldecode hat diesen ersetzt.',
-    timedOutHeading: 'Anmeldung abgelaufen',
-    timedOutBody: 'Der Code wurde nicht rechtzeitig verwendet. Sie bleiben im kostenlosen Tarif.',
-    retiredBody:
-      'Diese Gratis-Tarif-Identität wurde bereits verwendet oder ist abgelaufen; beim nächsten Start wird eine neue eingerichtet.',
-    errorBody: 'Die Anmeldung wurde nicht abgeschlossen; starten Sie sie erneut.',
-    busyHeading: 'Fast geschafft',
-    busyBody: wait =>
-      `Hermes konnte Ihre Anmeldung nicht abschließen, weil der Nous-Dienst ausgelastet ist. Versuchen Sie es in ${wait} erneut. Ihre Session bleibt so lange erhalten.`,
-    unreachableBody:
-      'Hermes konnte den Nous-Dienst nicht erreichen, um Ihre Anmeldung abzuschließen. Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut. Ihre Session bleibt erhalten.',
-    alreadySignedInHeading: 'Bereits angemeldet.',
-    alreadySignedInBody: 'Dieses Hermes ist bereits mit einem Nous-Konto angemeldet.',
-    setupFailed: {
-      gateClosed:
-        'Diese Hermes-Version kann ohne Nous-Konto nicht starten. Melden Sie sich an oder legen Sie eines an – kostenlos und in einer Minute erledigt.',
-      paused:
-        'Chatten ohne Anmeldung ist vorübergehend pausiert. Hermes prüft weiter. Die Anmeldung ist kostenlos, und Sie können sofort weitermachen.',
-      rateLimited: wait =>
-        `Gerade starten sehr viele Leute, deshalb versucht Hermes es in ${wait} erneut. Die Anmeldung ist kostenlos und überspringt das Warten.`,
-      unreachable:
-        'Hermes konnte den Nous-Dienst nicht erreichen. Prüfen Sie Ihre Internetverbindung und tippen Sie dann auf „Erneut versuchen“. Oder verbinden Sie vorerst einen anderen Anbieter.',
-      serverError:
-        'Beim Nous-Dienst ist ein Fehler aufgetreten. Tippen Sie gleich auf „Erneut versuchen“ oder verbinden Sie vorerst einen anderen Anbieter.',
-      powRequired:
-        'Der Nous-Server verlangt einen Proof of Work, den Ihr Agent noch nicht unterstützt. Melden Sie sich an oder legen Sie ein kostenloses Nous-Konto an, um fortzufahren.',
-      locked:
-        'Diese Session kann ohne Anmeldung nicht fortgesetzt werden. Melden Sie sich an oder legen Sie ein kostenloses Nous-Konto an, um weiterzumachen.',
-      generic:
-        'Hermes konnte den kostenlosen Zugang ohne Anmeldung nicht einrichten. Die Anmeldung ist kostenlos — oder verbinden Sie einen anderen Anbieter.',
-      signInBelow: 'Die Anmeldung ist kostenlos. Wählen Sie unten Nous.',
-      tryAgain: 'Erneut versuchen',
-      retrying: 'Wird erneut versucht…'
-    }
-  },
   modelPicker: {
     title: 'Modell wechseln',
     current: 'aktuell:',
@@ -5098,7 +5013,6 @@ export const deOverrides = {
       toggleTerminal: 'Terminal',
       toggleTokensPerSecond: 'Tokens pro Sekunde',
       toggleVersion: 'Version & Updates',
-      toggleFreeTier: 'Gratis-Tarif',
       toggleWorkspace: 'Workspace',
       cacheHitRateTitle:
         'Prompt-Cache-Trefferquote dieser Session — gecachte Tokens kosten weniger, also ist höher günstiger',
@@ -5621,7 +5535,6 @@ export const deOverrides = {
       errorOpenHermesFolderFailed: 'Der Hermes-Ordner konnte nicht geöffnet werden',
       errorUpdateApiKey: 'API-Key aktualisieren',
       errorSignInAgain: provider => `Erneut bei ${provider} anmelden`,
-      errorSignInFreeTier: 'Mit einem Nous-Konto anmelden',
       errorOauthExpired: provider =>
         `Ihre Anmeldung bei ${provider} ist abgelaufen oder wurde widerrufen. Melden Sie sich erneut an, um weiterzuchatten.`,
       errorOpenLogs: 'Logs öffnen',

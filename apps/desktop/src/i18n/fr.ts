@@ -158,8 +158,6 @@ export const frOverrides = {
         `${count} autre${count > 1 ? 's' : ''} résultat${count > 1 ? 's' : ''} dans d’autres groupes.`,
       showAllMatches: 'Afficher tous les résultats',
       segmentNoMatch: (segment: string) => `Aucun résultat dans ${segment} : tous les résultats sont affichés.`,
-      freeTierNote: 'Les connexions restent sur cet ordinateur jusqu’à ce que vous vous connectiez.',
-      signInLine: 'Connectez-vous à Nous pour utiliser les applications gérées.',
       signIn: 'Se connecter',
       managedUnavailable: 'Les applications gérées ne sont pas encore disponibles pour ce compte.',
       writeFailed: 'Cette modification n’a pas été enregistrée.',
@@ -2285,20 +2283,6 @@ export const frOverrides = {
       perMonth: (amount: string) => `${amount}/mois`,
       creditsPerMonth: (amount: string) => `${amount} crédits/mois`,
       usageLabel: (label: string) => `Utilisation ${label}`,
-      freeTier: {
-        signIn: 'Se connecter',
-        title: 'Vous utilisez l’offre gratuite Nous',
-        message: 'Connectez-vous avec un compte Nous pour débloquer davantage de modèles et d’outils.',
-        caption:
-          'Fonctionne avec nous/welcome, connecteurs inclus. La connexion conserve vos connecteurs et ajoute les outils qui nécessitent un compte ainsi que tous les autres modèles.',
-        name: 'Nous · offre gratuite',
-        footnote:
-          'L’offre gratuite n’a ni solde ni rien à payer. Le paiement et l’utilisation apparaissent une fois connecté avec un compte Nous.',
-        plan: 'Offre gratuite',
-        model: 'Modèle',
-        connectors: 'Connecteurs',
-        included: 'Inclus'
-      },
       amountValidation: {
         reloadTo: 'Recharger jusqu’à',
         greaterThanThreshold: 'Le montant de recharge doit être supérieur au seuil.',
@@ -4897,75 +4881,6 @@ export const frOverrides = {
     startChatting: 'Commencer',
     docs: provider => `Documentation ${provider}`
   },
-  freeTier: {
-    providerRowTitle: 'Nous · offre gratuite',
-    providerRowPitch: 'Connectez-vous avec un compte Nous pour débloquer davantage de modèles et outils.',
-    readyTitle: 'Hermes est prêt.',
-    readyCaption: 'Gratuit · connecteurs inclus',
-    begin: 'Commencer',
-    signInInstead: 'Se connecter plutôt avec un compte Nous',
-    otherProviders: 'Autres fournisseurs',
-    stripTitle: "L'inférence Nous gratuite et les connecteurs sont maintenant disponibles.",
-    stripBody: 'Ouvrez le sélecteur de modèle pour les essayer ou connectez-vous avec un compte Nous.',
-    openModelPicker: 'Ouvrir le sélecteur de modèle',
-    dismiss: 'Fermer',
-    providerName: 'Nous',
-    statusLabel: model => `Nous · ${model}`,
-    signIn: 'Se connecter',
-    signInHeading: 'Connectez-vous avec un compte Nous pour débloquer davantage de modèles et outils.',
-    settingUp: "Configuration de l'inférence gratuite…",
-    codeBody: 'Saisissez ce code dans votre navigateur pour terminer la connexion.',
-    copyLink: 'Copier le lien',
-    doNotShare: 'Ne partagez pas ce code.',
-    waiting: 'En attente de la connexion…',
-    finishingHeading: 'Finalisation de la connexion…',
-    finishingBody: 'Autorisation accordée dans le navigateur. Récupération des jetons de votre compte.',
-    signedInAs: email => `Connecté en tant que ${email}`,
-    signedIn: 'Connecté.',
-    completedBody: "Votre compte donne maintenant accès à l'inférence et aux outils.",
-    defaultModel: 'Modèle par défaut',
-    change: 'Modifier',
-    done: 'Terminé',
-    notNow: 'Pas maintenant',
-    tryAgain: 'Réessayer',
-    startAgain: 'Recommencer',
-    didNotComplete: "La connexion n'a pas abouti",
-    rejectedBody: "La connexion a été refusée dans le navigateur. Vous restez sur l'offre gratuite.",
-    supersededBody: 'Un code de connexion plus récent a remplacé celui-ci.',
-    timedOutHeading: 'Délai de connexion dépassé',
-    timedOutBody: "Le code n'a pas été utilisé à temps. Vous restez sur l'offre gratuite.",
-    retiredBody:
-      "Cette identité d'offre gratuite a déjà été utilisée ou a expiré ; une nouvelle sera créée au prochain démarrage.",
-    errorBody: "La connexion n'a pas abouti ; relancez-la.",
-    busyHeading: 'Presque terminé',
-    busyBody: wait =>
-      `Hermes n'a pas pu terminer votre connexion car le service Nous est occupé. Réessayez dans ${wait}. Votre session reste disponible entre-temps.`,
-    unreachableBody:
-      "Hermes n'a pas pu joindre le service Nous pour terminer votre connexion. Vérifiez votre connexion Internet et réessayez. Votre session reste disponible.",
-    alreadySignedInHeading: 'Déjà connecté.',
-    alreadySignedInBody: 'Cette installation Hermes est déjà connectée à un compte Nous.',
-    setupFailed: {
-      gateClosed:
-        'Cette version de Hermes ne peut pas démarrer sans compte Nous. Connectez-vous ou créez-en un gratuitement en une minute.',
-      paused:
-        "L'utilisation de Hermes sans connexion est momentanément suspendue. Hermes continuera à vérifier. La connexion est gratuite et vous permet de continuer immédiatement.",
-      rateLimited: wait =>
-        `Beaucoup de personnes démarrent en ce moment ; Hermes réessaiera dans ${wait}. La connexion est gratuite et évite l'attente.`,
-      unreachable:
-        "Hermes n'a pas pu joindre le service Nous. Vérifiez votre connexion Internet, puis appuyez sur Réessayer. Vous pouvez aussi connecter un autre fournisseur.",
-      serverError:
-        'Le service Nous a rencontré un problème. Réessayez dans un instant ou connectez un autre fournisseur.',
-      powRequired:
-        "Le serveur Nous a demandé une preuve de travail qui n'est pas encore gérée par votre Agent. Connectez-vous ou créez un compte Nous gratuit pour continuer.",
-      locked:
-        'Cette session ne peut pas continuer sans connexion. Connectez-vous ou créez un compte Nous gratuit pour poursuivre.',
-      generic:
-        "Hermes n'a pas pu configurer l'accès gratuit sans connexion. Connectez-vous gratuitement ou choisissez un autre fournisseur.",
-      signInBelow: 'La connexion est gratuite. Choisissez Nous ci-dessous.',
-      tryAgain: 'Réessayer',
-      retrying: 'Nouvelle tentative…'
-    }
-  },
   modelPicker: {
     title: 'Changer de modèle',
     current: 'actuel :',
@@ -5110,7 +5025,6 @@ export const frOverrides = {
       toggleTerminal: 'Terminal',
       toggleTokensPerSecond: 'Tokens par seconde',
       toggleVersion: 'Version et mises à jour',
-      toggleFreeTier: 'Offre gratuite',
       toggleWorkspace: 'Espace de travail',
       cacheHitRateTitle:
         'Taux de cache des prompts pour cette session — les tokens en cache coûtent moins cher, un taux élevé est donc plus économique',
@@ -5631,7 +5545,6 @@ export const frOverrides = {
       errorOpenHermesFolderFailed: "Impossible d'ouvrir le dossier Hermes",
       errorUpdateApiKey: 'Mettre à jour la clé API',
       errorSignInAgain: provider => `Se reconnecter à ${provider}`,
-      errorSignInFreeTier: 'Se connecter avec un compte Nous',
       errorOauthExpired: provider =>
         `Votre connexion à ${provider} a expiré ou a été révoquée. Reconnectez-vous pour continuer la conversation.`,
       errorOpenLogs: 'Ouvrir les journaux',

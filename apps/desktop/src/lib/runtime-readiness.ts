@@ -42,10 +42,6 @@ export interface RuntimeReadinessOptions {
 
 export interface RuntimeReadinessResult {
   checksDisagree: boolean
-  /** Passed through from `setup.runtime_check`: the resolved route is the free
-   *  tier. Undefined when the check did not answer (older backend, transport
-   *  fallback) — never read it as "not free tier". */
-  freeTier?: boolean
   /** Passed through from `setup.runtime_check`: the model the route resolved
    *  to. Undefined when the check did not answer. */
   model?: string
@@ -128,10 +124,9 @@ export function interpretRuntimeReadiness(
   const setupFailure = normalizeMessage(signals.setupError)
 
   // Route facts the check reported, carried through untouched so consumers
-  // (free-tier chrome) don't have to re-issue setup.runtime_check. Left
-  // undefined when the check said nothing — "absent" and "false" differ.
+  // don't have to re-issue setup.runtime_check. Left undefined when the check
+  // said nothing — "absent" and "false" differ.
   const route = {
-    freeTier: typeof signals.runtime?.free_tier_route === 'boolean' ? signals.runtime.free_tier_route : undefined,
     model: normalizeMessage(signals.runtime?.model) ?? undefined
   }
 

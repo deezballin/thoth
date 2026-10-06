@@ -29,7 +29,6 @@ function baseState(overrides: Partial<DesktopOnboardingState> = {}): DesktopOnbo
     firstRunSkipped: false,
     manual: false,
     localEndpoint: false,
-    freeTierReady: false,
     ...overrides
   }
 }

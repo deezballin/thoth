@@ -23,7 +23,6 @@ function skippedState(overrides: Partial<DesktopOnboardingState> = {}): DesktopO
     firstRunSkipped: true,
     manual: false,
     localEndpoint: false,
-    freeTierReady: false,
     ...overrides
   }
 }

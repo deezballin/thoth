@@ -250,8 +250,6 @@ export interface ErrorRecoveryPlan {
   updateApiKey: boolean
   /** Re-run the provider's OAuth sign-in (auth, oauth). */
   signInAgain: boolean
-  /** Open the free-tier sign-in dialog (free_tier_* codes): signing in is free and lifts the refusal. */
-  signInFreeTier: boolean
   /** Open the live session model menu (switches THIS session via
    *  model.switch); Settings → Models deep link fallback when no chat surface
    *  is on screen. */
@@ -290,7 +288,6 @@ export function errorRecoveryPlan(surface: ErrorSurface | null | undefined): Err
     // natural second click.
     retry: !surface || surface.retryable || oauthReauth || apiKeyRejected,
     signInAgain: oauthReauth,
-    signInFreeTier: isFreeTierSurface(surface),
     startNewSession: false,
     switchProvider: surface != null && SWITCH_PROVIDER_LAYERS.includes(surface.layer),
     updateApiKey: apiKeyRejected

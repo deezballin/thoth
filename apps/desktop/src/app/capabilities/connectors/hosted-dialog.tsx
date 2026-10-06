@@ -2,7 +2,6 @@ import { useStore } from '@nanostores/react'
 import { useEffect, useState } from 'react'
 
 import type { ProfileScope } from '@/hermes'
-import { openFreeTierSignIn } from '@/store/free-tier-sign-in'
 
 import type { McpServersController } from '../mcp/use-mcp-servers'
 
@@ -83,7 +82,6 @@ export function HostedConnectorDialog({
       disabledTools={card.ways.hosted?.disabledTools}
       onDisconnect={onDisconnect}
       onRetryRules={hosted.retryRules}
-      onSignIn={() => openFreeTierSignIn()}
       policy={hosted.policy}
       readOnly={hosted.rulesFailed}
       rulesSignedOut={hosted.rulesSignedOut}

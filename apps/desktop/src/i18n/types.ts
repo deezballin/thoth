@@ -223,8 +223,6 @@ export interface Translations {
       matchesElsewhere: (count: number) => string
       showAllMatches: string
       segmentNoMatch: (segment: string) => string
-      freeTierNote: string
-      signInLine: string
       signIn: string
       managedUnavailable: string
       writeFailed: string
@@ -1635,18 +1633,6 @@ export interface Translations {
       perMonth: (amount: string) => string
       creditsPerMonth: (amount: string) => string
       usageLabel: (label: string) => string
-      freeTier: {
-        signIn: string
-        title: string
-        message: string
-        caption: string
-        name: string
-        footnote: string
-        plan: string
-        model: string
-        connectors: string
-        included: string
-      }
       amountValidation: {
         reloadTo: string
         greaterThanThreshold: string
@@ -3703,77 +3689,6 @@ export interface Translations {
     docs: (provider: string) => string
   }
 
-  freeTier: {
-    /** Settings › Providers row title while the Nous identity is the free tier. */
-    providerRowTitle: string
-    /** The featured row's pitch while the identity is the free tier: what signing in adds. */
-    providerRowPitch: string
-    // First-launch introduction (ready screen + composer strip).
-    readyTitle: string
-    readyCaption: string
-    begin: string
-    signInInstead: string
-    otherProviders: string
-    stripTitle: string
-    stripBody: string
-    openModelPicker: string
-    dismiss: string
-    // Statusbar chip.
-    /** The status-bar chip's label: the provider name alone; the model id and the sign-in follow it. */
-    providerName: string
-    statusLabel: (model: string) => string
-    // Sign-in dialog.
-    signIn: string
-    signInHeading: string
-    settingUp: string
-    codeBody: string
-    copyLink: string
-    doNotShare: string
-    waiting: string
-    finishingHeading: string
-    finishingBody: string
-    signedInAs: (email: string) => string
-    signedIn: string
-    completedBody: string
-    defaultModel: string
-    change: string
-    done: string
-    notNow: string
-    tryAgain: string
-    startAgain: string
-    didNotComplete: string
-    rejectedBody: string
-    supersededBody: string
-    timedOutHeading: string
-    timedOutBody: string
-    retiredBody: string
-    errorBody: string
-    /** The account service asked for a short wait mid sign-in (a busy account, a rate limit, the ops pause). */
-    busyHeading: string
-    busyBody: (wait: string) => string
-    /** The account service could not be reached or errored mid sign-in. */
-    unreachableBody: string
-    alreadySignedInHeading: string
-    alreadySignedInBody: string
-    // First-launch set-up failure notice: the free tier could not be created at boot.
-    // One sentence per backend code (`hermes_cli/anon_auth.py::ANON_*`); the copy never says
-    // the free MODEL is off — what is unavailable is using Hermes without signing in.
-    setupFailed: {
-      gateClosed: string
-      paused: string
-      rateLimited: (wait: string) => string
-      unreachable: string
-      serverError: string
-      powRequired: string
-      locked: string
-      generic: string
-      /** The sign-in door, when the account service is reachable: the Nous row sits right below. */
-      signInBelow: string
-      tryAgain: string
-      retrying: string
-    }
-  }
-
   modelPicker: {
     title: string
     current: string
@@ -3920,7 +3835,6 @@ export interface Translations {
       toggleTerminal: string
       toggleTokensPerSecond: string
       toggleVersion: string
-      toggleFreeTier: string
       toggleWorkspace: string
       cacheHitRateTitle: string
       tokensPerSecondTitle: string
@@ -4298,8 +4212,6 @@ export interface Translations {
       /** One-click recovery for an expired/revoked OAuth grant: re-runs that
        *  provider's sign-in flow (auth layer, authKind 'oauth'). */
       errorSignInAgain: (provider: string) => string
-      /** Free-tier refusals: opens the free sign-in dialog (signing in is free and lifts the refusal). */
-      errorSignInFreeTier: string
       /** Explains WHY the turn failed for an OAuth 401 — the raw body
        *  ("HTTP 401: User not found.") doesn't say "sign in again". */
       errorOauthExpired: (provider: string) => string

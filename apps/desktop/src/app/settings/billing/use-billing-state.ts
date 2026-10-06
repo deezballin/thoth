@@ -3,8 +3,6 @@ import { useQuery } from '@tanstack/react-query'
 import type { Translations } from '@/i18n'
 import { en } from '@/i18n/en'
 import { fmtDate } from '@/lib/time'
-import { FREE_TIER_MODEL } from '@/store/free-tier'
-import { openFreeTierSignIn } from '@/store/free-tier-sign-in'
 
 import type { BillingRefusal, BillingResult } from './api'
 import { useBillingApi } from './api'
@@ -40,11 +38,8 @@ export interface BillingSummaryItemView {
 }
 
 export interface BillingNoticeView {
-  /** Either an external portal hop (`url`) or an in-app action (`onSelect`) —
-   *  a discriminated pair, so a consumer never has to guard for "both" or
-   *  "neither". */
-  action?:
-    { label: string; onSelect: () => void; url?: undefined } | { label: string; onSelect?: undefined; url: string }
+  /** An external portal hop. */
+  action?: { label: string; url: string }
   message: string
   title: string
   /** `warn` = an actionable blocker (e.g. no card); `info` = neutral guidance. */
@@ -103,15 +98,10 @@ export type BillingPlanCardView = {
   tierName: string
 } & (
   | {
-      // `onSelect` overrides the card's default "open the plans grid" action —
-      // the free-tier card signs in instead. Absent = the plans grid.
-      action: { label: string; onSelect?: () => void }
+      action: { label: string }
       link?: undefined
     }
   | { action?: undefined; link: { label: string; url: string } }
-  // The free-tier card is the "what you get" text alone: the page's one Sign in lives on the
-  // notice above it, so the card carries neither an action nor a link.
-  | { action?: undefined; link?: undefined }
 )
 
 interface BillingPlanTierBase {
@@ -153,11 +143,9 @@ export interface BillingView {
   paymentRow?: BillingAccountRowView
   /** Current-plan card (Plan section). Absent until billing.state resolves. */
   plan?: BillingPlanCardView
-  /** Small print under the Plan section. Only the free-tier view sets it. */
-  planFootnote?: string
   /** Automatic-refill section row. */
   refillRow?: BillingAccountRowView
-  status: 'free_tier' | 'loading' | 'logged_out' | 'normal' | 'refusal'
+  status: 'loading' | 'logged_out' | 'normal' | 'refusal'
   summary: BillingSummaryItemView[]
   /** Live tier catalog for the plans sub-view (empty when unavailable). */
   tiers: BillingPlanTierView[]
@@ -215,19 +203,9 @@ export function deriveBillingView(
   const billing = stateResult.data
   const subscription = subscriptionResult?.ok ? subscriptionResult.data : null
 
-  // Read BEFORE the logged-out branch: a free-tier install has no account, so
-  // `logged_in` is false and the generic "connect your account" notice would
-  // otherwise win and tell the user to go to the portal.
-  if (billing.free_tier_account) {
-    return freeTierView(billing, b)
-  }
-
-  // Signing in is the only thing that writes a credential; a portal link never would, so the
-  // page would stay logged out after the user logged in on the web (#87792).
   if (!billing.logged_in || subscription?.logged_in === false) {
     return {
       notice: {
-        action: { label: b.state.notice.loggedOut.action, onSelect: openFreeTierSignIn },
         message: b.state.notice.loggedOut.message,
         title: b.state.notice.loggedOut.title
       },
@@ -327,36 +305,6 @@ function emptySummary(b: Translations['settings']['billing']): BillingSummaryIte
     { label: b.summary.plan, value: EMPTY_BILLING_VALUE },
     { label: b.summary.autoRefill, value: EMPTY_BILLING_VALUE }
   ]
-}
-
-/**
- * The no-account state: nothing is owed, nothing is owned, and every money
- * control would be a lie. So the page collapses to one notice, a three-item
- * summary, and a single plan card whose only action is signing in — no payment,
- * credits, auto-refill or usage sections at all.
- */
-function freeTierView(billing: BillingStateResponse, b: Translations['settings']['billing']): BillingView {
-  return {
-    notice: {
-      action: { label: b.freeTier.signIn, onSelect: openFreeTierSignIn },
-      message: b.freeTier.message,
-      title: b.freeTier.title,
-      tone: 'info'
-    },
-    plan: {
-      caption: b.freeTier.caption,
-      tierName: b.freeTier.name
-    },
-    planFootnote: b.freeTier.footnote,
-    status: 'free_tier',
-    summary: [
-      { label: b.summary.plan, value: b.freeTier.plan },
-      { label: b.freeTier.model, value: billing.free_tier_model ?? FREE_TIER_MODEL },
-      { label: b.freeTier.connectors, tone: 'primary', value: b.freeTier.included }
-    ],
-    tiers: [],
-    usageRows: []
-  }
 }
 
 function refusalNotice(refusal: BillingRefusal, b: Translations['settings']['billing']): BillingNoticeView {

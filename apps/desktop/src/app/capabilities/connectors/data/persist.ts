@@ -1,7 +1,6 @@
 import { type ProfileScope, profileScopeKey } from '@/hermes'
 import { queryClient } from '@/lib/query-client'
 import { readJson, writeJson } from '@/lib/storage'
-import { $freeTierStatus } from '@/store/free-tier'
 
 import { MCP_CATALOG_KEY } from '../../mcp/mcp-status'
 import type { LocalServerInput } from '../types'
@@ -39,12 +38,8 @@ interface PersistedBlob {
 
 const keyFor = (scopeKey: string) => `${STORAGE_PREFIX}${scopeKey}`
 
-const identityOf = (hasGuest: boolean): PersistedIdentity => (hasGuest ? 'guest' : 'signed-in')
-
 function currentIdentity(): PersistedIdentity | null {
-  const status = $freeTierStatus.get()
-
-  return status ? identityOf(status.has_guest) : readJson<PersistedIdentity>(IDENTITY_KEY)
+  return readJson<PersistedIdentity>(IDENTITY_KEY)
 }
 
 const READS: ReadonlySet<PersistedValue> = new Set(Object.keys(CONNECTOR_LIFETIMES))
@@ -226,17 +221,8 @@ export function startConnectorPersistence(): () => void {
     timer ??= setTimeout(flush, WRITE_DELAY_MS)
   })
 
-  const stopIdentity = $freeTierStatus.listen(status => {
-    const identity = status ? identityOf(status.has_guest) : null
-
-    if (identity !== null && identity !== readJson<PersistedIdentity>(IDENTITY_KEY)) {
-      writeJson(IDENTITY_KEY, identity)
-    }
-  })
-
   return () => {
     stopCache()
-    stopIdentity()
 
     if (timer !== null) {
       clearTimeout(timer)

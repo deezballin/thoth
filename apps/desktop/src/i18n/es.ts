@@ -157,8 +157,6 @@ export const esOverrides = {
       matchesElsewhere: (count: number) => `${count} coincidencia${count === 1 ? '' : 's'} más en otros grupos.`,
       showAllMatches: 'Mostrar todas las coincidencias',
       segmentNoMatch: (segment: string) => `No hay coincidencias en ${segment}, así que se muestran todas.`,
-      freeTierNote: 'Las conexiones se quedan en este equipo hasta que inicies sesión.',
-      signInLine: 'Inicia sesión en Nous para usar las apps administradas.',
       signIn: 'Iniciar sesión',
       managedUnavailable: 'Las apps administradas aún no están disponibles para esta cuenta.',
       writeFailed: 'No se guardó ese cambio.',
@@ -2270,20 +2268,6 @@ export const esOverrides = {
       perMonth: (amount: string) => `${amount}/mes`,
       creditsPerMonth: (amount: string) => `${amount} créditos/mes`,
       usageLabel: (label: string) => `Uso de ${label}`,
-      freeTier: {
-        signIn: 'Iniciar sesión',
-        title: 'Estás en el plan gratuito de Nous',
-        message: 'Inicia sesión con una cuenta de Nous para desbloquear más modelos y herramientas.',
-        caption:
-          'Funciona con nous/welcome, con conectores incluidos. Al iniciar sesión conservas tus conectores y se añaden las herramientas que requieren cuenta y todos los demás modelos.',
-        name: 'Nous · plan gratuito',
-        footnote:
-          'El plan gratuito no tiene saldo ni nada que pagar. El pago y el uso aparecen al iniciar sesión con una cuenta de Nous.',
-        plan: 'Plan gratuito',
-        model: 'Modelo',
-        connectors: 'Conectores',
-        included: 'Incluidos'
-      },
       amountValidation: {
         reloadTo: 'Recargar hasta',
         greaterThanThreshold: 'El importe de recarga debe ser mayor que el umbral.',
@@ -4876,76 +4860,6 @@ export const esOverrides = {
     startChatting: 'Empezar',
     docs: provider => `Docs de ${provider}`
   },
-  freeTier: {
-    providerRowTitle: 'Nous · plan gratuito',
-    providerRowPitch: 'Inicia sesión con una cuenta de Nous para desbloquear más modelos y herramientas.',
-    readyTitle: 'Hermes está listo.',
-    readyCaption: 'Gratis · conectores incluidos',
-    begin: 'Empezar',
-    signInInstead: 'Iniciar sesión con una cuenta de Nous',
-    otherProviders: 'Otros proveedores',
-    stripTitle: 'Ya están disponibles la inferencia y los conectores gratuitos de Nous.',
-    stripBody: 'Abre el selector de modelos para probarlos o inicia sesión con una cuenta de Nous.',
-    openModelPicker: 'Abrir selector de modelos',
-    dismiss: 'Descartar',
-    providerName: 'Nous',
-    statusLabel: (model: string) => `Nous · ${model}`,
-    signIn: 'Iniciar sesión',
-    signInHeading: 'Inicia sesión con una cuenta de Nous para desbloquear más modelos y herramientas.',
-    settingUp: 'Configurando la inferencia gratuita…',
-    codeBody: 'Introduce este código en tu navegador para terminar de iniciar sesión.',
-    copyLink: 'Copiar enlace',
-    doNotShare: 'No compartas este código.',
-    waiting: 'Esperando el inicio de sesión…',
-    finishingHeading: 'Terminando el inicio de sesión…',
-    finishingBody: 'Aprobado en el navegador. Obteniendo los tokens de tu cuenta.',
-    signedInAs: (email: string) => `Sesión iniciada como ${email}`,
-    signedIn: 'Sesión iniciada.',
-    completedBody: 'Tu cuenta ya incluye inferencia y herramientas.',
-    defaultModel: 'Modelo predeterminado',
-    change: 'Cambiar',
-    done: 'Listo',
-    notNow: 'Ahora no',
-    tryAgain: 'Reintentar',
-    startAgain: 'Empezar de nuevo',
-    didNotComplete: 'No se completó el inicio de sesión',
-    rejectedBody: 'No pasa nada, sigues en el servicio gratuito de Nous. Inicia sesión cuando quieras.',
-    supersededBody:
-      'Un código de inicio de sesión más reciente sustituyó a este. Usa el más reciente o empieza de nuevo.',
-    timedOutHeading: 'Ese enlace de inicio de sesión caducó',
-    timedOutBody: 'Empieza de nuevo cuando quieras. Sigues en el servicio gratuito de Nous.',
-    retiredBody:
-      'Tu sesión terminó antes de completar el inicio de sesión. Hermes iniciará una nueva; luego vuelve a iniciar sesión cuando quieras.',
-    errorBody: 'No se completó el inicio de sesión. Vuelve a intentarlo cuando quieras.',
-    busyHeading: 'Ya casi está',
-    busyBody: (wait: string) =>
-      `Hermes no pudo terminar de iniciar tu sesión porque el servicio de Nous está ocupado. Vuelve a intentarlo en ${wait}. Mientras tanto, tu sesión sigue aquí.`,
-    unreachableBody:
-      'Hermes no pudo llegar al servicio de Nous para terminar de iniciar tu sesión. Comprueba tu conexión a internet y vuelve a intentarlo. Tu sesión sigue aquí.',
-    alreadySignedInHeading: 'Ya has iniciado sesión.',
-    alreadySignedInBody: 'Este Hermes ya tiene la sesión iniciada en una cuenta de Nous.',
-    setupFailed: {
-      gateClosed:
-        'Esta versión de Hermes no puede iniciarse sin una cuenta de Nous. Inicia sesión o crea una: es gratis y solo lleva un minuto.',
-      paused:
-        'El uso de Hermes sin iniciar sesión está en pausa por un momento. Hermes seguirá comprobándolo. Iniciar sesión es gratis y te permite empezar ahora mismo.',
-      rateLimited: (wait: string) =>
-        `Mucha gente está empezando ahora mismo, así que Hermes volverá a intentarlo en ${wait}. Iniciar sesión es gratis y te ahorra la espera.`,
-      unreachable:
-        'Hermes no pudo llegar al servicio de Nous. Comprueba tu conexión a internet y pulsa Reintentar. O conecta otro proveedor por ahora.',
-      serverError:
-        'El servicio de Nous tuvo un fallo. Pulsa Reintentar en un momento o conecta otro proveedor por ahora.',
-      powRequired:
-        'El servidor de Nous pidió una prueba de trabajo, pero tu agente todavía no la implementa. Inicia sesión o crea una cuenta gratuita de Nous para continuar.',
-      locked:
-        'Esta sesión no puede continuar sin iniciar sesión. Inicia sesión o crea una cuenta gratuita de Nous para seguir.',
-      generic:
-        'Hermes no pudo configurar el acceso gratuito sin iniciar sesión. Iniciar sesión es gratis; también puedes conectar otro proveedor.',
-      signInBelow: 'Iniciar sesión es gratis. Elige Nous abajo.',
-      tryAgain: 'Reintentar',
-      retrying: 'Reintentando…'
-    }
-  },
   modelPicker: {
     title: 'Cambiar modelo',
     current: 'actual:',
@@ -5090,7 +5004,6 @@ export const esOverrides = {
       toggleTerminal: 'Terminal',
       toggleTokensPerSecond: 'Tokens por segundo',
       toggleVersion: 'Versión y actualizaciones',
-      toggleFreeTier: 'Plan gratuito',
       toggleWorkspace: 'Espacio de trabajo',
       cacheHitRateTitle:
         'Tasa de aciertos de la caché de prompts en esta sesión: los tokens en caché cuestan menos, así que cuanto más alta, más barato',
@@ -5611,7 +5524,6 @@ export const esOverrides = {
       errorOpenHermesFolderFailed: 'No se pudo abrir la carpeta de Hermes',
       errorUpdateApiKey: 'Actualizar clave API',
       errorSignInAgain: (provider: string) => `Volver a iniciar sesión en ${provider}`,
-      errorSignInFreeTier: 'Iniciar sesión con una cuenta de Nous',
       errorOauthExpired: (provider: string) =>
         `Tu sesión de ${provider} caducó o se revocó. Vuelve a iniciar sesión para seguir chateando.`,
       errorOpenLogs: 'Abrir registros',

@@ -60,13 +60,10 @@ export function SharedMetricsConsentDialog({ enabled, profile, requestGateway }:
   const [expanded, setExpanded] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  // Never over the provider picker, the free-tier welcome or the guided chat:
-  // the question belongs to the moment after setup.
+  // Never over the provider picker or the guided chat: the question belongs to
+  // the moment after setup.
   const onboardingSettled =
-    (onboarding.configured === true || onboarding.firstRunSkipped) &&
-    !onboarding.manual &&
-    !onboarding.freeTierReady &&
-    surfaces.size === 0
+    (onboarding.configured === true || onboarding.firstRunSkipped) && !onboarding.manual && surfaces.size === 0
 
   const ready = enabled && onboardingSettled
 

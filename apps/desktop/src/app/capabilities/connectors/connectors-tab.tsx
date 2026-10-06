@@ -6,8 +6,6 @@ import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import type { HermesGateway, ProfileScope } from '@/hermes'
 import { useI18n } from '@/i18n'
-import { $freeTierStatus } from '@/store/free-tier'
-import { openFreeTierSignIn } from '@/store/free-tier-sign-in'
 import { notifyError, readableError } from '@/store/notifications'
 
 import { installBundledEntry } from '../mcp/install-catalog-entry'
@@ -50,7 +48,6 @@ export function ConnectorsTab({ gateway, profile }: ConnectorsTabProps) {
   const mcp = useMcpServers({ gateway, profile })
   const operations = useStore($accountOperations)
   const abandoned = useStore($abandonedConnects)
-  const freeTier = useStore($freeTierStatus)
 
   const connector = useConnectConnector(profile)
   const switcher = useConnectorSwitch(profile)
@@ -239,7 +236,7 @@ export function ConnectorsTab({ gateway, profile }: ConnectorsTabProps) {
         filter={filter}
         hostedFailed={hosted.phase === 'failed'}
         loading={(hosted.phase === 'loading' || mcp.configLoading || mcp.catalogLoading) && cards.length === 0}
-        notices={<HostedNotice hasGuest={freeTier?.has_guest === true} phase={hosted.phase} />}
+        notices={<HostedNotice phase={hosted.phase} />}
         onFilterChange={setFilter}
         onOpen={card => setOpenKey(cardKey(card))}
         onPrefetch={card => {
@@ -334,26 +331,15 @@ export function ConnectorsTab({ gateway, profile }: ConnectorsTabProps) {
   )
 }
 
-function HostedNotice({ hasGuest, phase }: { hasGuest: boolean; phase: HostedPhase }) {
+function HostedNotice({ phase }: { phase: HostedPhase }) {
   const { t } = useI18n()
   const copy = t.connectorsPage.page
-
-  if (phase === 'signedOut') {
-    return (
-      <p className="flex shrink-0 items-center gap-1 text-[0.7rem] text-(--ui-text-tertiary)">
-        {copy.signInLine}
-        <Button onClick={() => openFreeTierSignIn()} size="xs" variant="text">
-          {copy.signIn}
-        </Button>
-      </p>
-    )
-  }
 
   if (phase === 'unavailable') {
     return <p className="shrink-0 text-[0.7rem] text-(--ui-text-tertiary)">{copy.managedUnavailable}</p>
   }
 
-  return hasGuest ? <p className="shrink-0 text-[0.7rem] text-(--ui-text-tertiary)">{copy.freeTierNote}</p> : null
+  return null
 }
 
 function useOpenFromRoute(cards: readonly ConnectorCardModel[], open: (key: string) => void): void {

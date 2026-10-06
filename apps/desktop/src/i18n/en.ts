@@ -171,8 +171,6 @@ export const en: Translations = {
       matchesElsewhere: (count: number) => `${count} more match${count === 1 ? '' : 'es'} in other groups.`,
       showAllMatches: 'Show all matches',
       segmentNoMatch: (segment: string) => `No match in ${segment}, so every match is shown.`,
-      freeTierNote: 'Connections stay on this computer until you sign in.',
-      signInLine: 'Sign in to Nous to use managed apps.',
       signIn: 'Sign in',
       managedUnavailable: 'Managed apps are not available for this account yet.',
       writeFailed: 'That change was not saved.',
@@ -1929,20 +1927,6 @@ export const en: Translations = {
       perMonth: amount => `${amount}/mo`,
       creditsPerMonth: amount => `${amount} credits/mo`,
       usageLabel: label => `${label} usage`,
-      freeTier: {
-        signIn: 'Sign in',
-        title: "You're on the Nous free tier",
-        message: 'Sign in with a Nous account to unlock more models and tools.',
-        caption:
-          'Runs on nous/welcome with connectors included. Signing in keeps your connectors and adds the tools that need an account and every other model.',
-        name: 'Nous · free tier',
-        footnote:
-          'The free tier has no balance and nothing to pay. Payment and usage appear when you sign in with a Nous account.',
-        plan: 'Free tier',
-        model: 'Model',
-        connectors: 'Connectors',
-        included: 'Included'
-      },
       amountValidation: {
         reloadTo: 'Reload-to',
         greaterThanThreshold: 'Reload-to amount must be greater than the threshold.',
@@ -4446,74 +4430,6 @@ export const en: Translations = {
     docs: provider => `${provider} docs`
   },
 
-  freeTier: {
-    providerRowTitle: 'Nous · free tier',
-    providerRowPitch: 'Sign in with a Nous account to unlock more models and tools.',
-    readyTitle: 'Hermes is ready.',
-    readyCaption: 'Free · connectors included',
-    begin: 'Begin',
-    signInInstead: 'Sign in with a Nous account instead',
-    otherProviders: 'Other providers',
-    stripTitle: 'Free Nous inference and connectors are now available.',
-    stripBody: 'Open the model picker to try them, or sign in with a Nous account.',
-    openModelPicker: 'Open model picker',
-    dismiss: 'Dismiss',
-    providerName: 'Nous',
-    statusLabel: model => `Nous · ${model}`,
-    signIn: 'Sign in',
-    signInHeading: 'Sign in with a Nous account to unlock more models and tools.',
-    settingUp: 'Setting up free inference…',
-    codeBody: 'Enter this code in your browser to finish signing in.',
-    copyLink: 'Copy link',
-    doNotShare: 'Do not share this code.',
-    waiting: 'Waiting for sign-in…',
-    finishingHeading: 'Finishing sign-in…',
-    finishingBody: 'Approved in the browser. Collecting your account tokens.',
-    signedInAs: email => `Signed in as ${email}`,
-    signedIn: 'Signed in.',
-    completedBody: 'Your account now carries inference and tools.',
-    defaultModel: 'Default model',
-    change: 'Change',
-    done: 'Done',
-    notNow: 'Not now',
-    tryAgain: 'Try again',
-    startAgain: 'Start again',
-    didNotComplete: "Sign-in didn't finish",
-    rejectedBody: "No problem, you're still on the free Nous service. Sign in whenever you're ready.",
-    supersededBody: 'A newer sign-in code replaced this one. Use the newest one, or start again.',
-    timedOutHeading: 'That sign-in link has expired',
-    timedOutBody: "Start again whenever you're ready. You're still on the free Nous service.",
-    retiredBody:
-      "Your session ended before the sign-in finished. Hermes will start a new one; then sign in again whenever you're ready.",
-    errorBody: "Sign-in didn't finish. Try again whenever you're ready.",
-    busyHeading: 'Almost there',
-    busyBody: wait =>
-      `Hermes couldn't finish signing you in because the Nous service is busy. Try again in ${wait}. Your session is still here in the meantime.`,
-    unreachableBody:
-      "Hermes couldn't reach the Nous service to finish signing you in. Check your internet connection and try again. Your session is still here.",
-    alreadySignedInHeading: 'Already signed in.',
-    alreadySignedInBody: 'This Hermes is already signed in to a Nous account.',
-    setupFailed: {
-      gateClosed:
-        "This version of Hermes can't start without a Nous account. Sign in or create one, it's free and only takes a minute.",
-      paused:
-        'Using Hermes without signing in is paused for a moment. Hermes will keep checking. Signing in is free and gets you going right now.',
-      rateLimited: wait =>
-        `Lots of people are getting started right now, so Hermes will try again in ${wait}. Signing in is free and skips the wait.`,
-      unreachable:
-        "Hermes couldn't reach the Nous service. Check your internet connection, then tap Try again. Or connect another provider for now.",
-      serverError: 'The Nous service had a hiccup. Tap Try again in a moment, or connect another provider for now.',
-      powRequired:
-        "The Nous server asked for a proof of work, but that isn't implemented in your Agent yet. Sign in or create a free Nous account to continue.",
-      locked: "This session can't continue without signing in. Sign in or create a free Nous account to keep going.",
-      generic:
-        "Hermes couldn't set up free access without signing in. Signing in is free, or connect another provider.",
-      signInBelow: 'Signing in is free. Pick Nous below.',
-      tryAgain: 'Try again',
-      retrying: 'Trying again…'
-    }
-  },
-
   modelPicker: {
     title: 'Switch model',
     current: 'current:',
@@ -4661,7 +4577,6 @@ export const en: Translations = {
       toggleTerminal: 'Terminal',
       toggleTokensPerSecond: 'Tokens per second',
       toggleVersion: 'Version & updates',
-      toggleFreeTier: 'Free tier',
       toggleWorkspace: 'Workspace',
       cacheHitRateTitle: 'Prompt cache hit rate this session — cached tokens cost less, so higher is cheaper',
       tokensPerSecondTitle: 'Output tokens per second, averaged over the last 10 model calls',
@@ -5184,7 +5099,6 @@ export const en: Translations = {
       errorOpenHermesFolderFailed: 'Could not open the Hermes folder',
       errorUpdateApiKey: 'Update API key',
       errorSignInAgain: provider => `Sign in to ${provider} again`,
-      errorSignInFreeTier: 'Sign in with a Nous account',
       errorOauthExpired: provider =>
         `Your ${provider} sign-in has expired or was revoked. Sign in again to keep chatting.`,
       errorOpenLogs: 'Open logs',

@@ -1157,18 +1157,6 @@ export const zhHantSettings = {
       perMonth: amount => `${amount}/月`,
       creditsPerMonth: amount => `${amount} 額度/月`,
       usageLabel: label => `${label}用量`,
-      freeTier: {
-        signIn: '登入',
-        title: '你正在使用 Nous 免費服務',
-        message: '登入 Nous 帳戶以解鎖更多模型和工具。',
-        caption: '使用 nous/welcome，包含連接器。登入後會保留連接器，並增加需要帳戶的工具和其他所有模型。',
-        name: 'Nous · 免費服務',
-        footnote: '免費服務沒有餘額，無需付款。登入 Nous 帳戶後才會顯示支付與用量。',
-        plan: '免費服務',
-        model: '模型',
-        connectors: '連接器',
-        included: '已包含'
-      },
       amountValidation: {
         reloadTo: '儲值金額',
         greaterThanThreshold: '儲值金額必須大於門檻。',

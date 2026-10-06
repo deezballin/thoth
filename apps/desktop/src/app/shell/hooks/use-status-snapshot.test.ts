@@ -130,8 +130,8 @@ describe('useStatusSnapshot', () => {
     await flushAsync()
 
     expect(getStatus).toHaveBeenCalledOnce()
-    // One refresh round = setup.status + setup.runtime_check + free_tier.status.
-    expect(requestGateway).toHaveBeenCalledTimes(3)
+    // One refresh round = setup.status + setup.runtime_check.
+    expect(requestGateway).toHaveBeenCalledTimes(2)
   })
 
   it('keeps the last authoritative readiness through a transient RPC failure', async () => {
@@ -276,16 +276,16 @@ describe('useStatusSnapshot', () => {
     renderHook(() => useStatusSnapshot('open', requestGateway))
     await flushAsync()
 
-    // Open runs the readiness legs once: setup.status, setup.runtime_check, free_tier.status.
+    // Open runs the readiness legs once: setup.status, setup.runtime_check.
     expect(getStatus).toHaveBeenCalledOnce()
-    expect(requestGatewayMock).toHaveBeenCalledTimes(3)
+    expect(requestGatewayMock).toHaveBeenCalledTimes(2)
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(60_000)
     })
 
     expect(getStatus).toHaveBeenCalledOnce()
-    expect(requestGatewayMock).toHaveBeenCalledTimes(3)
+    expect(requestGatewayMock).toHaveBeenCalledTimes(2)
 
     await act(async () => {
       setup.resolve({ provider_configured: true })
@@ -302,13 +302,13 @@ describe('useStatusSnapshot', () => {
       await vi.advanceTimersByTimeAsync(1)
     })
 
-    // The periodic tick is status-only: readiness and the free-tier verdict
-    // arrive by `setup.ready` push plus the one-shots on open and on return.
+    // The periodic tick is status-only: readiness arrives by `setup.ready`
+    // push plus the one-shots on open and on return.
     expect(getStatus).toHaveBeenCalledTimes(2)
-    expect(requestGatewayMock).toHaveBeenCalledTimes(3)
+    expect(requestGatewayMock).toHaveBeenCalledTimes(2)
   })
 
-  it('re-reads readiness and the free-tier verdict once per setup.ready, off the status tick', async () => {
+  it('re-reads readiness once per setup.ready, off the status tick', async () => {
     const requestGatewayMock = vi.fn(
       async (method: string) =>
         (method === 'setup.runtime_check' ? { ok: true } : { provider_configured: true }) as never
@@ -327,7 +327,6 @@ describe('useStatusSnapshot', () => {
     })
 
     const methods = requestGatewayMock.mock.calls.map(([method]) => method)
-    expect(methods.filter(method => method === 'free_tier.status')).toHaveLength(1)
     expect(methods.filter(method => method === 'setup.runtime_check')).toHaveLength(1)
     expect(methods.filter(method => method === 'setup.status')).toHaveLength(1)
     expect(getStatus).not.toHaveBeenCalled()

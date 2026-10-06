@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { getStatus } from '@/hermes'
 import { type I18nContextValue, useI18n } from '@/i18n'
 import { evaluateRuntimeReadiness, type RuntimeReadinessResult } from '@/lib/runtime-readiness'
-import { refreshFreeTierStatus, setFreeTierRoute } from '@/store/free-tier'
 import { $setupReadyTick } from '@/store/live-sync'
 import { dismissNotification, notify } from '@/store/notifications'
 import type { StatusResponse } from '@/types/hermes'
@@ -56,22 +55,15 @@ export function useStatusSnapshot(
       // user is working in another app.
       document.visibilityState === 'visible' && document.hasFocus()
 
-    // Inference readiness + the free-tier verdict. Not on the periodic tick:
-    // both change only at seams the backend announces (`setup.ready` at boot)
-    // or that this window crosses (open, return from another app), so they
-    // run once per seam instead of every 60s.
+    // Inference readiness. Not on the periodic tick: it changes only at seams
+    // the backend announces (`setup.ready` at boot) or that this window crosses
+    // (open, return from another app), so it runs once per seam, not every 60s.
     const refreshReadiness = async () => {
       if (gatewayState !== 'open') {
         return
       }
 
-      // The free-tier verdict is a local, zero-network read that writes
-      // straight to its own store and swallows its failures — nothing here
-      // waits on it or reads the result.
-      const [inferenceResult] = await Promise.allSettled([
-        evaluateRuntimeReadiness(requestGateway),
-        refreshFreeTierStatus(requestGateway)
-      ])
+      const [inferenceResult] = await Promise.allSettled([evaluateRuntimeReadiness(requestGateway)])
 
       if (cancelled || inferenceResult.status !== 'fulfilled') {
         return
@@ -86,7 +78,6 @@ export function useStatusSnapshot(
         // became unconfigured. Keep the last authoritative result instead
         // of flashing "Inference not ready" during a gateway flap.
         setInferenceStatus(inference)
-        setFreeTierRoute(inference.freeTier)
       }
     }
 

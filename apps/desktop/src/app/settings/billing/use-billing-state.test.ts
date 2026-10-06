@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
 import { TRANSLATIONS } from '@/i18n'
-import { $freeTierSignIn } from '@/store/free-tier-sign-in'
 
 import type { BillingRefusal } from './api'
 import { resolveRefusal } from './errors'
@@ -83,16 +82,6 @@ describe('deriveBillingView', () => {
           expect(view.notice?.action?.url).toEqual(english.notice.action?.url)
         }
       }
-
-      const free = deriveBillingView(
-        okBilling({ ...loggedOutBillingState, free_tier_account: true }),
-        okSubscription(loggedOutSubscriptionState),
-        b
-      )
-
-      expect(free.notice?.title).toBe(b.freeTier.title)
-      expect(free.status).toBe('free_tier')
-      expect(free.usageRows).toEqual([])
     }
   )
 
@@ -246,44 +235,6 @@ describe('deriveBillingView', () => {
     expect(view.paymentRow).toBeUndefined()
     expect(view.topupRow).toBeUndefined()
     expect(view.refillRow).toBeUndefined()
-    expect(view.usageRows).toEqual([])
-  })
-
-  it('signs in from the logged-out notice through the shared sign-in dialog, not a portal link', () => {
-    // A plain portal link never writes a credential, so the page would stay logged out forever
-    // (#87792). The action must open the one Nous sign-in dialog (device-code + poll).
-    $freeTierSignIn.set({ status: 'closed' })
-    const view = deriveBillingView(okBilling(loggedOutBillingState), okSubscription(loggedOutSubscriptionState))
-
-    expect(view.notice?.action?.url).toBeUndefined()
-    view.notice?.action?.onSelect?.()
-    expect($freeTierSignIn.get()).toEqual({ status: 'requested' })
-    $freeTierSignIn.set({ status: 'closed' })
-  })
-
-  it('derives the free-tier view before the logged-out one, with nothing to pay', () => {
-    // A free-tier install is logged_in:false, so this branch must win — otherwise
-    // the generic "connect your account" notice sends the user to the portal.
-    const view = deriveBillingView(
-      okBilling({ ...loggedOutBillingState, free_tier_account: true, free_tier_model: 'nous/welcome' }),
-      okSubscription(loggedOutSubscriptionState)
-    )
-
-    expect(view.status).toBe('free_tier')
-    expect(view.notice).toMatchObject({ title: "You're on the Nous free tier", tone: 'info' })
-    expect(view.notice?.action?.label).toBe('Sign in')
-    expect(view.summary).toEqual([
-      { label: 'Plan', value: 'Free tier' },
-      { label: 'Model', value: 'nous/welcome' },
-      { label: 'Connectors', tone: 'primary', value: 'Included' }
-    ])
-    expect(view.plan).toMatchObject({ tierName: 'Nous · free tier' })
-    expect(view.plan?.action).toBeUndefined()
-    expect(view.planFootnote).toContain('no balance and nothing to pay')
-    expect(view.paymentRow).toBeUndefined()
-    expect(view.topupRow).toBeUndefined()
-    expect(view.refillRow).toBeUndefined()
-    expect(view.tiers).toEqual([])
     expect(view.usageRows).toEqual([])
   })
 
