@@ -175,7 +175,7 @@ PROFILE_CREDENTIAL_PATHS = frozenset({
     "pairing", "platforms/pairing", "feishu_comment_pairing.json",
     "whatsapp/session", "platforms/whatsapp/session", "matrix/store", "platforms/matrix/store",
     "cache/bws_cache.json", "cache/bws_cache.enc.json",
-    "workspace/meetings/node_token.json",  # google_meet node RPC secret
+    "workspace/meetings/node_token.json",  # legacy google_meet node RPC secret (old profiles)
     "weixin/accounts",              # WeChat bot tokens + per-peer context tokens
     ".copilot_jwt.json",            # exchanged Copilot API token
     "runtime/photon-sidecar.json",  # Photon sidecar auth token

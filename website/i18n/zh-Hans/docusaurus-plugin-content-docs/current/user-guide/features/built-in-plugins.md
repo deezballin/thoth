@@ -57,7 +57,6 @@ hermes plugins disable disk-cleanup
 |---|---|---|
 | `disk-cleanup` | hook + 斜杠命令 | 自动追踪临时文件并在会话结束时清理 |
 | `observability/langfuse` | hook | 将轮次 / LLM 调用 / 工具追踪到 [Langfuse](https://langfuse.com) |
-| `google_meet` | 独立插件 | 加入 Meet 通话、实时字幕转录、可选实时双工音频 |
 | `image_gen/openai` | 图像后端 | OpenAI `gpt-image-2` 图像生成后端（FAL 的替代方案） |
 | `image_gen/openai-codex` | 图像后端 | 通过 Codex OAuth 使用 OpenAI 图像生成 |
 | `image_gen/xai` | 图像后端 | xAI `grok-2-image` 后端 |
@@ -179,36 +178,6 @@ Hermes 前缀的环境变量和标准 SDK 环境变量（`LANGFUSE_PUBLIC_KEY`�
 **性能：** Langfuse 客户端在第一次 hook 调用后被缓存。如果凭据或 SDK 缺失，该决定也会被缓存——后续 hook 会快速返回，不再重新检查环境变量或重新加载配置。
 
 **禁用：** `hermes plugins disable observability/langfuse`。插件模块仍会被发现，但在你重新启用之前不会运行任何模块代码。
-
-### google_meet
-
-让 agent **加入、转录并参与 Google Meet 通话**——记录会议笔记、事后总结对话内容、跟进特定要点，并可选择通过 TTS 将回复发回通话中。
-
-**新增功能：**
-
-- 使用浏览器自动化加入 Meet URL 的无头虚拟参与者
-- 通过配置的 STT 提供者对会议音频进行实时转录
-- agent 调用的 `meet_summarize` / `meet_speak` / `meet_followup` 工具集，用于对所听内容采取行动
-- 会后产物（转录、带发言人归属的笔记、行动项）保存在 `~/.hermes/cache/google_meet/<meeting_id>/`
-
-**设置：**
-
-```bash
-hermes plugins enable google_meet
-# 首次使用时会提示你通过插件的 OAuth 流程登录——
-# 需要有 Meet 访问权限的 Google 账号。如果会议强制要求
-# "仅受邀参与者可加入"，可能需要主持人批准。
-```
-
-在聊天中使用：
-
-> "加入 meet.google.com/abc-defg-hij 并记录笔记。通话结束后，给我发一份包含行动项的摘要。"
-
-agent 会启动会议加入流程，在通话进行时将转录内容流式传输到其上下文中，并在会议结束（或你告知停止）时生成结构化摘要。
-
-**适用场景：** 需要机器人转录并为异步参与者总结的定期站会；需要结构化笔记的访谈式会议；任何原本需要 Fireflies / Otter / Grain 的场景。如果你不希望有 AI 在旁监听——请勿启用。
-
-**禁用：** `hermes plugins disable google_meet`。已缓存的转录和录音保留在 `~/.hermes/cache/google_meet/`，直到你手动删除。
 
 ## 添加内置插件
 
