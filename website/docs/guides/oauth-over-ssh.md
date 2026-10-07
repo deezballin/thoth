@@ -1,12 +1,12 @@
 ---
 sidebar_position: 17
 title: "OAuth over SSH / Remote Hosts"
-description: "How to complete browser-based OAuth (Spotify, MCP servers) when Hermes runs on a remote machine, container, or behind a jump box"
+description: "How to complete browser-based OAuth (MCP servers) when Hermes runs on a remote machine, container, or behind a jump box"
 ---
 
 # OAuth over SSH / Remote Hosts
 
-Some Hermes providers — **Spotify** and **remote MCP servers** (Linear, Sentry, Atlassian, Asana, Figma, …) — use a *loopback redirect* OAuth flow. The auth server redirects your browser to `http://127.0.0.1:<port>/callback` so a tiny HTTP listener started by Hermes can grab the authorization code.
+Some Hermes providers — **remote MCP servers** (Linear, Sentry, Atlassian, Asana, Figma, …) — use a *loopback redirect* OAuth flow. The auth server redirects your browser to `http://127.0.0.1:<port>/callback` so a tiny HTTP listener started by Hermes can grab the authorization code.
 
 This works perfectly when Hermes and your browser are on the same machine. It breaks the moment they aren't: your laptop's browser tries to reach `127.0.0.1` on **your laptop**, but the listener is bound to `127.0.0.1` on **the remote server**.
 
@@ -18,22 +18,21 @@ The fix is a one-line SSH local-forward. For MCP servers on an interactive termi
 
 ```bash
 # On your local machine (laptop), in a separate terminal:
-ssh -N -L 43827:127.0.0.1:43827 user@remote-host
+ssh -N -L <port>:127.0.0.1:<port> user@remote-host
 
 # In your existing SSH session on the remote machine:
-hermes auth spotify --no-browser
-# → Hermes prints an authorize URL. Open it in a browser on your laptop.
-# → Your browser redirects to 127.0.0.1:43827/callback, the tunnel forwards
+hermes mcp login <server>
+# → Hermes prints an authorize URL. Open it in your browser.
+# → Your browser redirects to 127.0.0.1:<port>/callback, the tunnel forwards
 #   the request to the remote listener, login completes.
 ```
 
-Hermes prints the exact port it bound to on the `Waiting for callback on ...` line — copy it from there. Spotify defaults to port `43827`.
+Hermes prints the exact port it bound to on the `Waiting for callback on ...` line — copy it from there. (The examples below use `43827` as a stand-in port.)
 
 ## Which Providers Need This
 
 | Provider | Loopback port | Tunnel needed? |
 |----------|---------------|----------------|
-| Spotify | `43827` (default) | Yes, when Hermes is remote |
 | MCP servers (`auth: oauth`) | auto-picked per server | Yes, when Hermes is remote (or paste redirect URL) |
 | `xai-oauth` (Grok SuperGrok) | n/a | No — device code flow |
 | `anthropic` (Claude Pro/Max) | n/a | No — paste-the-code flow |
@@ -72,7 +71,7 @@ You have two ways to complete it from a remote host:
 
 A bare `?code=...&state=...` query string is accepted too. This works for any MCP server with `auth: oauth` and requires no SSH config changes.
 
-**Option 2 — SSH port forward (same as Spotify).** Hermes prints the exact port it bound to in the SSH-session hint. Open a separate terminal on your laptop:
+**Option 2 — SSH port forward (fixed-port example below).** Hermes prints the exact port it bound to in the SSH-session hint. Open a separate terminal on your laptop:
 
 ```bash
 ssh -N -L <port>:127.0.0.1:<port> user@remote-host
@@ -84,14 +83,14 @@ Then open the authorize URL in your browser as normal; the redirect tunnels thro
 
 ## Why the listener can't just bind 0.0.0.0
 
-Spotify and most MCP OAuth servers validate the `redirect_uri` parameter against an allowlist. Both require the loopback form (`http://127.0.0.1:<exact-port>/callback`). Binding the listener to `0.0.0.0` or a different port would cause the auth server to reject the request as a redirect_uri mismatch. The SSH tunnel keeps the loopback URI intact end-to-end.
+Most MCP OAuth servers validate the `redirect_uri` parameter against an allowlist. Both require the loopback form (`http://127.0.0.1:<exact-port>/callback`). Binding the listener to `0.0.0.0` or a different port would cause the auth server to reject the request as a redirect_uri mismatch. The SSH tunnel keeps the loopback URI intact end-to-end.
 
 ## Step-by-step: single SSH hop
 
 ### 1. Start the tunnel from your local machine
 
 ```bash
-# Spotify (port 43827)
+# Example: fixed port 43827
 ssh -N -L 43827:127.0.0.1:43827 user@remote-host
 ```
 
@@ -101,7 +100,7 @@ ssh -N -L 43827:127.0.0.1:43827 user@remote-host
 
 ```bash
 ssh user@remote-host
-hermes auth spotify --no-browser
+hermes mcp login <server>
 ```
 
 Hermes detects the SSH session, skips the browser auto-open, and prints an authorize URL plus a `Waiting for callback on http://127.0.0.1:<port>/callback` line.
@@ -167,6 +166,5 @@ The tokens are written under the Linux user that ran `hermes auth add ...`. If y
 ## See Also
 
 - [xAI Grok OAuth](./xai-grok-oauth.md) — device code; no SSH tunnel
-- [Spotify (`Running over SSH`)](../user-guide/features/spotify.md#running-over-ssh--in-a-headless-environment)
 - [Native MCP client (OAuth section)](../user-guide/features/mcp.md#oauth-authenticated-http-servers)
 - [SSH `-J` / ProxyJump (man page)](https://man.openbsd.org/ssh#J)

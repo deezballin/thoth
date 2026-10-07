@@ -201,7 +201,7 @@ Hermes 在每次会话前刷新 token，并在收到 401 时响应式地再次�
 hermes auth add xai-oauth --no-browser
 ```
 
-回环重定向类 provider（Spotify、MCP 服务器）请参阅 [OAuth over SSH / Remote Hosts](./oauth-over-ssh.md)。
+回环重定向类 provider（MCP 服务器）请参阅 [OAuth over SSH / Remote Hosts](./oauth-over-ssh.md)。
 
 ### 登录成功后 HTTP 403（套餐 / 权限问题）
 

@@ -1332,7 +1332,7 @@ class TestEnvWriteDenylist:
         "allowed_key",
         [
             "HERMES_LANGFUSE_PUBLIC_KEY",
-            "HERMES_SPOTIFY_CLIENT_ID",
+            "HERMES_GITHUB_TOKEN",
             "HERMES_QWEN_BASE_URL",
             "HERMES_MAX_ITERATIONS",
         ],
@@ -1341,7 +1341,7 @@ class TestEnvWriteDenylist:
         """``HERMES_*`` overall is NOT blocked.
 
         Integration credentials following that convention must keep working
-        or we'd regress provider setup flows (auth.py, Spotify, Langfuse, …).
+        or we'd regress provider setup flows (auth.py, Langfuse, …).
         """
         save_env_value(allowed_key, "test-value-123")
         env = load_env()
@@ -1415,7 +1415,13 @@ class TestEnvWriteDenylist:
             "git_config_parameters", "ld_preload",
         ],
     )
-    def test_non_exec_near_misses_still_writable(self, allowed_key):
+    def test_non_exec_near_misses_still_writable(self, allowed_key, monkeypatch):
+        # POSIX case-sensitivity semantics: lowercase names are distinct from the
+        # uppercase exec-influence denylist entries. Pin the platform so this holds
+        # when the suite runs on Windows (case-insensitive policy) too.
+        import hermes_cli.config as config_mod
+
+        monkeypatch.setattr(config_mod, "_IS_WINDOWS", False)
         save_env_value(allowed_key, "test-value-123")
         env = load_env()
         assert env[allowed_key] == "test-value-123"

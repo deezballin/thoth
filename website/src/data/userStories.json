@@ -440,17 +440,6 @@
     "size": "sm"
   },
   {
-    "id": "reddit-music-library-spotify",
-    "source": "reddit",
-    "author": "u/slowmotionrunner",
-    "url": "https://www.reddit.com/r/hermesagent/comments/1v0gqpg/",
-    "date": "2026-07-19",
-    "category": "creative",
-    "headline": "Fresh workout playlists every morning, then a full MP3 library rebuild",
-    "quote": "I enabled the Spotify integration for this first time this week and put to work having Hermes create two new playlists for me: on that is ~10 minutes for my rowing machine workout and one that is ~25 minutes for my treadmill workout.",
-    "size": "md"
-  },
-  {
     "id": "reddit-typeui-design-skills",
     "source": "reddit",
     "author": "u/elwingo1",

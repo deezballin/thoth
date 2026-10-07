@@ -561,11 +561,10 @@ class TestImagegenModelPicker:
 
 
 
-def test_get_effective_configurable_toolsets_dedupes_bundled_plugins():
-    """Bundled plugins (plugins/spotify) share their toolset key with the
-    built-in CONFIGURABLE_TOOLSETS entry. The effective list must not list
-    them twice — otherwise `hermes tools` → "reconfigure existing" shows
-    the same toolset two rows in a row.
+def test_get_effective_configurable_toolsets_has_no_duplicates():
+    """The effective list must not list the same toolset key twice — otherwise
+    `hermes tools` → "reconfigure existing" shows the same toolset two rows
+    in a row (a bundled plugin sharing a CONFIGURABLE_TOOLSETS key caused this).
     """
     from hermes_cli.tools_config import _get_effective_configurable_toolsets
 
@@ -575,12 +574,6 @@ def test_get_effective_configurable_toolsets_dedupes_bundled_plugins():
         f"duplicate toolset keys in effective list: "
         f"{[k for k in keys if keys.count(k) > 1]}"
     )
-    # Spotify specifically — the bug that motivated the dedupe.
-    spotify_rows = [t for t in all_ts if t[0] == "spotify"]
-    assert len(spotify_rows) == 1, spotify_rows
-    # Built-in label wins over the plugin label.
-    builtin_label = next(label for key, label, _ in CONFIGURABLE_TOOLSETS if key == "spotify")
-    assert spotify_rows[0][1] == builtin_label
 
 
 

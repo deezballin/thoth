@@ -87,7 +87,6 @@ CONFIGURABLE_TOOLSETS = [
     ("clarify",         "❓ Clarifying Questions",      "clarify"),
     ("delegation",      "👥 Task Delegation",           "delegate_task"),
     ("cronjob",         "⏰ Cron Jobs",                 "create/list/update/pause/resume/run, with optional attached skills"),
-    ("spotify",          "🎵 Spotify",                  "playback, search, playlists, library"),
     ("discord",         "💬 Discord (read/participate)", "fetch messages, search members, create thread"),
     ("discord_admin",   "🛡️  Discord Server Admin",    "list channels/roles, pin, assign roles"),
     ("yuanbao",          "🤖 Yuanbao",                  "group info, member queries, DM"),
@@ -107,7 +106,7 @@ def gui_toolset_label(label: str) -> str:
 
 # OFF by default for new installs (still in _HERMES_CORE_TOOLS; the checklist won't pre-select them). x_search
 # auto-enables when xAI creds exist; its check_fn still gates the schema.
-_DEFAULT_OFF_TOOLSETS = {"spotify", "discord", "discord_admin", "video", "video_gen", "x_search", "a2a", "kanban"}
+_DEFAULT_OFF_TOOLSETS = {"discord", "discord_admin", "video", "video_gen", "x_search", "a2a", "kanban"}
 
 # Config-only capabilities: provider setup in `hermes tools` (TOOL_CATEGORIES) but not model toolsets — zero
 # schemas, own switch (``stt.enabled``), never in ``platform_toolsets`` or the per-platform checklist.
@@ -345,10 +344,6 @@ TOOL_CATEGORIES = {
                  post_setup="browser_use_cli"),
         ],
     },
-    "spotify": {
-        "name": "Spotify", "icon": "🎵",
-        "providers": [_row("Spotify Web API", tag="PKCE OAuth — opens the setup wizard", post_setup="spotify")],
-    },
     "computer_use": {
         "name": "Computer Use (macOS/Windows/Linux)", "icon": "🖱️",
         # Runtime backends ship for macOS, Windows, Linux (X11; Wayland via XWayland). Gaps surface via `computer-use doctor`.
@@ -495,7 +490,7 @@ def _explicit_toolsets(
     toolset_names: List[str], explicit_known_keys: Set[str], config: dict, platform: str,
     explicitly_configured: bool) -> Set[str]:
     """Enabled set when the saved list names configurable/plugin keys directly (subset inference over
-    ``hermes-cli`` would re-enable disabled toolsets). A mixed list (``[hermes-cli, spotify]``) still expands the
+    ``hermes-cli`` would re-enable disabled toolsets). A mixed list (``[hermes-cli, discord]``) still expands the
     composite; _DEFAULT_OFF_TOOLSETS applies to that implicit expansion only."""
     from toolsets import resolve_toolset, TOOLSETS
 
@@ -524,7 +519,7 @@ def _composite_toolsets(toolset_names: List[str], platform: str, explicitly_conf
 
 
 def _enabled_plugin_toolsets(config: dict, platform: str, toolset_names: List[str], plugin_ts_keys: Set[str]) -> Set[str]:
-    """Plugin toolsets: on by default unless default-off (bundled spotify) or "known" for this platform
+    """Plugin toolsets: on by default unless default-off (e.g. kanban) or "known" for this platform
     (``known_plugin_toolsets``, written on every save) and absent from the saved list."""
     known_for_platform = set((config.get("known_plugin_toolsets", {}) or {}).get(platform, []) or [])
     return {

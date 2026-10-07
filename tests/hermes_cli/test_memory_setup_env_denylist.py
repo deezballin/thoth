@@ -106,7 +106,7 @@ def test_legitimate_hermes_integration_key_still_writable():
     """``HERMES_*`` overall is NOT blocked — only the four runtime
     location names (HOME/PROFILE/CONFIG/ENV). Integration credentials
     following the ``HERMES_*`` convention (HERMES_LANGFUSE_*,
-    HERMES_SPOTIFY_*, HERMES_QWEN_BASE_URL, ...) must keep working or
+    HERMES_GITHUB_*, HERMES_QWEN_BASE_URL, ...) must keep working or
     the memory-setup wizard regresses for every plugin that follows
     the convention."""
     _write_env_vars({

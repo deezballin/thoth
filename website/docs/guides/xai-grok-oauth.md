@@ -201,7 +201,7 @@ On SSH or container sessions Hermes prints the verification URL and user code in
 hermes auth add xai-oauth --no-browser
 ```
 
-For loopback-redirect providers (Spotify, MCP servers), see [OAuth over SSH / Remote Hosts](./oauth-over-ssh.md).
+For loopback-redirect providers (MCP servers), see [OAuth over SSH / Remote Hosts](./oauth-over-ssh.md).
 
 ### HTTP 403 after a successful login (tier / entitlement)
 
@@ -236,7 +236,7 @@ This clears both the singleton OAuth entry in `auth.json` and any credential-poo
 
 ## See Also
 
-- [OAuth over SSH / Remote Hosts](./oauth-over-ssh.md) — SSH tunnels for loopback-redirect providers (Spotify, MCP); xAI uses device code and does not need a tunnel
+- [OAuth over SSH / Remote Hosts](./oauth-over-ssh.md) — SSH tunnels for loopback-redirect providers (MCP); xAI uses device code and does not need a tunnel
 - [AI Providers reference](../integrations/providers.md)
 - [Environment Variables](../reference/environment-variables.md)
 - [Configuration](../user-guide/configuration.md)

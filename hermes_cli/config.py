@@ -85,7 +85,7 @@ _ENV_VAR_NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 # and Hermes runtime-location / security-policy flags (config.yaml is the supported surface).
 #
 # ``HERMES_*`` overall is NOT blocked — many integration credentials use that prefix
-# (HERMES_LANGFUSE_PUBLIC_KEY, HERMES_SPOTIFY_CLIENT_ID, ...). The denylist is name-by-name so
+# (HERMES_LANGFUSE_PUBLIC_KEY, HERMES_GITHUB_TOKEN, ...). The denylist is name-by-name so
 # it cannot break provider setup wizards. Enforced on *write* only: pre-existing/out-of-band
 # ``.env`` values keep working; the dashboard's writable surface just cannot escalate.
 
