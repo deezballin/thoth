@@ -18,12 +18,21 @@ envs in engaged multi-session hosts.
 """
 
 import os
+import shutil
 import subprocess
+
+import pytest
 
 from hermes_cli.main import _advertise_agent_env
 
 # Registry id — must stay in sync with huggingface.js agent-harnesses.ts.
 HARNESS_ID = "hermes-agent"
+
+# Windows searches System32 — where the WSL `bash.exe` shim lives — BEFORE
+# PATH, and that shim re-runs our -c script through the distro shell, which
+# expands $-references before the wrapped script ever executes. Resolve the
+# real shell on PATH instead of relying on bare-name lookup.
+BASH = shutil.which("bash")
 
 
 class TestAdvertiseAgentEnv:
@@ -61,19 +70,22 @@ class TestWrapCommandAdvertisesHarness:
 
     def test_shell_sets_default_and_preserves_outer(self):
         """Run the wrapped script through real bash both ways."""
+        if BASH is None:
+            pytest.skip("bash is not available")
+
         wrapped = self._wrap('echo "AI=$AI_AGENT HERMES=$HERMES_AGENT"')
 
         clean_env = {k: v for k, v in os.environ.items()
                      if k not in ("AI_AGENT", "HERMES_AGENT")}
         out = subprocess.run(
-            ["bash", "-c", wrapped], capture_output=True, text=True,
+            [BASH, "-c", wrapped], capture_output=True, text=True,
             env=clean_env, timeout=30,
         )
         assert f"AI={HARNESS_ID} HERMES=true" in out.stdout
 
         outer_env = dict(clean_env, AI_AGENT="pi", HERMES_AGENT="false")
         out = subprocess.run(
-            ["bash", "-c", wrapped], capture_output=True, text=True,
+            [BASH, "-c", wrapped], capture_output=True, text=True,
             env=outer_env, timeout=30,
         )
         assert "AI=pi HERMES=false" in out.stdout
