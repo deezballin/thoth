@@ -988,7 +988,6 @@ Defaults to `false`. Only platforms whose adapter implements `delete_message` ho
 - [QQBot Setup](qqbot.md)
 - [Yuanbao Setup](yuanbao.md)
 - [Microsoft Teams Setup](teams.md)
-- [Teams Meetings Pipeline](teams-meetings.md)
 - [Microsoft Graph Webhook Listener](msgraph-webhook.md)
 - [LINE Setup](line.md)
 - [ntfy Setup](ntfy.md)

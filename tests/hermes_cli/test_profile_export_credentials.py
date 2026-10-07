@@ -15,7 +15,6 @@ import pytest
 
 from agent.file_safety import HOME_CREDENTIAL_DIRS
 from hermes_cli.profiles import export_profile
-from plugins.teams_pipeline.store import DEFAULT_TEAMS_PIPELINE_STORE_FILENAME
 
 # Long enough to match agent.redact prefix patterns (sk- + 10+ chars).
 _LEAKED_KEY = "sk-or-v1-reallyLongSecretKeyValue12345678"
@@ -33,7 +32,7 @@ _EXTRA_STORES = {
     ".op.env", "npmrc", "honcho.json", "google_chat_user_token.json", "google_chat_user_oauth_pending",
     "workspace/meetings/node_token.json", "weixin/accounts", ".copilot_jwt.json", "proxy", "chrome-debug",
     "home/.git-credentials", "home/.config/gh/hosts.yml", "backups", "state-snapshots",
-    DEFAULT_TEAMS_PIPELINE_STORE_FILENAME, "mem0.json",
+    "teams_pipeline_store.json", "mem0.json",  # legacy store name kept so old profiles still scrub
     "browser-profiles/live/Default/Cookies", "browser_profiles/default/Default/Login Data",
     "mcp-tokens/srv.json", "vault/vault.key", "platforms/pairing/approved.json", "slack_tokens.json",
     "webhook_subscriptions.json", ".ssh/id_rsa", ".aws/credentials", ".gnupg/x", ".kube/config", ".envrc",

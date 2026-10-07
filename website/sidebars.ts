@@ -317,7 +317,6 @@ const sidebars: SidebarsConfig = {
           label: 'Microsoft 365',
           items: [
             'user-guide/messaging/teams',
-            'user-guide/messaging/teams-meetings',
             'user-guide/messaging/msgraph-webhook',
           ],
         },
@@ -405,7 +404,6 @@ const sidebars: SidebarsConfig = {
         'guides/xai-grok-oauth',
         'guides/oauth-over-ssh',
         'guides/microsoft-graph-app-registration',
-        'guides/operate-teams-meeting-pipeline',
       ],
     },
     {

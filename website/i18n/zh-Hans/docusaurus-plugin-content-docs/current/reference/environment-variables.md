@@ -446,19 +446,6 @@ Graph 事件（Teams 会议、日历、聊天等）的入站变更通知监听�
 | `MSGRAPH_WEBHOOK_ACCEPTED_RESOURCES` | 逗号分隔的 Graph 资源路径/模式白名单（例如 `communications/onlineMeetings,chats/*/messages`）。末尾 `*` 为前缀匹配。为空则接受所有。 |
 | `MSGRAPH_WEBHOOK_ALLOWED_SOURCE_CIDRS` | 允许 POST 到监听器的逗号分隔 CIDR 范围（例如 `52.96.0.0/14,52.104.0.0/14`）。为空则允许所有（默认）。生产环境中应限制为 Microsoft Graph 公布的出口范围。 |
 
-### Teams 会议摘要投递
-
-仅在启用 [`teams_pipeline` 插件](../user-guide/messaging/msgraph-webhook.md)时使用。设置也可在 `config.yaml` 的 `platforms.teams.extra` 下配置——两者都设置时环境变量优先。参见 [Microsoft Teams → 会议摘要投递](../user-guide/messaging/teams.md#会议摘要投递teams-会议-pipeline)。
-
-| 变量 | 描述 |
-|----------|-------------|
-| `TEAMS_DELIVERY_MODE` | `graph` 或 `incoming_webhook`。 |
-| `TEAMS_INCOMING_WEBHOOK_URL` | Teams 生成的 webhook URL；`TEAMS_DELIVERY_MODE=incoming_webhook` 时必填。 |
-| `TEAMS_GRAPH_ACCESS_TOKEN` | Graph 投递的预获取委托访问 token。极少需要——未设置时 writer 回退到 `MSGRAPH_*` 应用凭证。 |
-| `TEAMS_TEAM_ID` | 频道投递的目标 Team ID（`graph` 模式）。 |
-| `TEAMS_CHANNEL_ID` | 目标频道 ID（与 `TEAMS_TEAM_ID` 配对）。 |
-| `TEAMS_CHAT_ID` | 目标 1:1 或群聊 ID（`graph` 模式下 team+channel 的替代方案）。 |
-
 ### LINE Messaging API
 
 由内置 LINE 平台插件（`plugins/platforms/line/`）使用。完整设置详见 [消息 Gateway → LINE](../user-guide/messaging/line.md)。

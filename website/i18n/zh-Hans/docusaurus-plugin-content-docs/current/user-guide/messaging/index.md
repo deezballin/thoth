@@ -564,6 +564,5 @@ display:
 - [QQBot 配置](qqbot.md)
 - [Yuanbao 配置](yuanbao.md)
 - [Microsoft Teams 配置](teams.md)
-- [Teams 会议流水线](teams-meetings.md)
 - [Open WebUI + API Server](open-webui.md)
 - [Webhooks](webhooks.md)

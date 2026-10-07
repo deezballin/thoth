@@ -611,19 +611,6 @@ Inbound change-notification listener for Graph events (Teams meetings, calendar,
 | `MSGRAPH_WEBHOOK_ACCEPTED_RESOURCES` | Comma-separated allowlist of Graph resource paths/patterns (e.g. `communications/onlineMeetings,chats/*/messages`). Trailing `*` is prefix-matching. Empty = accept all. |
 | `MSGRAPH_WEBHOOK_ALLOWED_SOURCE_CIDRS` | Comma-separated CIDR ranges allowed to POST to the listener (e.g. `52.96.0.0/14,52.104.0.0/14`). Empty = allow all (default). Restrict to Microsoft Graph's published egress ranges in production. |
 
-### Teams Meeting Summary Delivery
-
-Only used when the [`teams_pipeline` plugin](../user-guide/messaging/msgraph-webhook.md) is enabled. Settings are also configurable under `platforms.teams.extra` in `config.yaml` — env vars take priority when both are set. See [Microsoft Teams → Meeting Summary Delivery](../user-guide/messaging/teams.md#meeting-summary-delivery-teams-meeting-pipeline).
-
-| Variable | Description |
-|----------|-------------|
-| `TEAMS_DELIVERY_MODE` | `graph` or `incoming_webhook`. |
-| `TEAMS_INCOMING_WEBHOOK_URL` | Teams-generated webhook URL; required when `TEAMS_DELIVERY_MODE=incoming_webhook`. |
-| `TEAMS_GRAPH_ACCESS_TOKEN` | Pre-acquired delegated access token for Graph delivery. Rarely needed — the writer falls back to the `MSGRAPH_*` app credentials when unset. |
-| `TEAMS_TEAM_ID` | Target Team ID for channel delivery (`graph` mode). |
-| `TEAMS_CHANNEL_ID` | Target channel ID (paired with `TEAMS_TEAM_ID`). |
-| `TEAMS_CHAT_ID` | Target 1:1 or group chat ID (alternative to team+channel for `graph` mode). |
-
 ### LINE Messaging API
 
 Used by the bundled LINE platform plugin (`plugins/platforms/line/`). See [Messaging Gateway → LINE](../user-guide/messaging/line.md) for full setup.
