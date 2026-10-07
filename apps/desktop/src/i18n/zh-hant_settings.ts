@@ -990,8 +990,6 @@ export const zhHantSettings = {
       deepLinkErrorTooLarge: '設定內容超過 32KB 上限。'
     },
     model: {
-      setupProviderFallback: '提供方',
-      setUpProvider: name => `設定 ${name}`,
       staleAuxBefore: (count, names) => `${count} 個輔助任務（${names}）仍由 `,
       staleAuxAfter: ' 執行，而非主要模型。',
       staleAuxOtherProviders: '其他提供方',
@@ -1370,8 +1368,6 @@ export const zhHantSettings = {
       haveApiKey: '改用 API 金鑰？',
       intro: '使用訂閱登入，無需複製 API 金鑰。Hermes 會在應用程式中為您完成瀏覽器登入。',
       connected: '已連線',
-      collapse: '收合',
-      connectAnother: '連結其他提供方',
       otherProviders: '其他提供方',
       removeConfirm: provider => `移除 ${provider}？`,
       removeKeyManaged: provider => `${provider} 由 API 金鑰設定。請從 API Keys 中移除。`,

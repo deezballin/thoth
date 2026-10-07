@@ -1429,8 +1429,6 @@ export interface Translations {
       deepLinkErrorTooLarge: string
     }
     model: {
-      setupProviderFallback: string
-      setUpProvider: (name: string) => string
       staleAuxBefore: (count: number, names: string) => string
       staleAuxAfter: string
       staleAuxOtherProviders: string
@@ -1805,8 +1803,6 @@ export interface Translations {
       haveApiKey: string
       intro: string
       connected: string
-      collapse: string
-      connectAnother: string
       otherProviders: string
       disconnect: string
       disconnectInTerminal: string
@@ -3598,66 +3594,10 @@ export interface Translations {
   }
 
   onboarding: {
-    headerTitle: string
-    headerDesc: string
-    preparingInstall: string
-    starting: string
-    lookingUpProviders: string
-    collapse: string
-    otherProviders: string
-    haveApiKey: string
-    chooseLater: string
-    recommended: string
-    connected: string
-    featuredPitch: string
     fireworksPitch: string
     localModelsTitle: string
     localModelsPitch: string
     openRouterPitch: string
-    apiKeyOptions: Record<string, { short: string; description: string }>
-    backToSignIn: string
-    getKey: string
-    replaceCurrent: string
-    pasteApiKey: string
-    localApiKeyPlaceholder: string
-    localModelNamePlaceholder: string
-    couldNotSave: string
-    connecting: string
-    update: string
-    flowSubtitles: Record<string, string>
-    startingSignIn: (provider: string) => string
-    verifyingCode: (provider: string) => string
-    connectedProvider: (provider: string) => string
-    connectedPicking: (provider: string) => string
-    signInFailed: string
-    signInExpired: string
-    signInDidNotFinish: (provider: string) => string
-    tryAgain: string
-    useApiKeyInstead: string
-    errorDetails: string
-    pickDifferentProvider: string
-    signInWith: (provider: string) => string
-    openedBrowser: (provider: string) => string
-    authorizeThere: string
-    copyAuthCode: string
-    pasteAuthCode: string
-    reopenAuthPage: string
-    autoBrowser: (provider: string) => string
-    reopenSignInPage: string
-    waitingAuthorize: string
-    externalPending: (provider: string) => string
-    signedIn: string
-    deviceCodeOpened: (provider: string) => string
-    reopenVerification: string
-    copy: string
-    defaultModel: string
-    freeTier: string
-    pro: string
-    free: string
-    price: (input: string, output: string) => string
-    change: string
-    startChatting: string
-    docs: (provider: string) => string
   }
 
   modelPicker: {
@@ -4182,7 +4122,6 @@ export interface Translations {
       errorUpdateApiKey: string
       /** One-click recovery for an expired/revoked OAuth grant: re-runs that
        *  provider's sign-in flow (auth layer, authKind 'oauth'). */
-      errorSignInAgain: (provider: string) => string
       /** Explains WHY the turn failed for an OAuth 401 — the raw body
        *  ("HTTP 401: User not found.") doesn't say "sign in again". */
       errorOauthExpired: (provider: string) => string
