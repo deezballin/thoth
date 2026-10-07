@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { fieldCopyForSchemaKey } from '@/app/settings/field-copy'
 
 import { TRANSLATIONS } from './catalog'
+import { registerAppLocale, resetAppLocaleRegistry } from './registry'
 import { setRuntimeI18nLocale, translateNow } from './runtime'
-import { zh } from './zh'
 
 describe('desktop i18n runtime translator', () => {
   beforeEach(() => {
@@ -13,14 +13,21 @@ describe('desktop i18n runtime translator', () => {
 
   afterEach(() => {
     setRuntimeI18nLocale('en')
+    resetAppLocaleRegistry()
   })
 
   it('translates string paths for the active runtime locale', () => {
-    setRuntimeI18nLocale('zh')
+    // English is the only bundled catalog; a registered pack is what makes a
+    // second locale renderable, so exercise the active-locale path through it.
+    registerAppLocale('pl', { translations: { boot: { ready: 'Gotowe' } } })
+    setRuntimeI18nLocale('pl')
 
-    expect(translateNow('boot.ready')).toBe(zh.boot.ready)
-    expect(translateNow('assistant.tool.statusRecovered')).toBe(zh.assistant.tool.statusRecovered)
+    expect(translateNow('boot.ready')).toBe('Gotowe')
     expect(translateNow('boot.ready')).not.toBe(TRANSLATIONS.en.boot.ready)
+    // Keys the pack does not carry fall back per key, never to the raw key.
+    expect(translateNow('assistant.tool.statusRecovered')).toBe(
+      TRANSLATIONS.en.assistant.tool.statusRecovered
+    )
   })
 
   it('passes arguments to function translations', () => {
@@ -30,29 +37,15 @@ describe('desktop i18n runtime translator', () => {
     expect(translateNow('notifications.updateReadyMessage', 2)).toContain('2')
   })
 
-  it('keeps translated settings field copy addressable from schema keys', () => {
+  it('keeps settings field copy addressable from schema keys', () => {
     const field = ['display', 'show_reasoning'].join('.')
 
-    expect(fieldCopyForSchemaKey(zh.settings.fieldLabels, field)).toBeTypeOf('string')
-    expect(fieldCopyForSchemaKey(zh.settings.fieldDescriptions, field)).toBeTypeOf('string')
-  })
-
-  it('falls back to English when the active locale cannot resolve a key', () => {
-    const boot = TRANSLATIONS.ja.boot as { ready?: string }
-    const originalReady = boot.ready
-
-    try {
-      boot.ready = undefined
-      setRuntimeI18nLocale('ja')
-
-      expect(translateNow('boot.ready')).toBe(TRANSLATIONS.en.boot.ready)
-    } finally {
-      boot.ready = originalReady
-    }
+    expect(fieldCopyForSchemaKey(TRANSLATIONS.en.settings.fieldLabels, field)).toBeTypeOf('string')
+    expect(fieldCopyForSchemaKey(TRANSLATIONS.en.settings.fieldDescriptions, field)).toBeTypeOf('string')
   })
 
   it('returns the key when no locale can resolve a path', () => {
-    setRuntimeI18nLocale('zh')
+    setRuntimeI18nLocale('zz')
 
     expect(translateNow('missing.path')).toBe('missing.path')
   })

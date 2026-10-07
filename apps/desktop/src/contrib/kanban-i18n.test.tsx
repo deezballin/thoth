@@ -7,7 +7,7 @@ import { createPluginContext } from '@/contrib/plugin'
 import { useContributions } from '@/contrib/react/use-contributions'
 import { registry } from '@/contrib/registry'
 import type { HermesConfigRecord } from '@/hermes'
-import { I18nProvider, useI18n } from '@/i18n'
+import { I18nProvider, registerAppLocale, useI18n } from '@/i18n'
 import type { I18nContextValue } from '@/i18n'
 import { setRuntimeI18nLocale } from '@/i18n/runtime'
 import { contributedKeybindHandler, keybindAction, KEYBINDS_AREA } from '@/lib/keybinds/actions'
@@ -23,6 +23,10 @@ vi.mock('../plugins/kanban/api', async () => ({
 }))
 let i18n: I18nContextValue
 const disposers: Array<() => void> = []
+
+// English is the only bundled catalog now; registering zh (empty) keeps the
+// starting locale renderable so the plugin's zh bundle stays on screen.
+registerAppLocale('zh', {})
 
 function Contributions() {
   i18n = useI18n()

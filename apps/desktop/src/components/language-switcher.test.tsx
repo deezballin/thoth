@@ -16,6 +16,9 @@ describe('LanguageSwitcher', () => {
   })
 
   it('persists language changes through display.language config', async () => {
+    // English is the only bundled option now, so the picker's second entry
+    // comes from a registered pack (its endonym is what the menu shows).
+    const dispose = registerAppLocale('ja', { endonym: '日本語' })
     const saveConfig = vi.fn().mockResolvedValue({ ok: true })
     const latestConfig: HermesConfigRecord = { display: { language: 'en', skin: 'slate' } }
 
@@ -24,21 +27,25 @@ describe('LanguageSwitcher', () => {
       saveConfig
     }
 
-    render(
-      <I18nProvider configClient={configClient}>
-        <LanguageSwitcher />
-      </I18nProvider>
-    )
+    try {
+      render(
+        <I18nProvider configClient={configClient}>
+          <LanguageSwitcher />
+        </I18nProvider>
+      )
 
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Switch language' }).hasAttribute('disabled')).toBe(false)
-    })
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Switch language' }).hasAttribute('disabled')).toBe(false)
+      })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Switch language' }))
-    fireEvent.click(screen.getByRole('option', { name: /日本語/i }))
+      fireEvent.click(screen.getByRole('button', { name: 'Switch language' }))
+      fireEvent.click(screen.getByRole('option', { name: /日本語/i }))
 
-    await waitFor(() => expect(saveConfig).toHaveBeenCalledTimes(1))
-    expect(saveConfig).toHaveBeenCalledWith({ display: { language: 'ja', skin: 'slate' } })
+      await waitFor(() => expect(saveConfig).toHaveBeenCalledTimes(1))
+      expect(saveConfig).toHaveBeenCalledWith({ display: { language: 'ja', skin: 'slate' } })
+    } finally {
+      dispose()
+    }
   })
 
   it('lists a registered language by endonym, renders its pack, and writes its id to display.language', async () => {

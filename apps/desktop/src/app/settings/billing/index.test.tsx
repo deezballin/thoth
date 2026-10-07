@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import { MemoryRouter } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { type I18nContextValue, I18nProvider, useI18n } from '@/i18n'
+import { type I18nContextValue, I18nProvider, registerAppLocale, useI18n } from '@/i18n'
 
 import { formatMoney } from './billing-amounts'
 import {
@@ -20,6 +20,33 @@ import {
 } from './fixtures.test-util'
 
 import { BillingSettings } from './index'
+
+// English is the only bundled catalog now; the shell-language test drives two
+// registered packs instead of the dropped zh / zh-hant bundles.
+registerAppLocale('zh', {
+  translations: {
+    settings: {
+      billing: {
+        buyCredits: { buyButton: '购买', customAmount: '自定义充值金额' },
+        errors: { stripeUnavailable: { title: 'Stripe 遇到问题' } },
+        sections: { paymentAndCredits: '支付与额度' },
+        summary: { balance: '余额' }
+      }
+    }
+  }
+})
+registerAppLocale('zh-hant', {
+  translations: {
+    settings: {
+      billing: {
+        buyCredits: { buyButton: '購買', customAmount: '自訂儲值金額' },
+        errors: { stripeUnavailable: { title: 'Stripe 遇到問題' } },
+        sections: { paymentAndCredits: '支付與額度' },
+        summary: { balance: '餘額' }
+      }
+    }
+  }
+})
 
 const apiMocks = vi.hoisted(() => ({
   charge: vi.fn(),

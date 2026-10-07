@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { renderCommandsCatalog } from '@/app/session/hooks/use-prompt-actions/utils'
 import type { HermesGateway } from '@/hermes'
-import { I18nProvider, useI18n } from '@/i18n'
+import { I18nProvider, registerAppLocale, resolveTranslations, useI18n } from '@/i18n'
 import { TRANSLATIONS } from '@/i18n/catalog'
 import { setRuntimeI18nLocale } from '@/i18n/runtime'
 import type { Locale } from '@/i18n/types'
@@ -84,6 +84,12 @@ describe('desktop slash description localization', () => {
   })
 
   it('refreshes both cached bare and typed suggestions when the UI locale changes', async () => {
+    // A registered pack supplies the second locale — the bundled catalog is
+    // English-only, so the switch itself is what must repaint descriptions.
+    const dispose = registerAppLocale('pl', {
+      translations: { composer: { commandDescs: { '/new': 'Nowa rozmowa' } } }
+    })
+
     const request = vi.fn(async (method: string) =>
       method === 'commands.catalog'
         ? catalog
@@ -113,25 +119,29 @@ describe('desktop slash description localization', () => {
       </I18nProvider>
     )
 
-    for (const query of ['', 'ne']) {
-      for (const locale of ['en', 'zh', 'ja', 'zh-hant', 'ar', 'ru', 'fr', 'de', 'es', 'en'] as const) {
-        await act(async () => {
-          await api.setLocale!(locale)
-        })
-        await waitFor(
-          () => {
-            const items = api.search!(query)
+    try {
+      for (const query of ['', 'ne']) {
+        for (const locale of ['en', 'pl', 'en'] as const) {
+          await act(async () => {
+            await api.setLocale!(locale)
+          })
+          await waitFor(
+            () => {
+              const items = api.search!(query)
 
-            expect(items.find(item => item.metadata?.command === '/new')?.description).toBe(
-              TRANSLATIONS[locale].composer.commandDescs['/new']
-            )
-            expect(items.find(item => item.metadata?.command === '/my-skill')?.description).toBe(
-              'Author-owned description'
-            )
-          },
-          { timeout: 2000 }
-        )
+              expect(items.find(item => item.metadata?.command === '/new')?.description).toBe(
+                resolveTranslations(locale).composer.commandDescs['/new']
+              )
+              expect(items.find(item => item.metadata?.command === '/my-skill')?.description).toBe(
+                'Author-owned description'
+              )
+            },
+            { timeout: 2000 }
+          )
+        }
       }
+    } finally {
+      dispose()
     }
 
     expect(request).toHaveBeenCalledTimes(2)

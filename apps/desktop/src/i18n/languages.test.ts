@@ -7,34 +7,17 @@ describe('desktop i18n languages', () => {
   it('normalizes supported locale aliases', () => {
     expect(normalizeLocale('en')).toBe('en')
     expect(normalizeLocale('EN-US')).toBe('en')
-    expect(normalizeLocale('zh')).toBe('zh')
-    expect(normalizeLocale('zh-CN')).toBe('zh')
-    expect(normalizeLocale('zh-Hans')).toBe('zh')
-    expect(normalizeLocale(' zh_hans_cn ')).toBe('zh')
-    expect(normalizeLocale('zh-Hant')).toBe('zh-hant')
-    expect(normalizeLocale('zh-TW')).toBe('zh-hant')
-    expect(normalizeLocale('zh_HK')).toBe('zh-hant')
-    expect(normalizeLocale('ja')).toBe('ja')
-    expect(normalizeLocale('ja-JP')).toBe('ja')
-    expect(normalizeLocale('ar')).toBe('ar')
-    expect(normalizeLocale('AR-SA')).toBe('ar')
-    expect(normalizeLocale(' ar_eg ')).toBe('ar')
-    expect(normalizeLocale('ru')).toBe('ru')
-    expect(normalizeLocale('RU-RU')).toBe('ru')
-    expect(normalizeLocale(' ru_ru ')).toBe('ru')
-    expect(normalizeLocale('Русский')).toBe('ru')
-    expect(normalizeLocale('fr')).toBe('fr')
-    expect(normalizeLocale('FR-CA')).toBe('fr')
-    expect(normalizeLocale(' fr_fr ')).toBe('fr')
-    expect(normalizeLocale('Français')).toBe('fr')
-    expect(normalizeLocale('de')).toBe('de')
-    expect(normalizeLocale('DE-AT')).toBe('de')
-    expect(normalizeLocale(' de_ch ')).toBe('de')
-    expect(normalizeLocale('Deutsch')).toBe('de')
-    expect(normalizeLocale('es')).toBe('es')
-    expect(normalizeLocale('ES-419')).toBe('es')
-    expect(normalizeLocale(' es_mx ')).toBe('es')
-    expect(normalizeLocale('Español')).toBe('es')
+    expect(normalizeLocale(' en_us ')).toBe('en')
+  })
+
+  it('falls back to English for languages the app no longer bundles', () => {
+    // Phase 4 dropped the eight non-English families: config and OS values
+    // that used to map onto them must settle on English instead of naming a
+    // catalog the binary cannot render.
+    for (const value of ['zh', 'zh-CN', 'zh-Hans', 'zh-TW', 'zh_HK', 'ja', 'ja-JP', 'ar', 'AR-SA', 'ru', 'RU-RU', 'fr', 'FR-CA', 'de', 'DE-AT', 'es', 'ES-419']) {
+      expect(normalizeLocale(value), value).toBe(DEFAULT_LOCALE)
+      expect(isSupportedLocaleValue(value), value).toBe(false)
+    }
   })
 
   it('falls back to English for empty or unsupported values', () => {
@@ -44,21 +27,20 @@ describe('desktop i18n languages', () => {
   })
 
   it('distinguishes exact locale ids from supported config aliases', () => {
-    expect(isSupportedLocaleValue('zh-CN')).toBe(true)
-    expect(isSupportedLocaleValue('zh-TW')).toBe(true)
-    expect(isSupportedLocaleValue('ja-JP')).toBe(true)
-    expect(isSupportedLocaleValue('ru-RU')).toBe(true)
-    expect(isSupportedLocaleValue('de-DE')).toBe(true)
+    expect(isSupportedLocaleValue('en-US')).toBe(true)
     expect(isSupportedLocaleValue('it')).toBe(false)
-    expect(isLocale('zh-CN')).toBe(false)
-    expect(isLocale('zh')).toBe(true)
-    expect(isLocale('zh-hant')).toBe(true)
-    expect(isLocale('ja')).toBe(true)
-    expect(isLocale('ar')).toBe(true)
-    expect(isLocale('ru')).toBe(true)
-    expect(isLocale('fr')).toBe(true)
-    expect(isLocale('de')).toBe(true)
-    expect(isLocale('es')).toBe(true)
+    expect(isSupportedLocaleValue('zh-CN')).toBe(false)
+    expect(isLocale('en-US')).toBe(false)
+    expect(isLocale('en')).toBe(true)
+    expect(isLocale('zh')).toBe(false)
+    expect(isLocale('zh-hant')).toBe(false)
+    expect(isLocale('ja')).toBe(false)
+    expect(isLocale('ar')).toBe(false)
+  })
+
+  it('bundles exactly English and offers exactly it in the picker', () => {
+    expect(Object.keys(TRANSLATIONS)).toEqual(['en'])
+    expect(LOCALE_OPTIONS.map(option => option.id)).toEqual(['en'])
   })
 
   it('round-trips every picker option through its display.language value to a registered catalog', () => {

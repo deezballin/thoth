@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import { TRANSLATIONS } from '@/i18n'
+import { registerAppLocale, resolveTranslations } from '@/i18n'
 
 import type { BillingRefusal } from './api'
 import { resolveRefusal } from './errors'
@@ -60,10 +60,67 @@ function monthlyCapRowForSpent(spent: string) {
 }
 
 describe('deriveBillingView', () => {
-  it.each(['zh', 'zh-hant'] as const)(
+  // English is the only bundled catalog now, so the localized copy these tests
+  // prove lands (without touching data) comes from a registered pack.
+  const PL_BILLING = {
+    settings: {
+      billing: {
+        summary: { balance: 'Saldo' },
+        state: {
+          notice: {
+            loggedOut: { title: 'Połącz się z kontem Nous' },
+            noCard: { title: 'Brak zapisanej karty' }
+          }
+        },
+        errors: {
+          consentRequired: { title: 'Potwierdzenie karty', message: 'Potwierdź kartę w portalu.' },
+          insufficientScope: { title: 'Wymagana zgoda', message: 'Zezwól na Remote Spending i spróbuj ponownie.' },
+          remoteSpendingRevoked: {
+            title: 'Remote spending zatrzymany',
+            messageByAdmin: 'Administrator zatrzymał remote spending.',
+            messageBySelf: 'Zatrzymałeś remote spending.'
+          },
+          remoteSpendingReconnect: '{0} Połącz się ponownie w Ustawieniach → Gateway.',
+          sessionRevoked: { title: 'Sesja wylogowana', message: 'Zaloguj się ponownie w Ustawieniach → Gateway.' },
+          cliBillingDisabled: {
+            title: 'Remote spending wyłączone',
+            message: 'Remote spending jest wyłączone dla tego konta.'
+          },
+          roleRequired: { title: 'Wymagana rola administratora', message: 'Dodawanie środków wymaga roli administratora.' },
+          idempotencyConflict: { title: 'Rozpocznij nowe doładowanie', message: '🔴 Ten klucz opłaty został już użyty.' },
+          noPaymentMethod: { title: 'Brak zapisanej karty', message: '💳 Brak zapisanej karty do opłat terminalowych.' },
+          orgAccessDenied: { title: 'Brak dostępu do organizacji', message: 'Token nie jest powiązany z Twoją organizacją.' },
+          monthlyCapExceeded: {
+            title: 'Osiągnięto miesięczny limit',
+            messageReached: '🔴 Osiągnięto miesięczny limit.',
+            messageHeadroom: '🔴 Limit osiągnięty — zostało {0}.'
+          },
+          rateLimited: { title: 'Zbyt wiele prób opłat', message: '🟡 Spróbuj ponownie za {0} min.' },
+          stripeUnavailable: { title: 'Stripe ma problemy', message: 'Stripe ma problemy — spróbuj za {0} min' },
+          upgradeCapExceeded: { title: 'Dzienny limit zmian planu', message: 'Dzienny limit zmian planu — spróbuj jutro.' },
+          endpointUnavailable: { title: 'Endpoint rozliczeń niedostępny', message: 'Endpoint rozliczeń nie zwrócił poprawnej odpowiedzi.' },
+          timeout: { title: 'Przekroczono limit czasu', message: 'Żądanie rozliczeń przekroczyło limit czasu.' },
+          transport: { title: 'Błąd połączenia', message: 'Nie udało się połączyć z endpointem rozliczeń.' },
+          default: { title: 'Nieznany błąd', message: 'Nie udało się przetworzyć płatności.' }
+        }
+      }
+    }
+  }
+
+  let disposePl: () => void
+
+  beforeAll(() => {
+    disposePl = registerAppLocale('pl', { translations: PL_BILLING })
+  })
+
+  afterAll(() => {
+    disposePl()
+  })
+
+  it.each(['pl'] as const)(
     'localizes every billing fixture in %s without changing status, amounts or control policy',
     locale => {
-      const b = TRANSLATIONS[locale].settings.billing
+      const b = resolveTranslations(locale).settings.billing
 
       for (const fixture of Object.values(billingDevFixtures)) {
         const english = deriveBillingView(fixture.billing, fixture.subscription)
@@ -85,10 +142,10 @@ describe('deriveBillingView', () => {
     }
   )
 
-  it.each(['zh', 'zh-hant'] as const)(
+  it.each(['pl'] as const)(
     'localizes known refusal titles in %s while preserving identifiers, interpolations and remedies',
     locale => {
-      const copy = TRANSLATIONS[locale].settings.billing.errors
+      const copy = resolveTranslations(locale).settings.billing.errors
 
       const kinds: BillingRefusal['kind'][] = [
         'consent_required',

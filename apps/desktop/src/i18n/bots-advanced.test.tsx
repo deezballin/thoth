@@ -4,7 +4,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { useState } from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
 
-import { I18nProvider, useI18n } from '@/i18n'
+import { I18nProvider, registerAppLocale, useI18n } from '@/i18n'
 import type { I18nContextValue } from '@/i18n'
 import { registerPluginLocales } from '@/i18n/plugin-i18n'
 import { BOTS_LOCALES } from '@/plugins/hermes-bots/i18n'
@@ -50,6 +50,10 @@ vi.mock('@hermes/plugin-sdk', async importOriginal => {
 })
 let i18n: I18nContextValue
 let dispose: () => void
+
+// English is the only bundled catalog now; registering zh (empty) keeps the
+// starting locale renderable so the plugin's zh bundle stays on screen.
+registerAppLocale('zh', {})
 
 function Controls() {
   i18n = useI18n()

@@ -9,6 +9,14 @@ import { $connection } from '@/store/session'
 
 import { useI18n } from './context'
 import { ProfileI18nProvider as I18nProvider } from './profile-provider'
+import { registerAppLocale } from './registry'
+
+// English is the only bundled catalog now. These ids register (empty) so a
+// saved display.language of zh/ja/ar stays renderable across profile and
+// connection switches — the persistence contract under test.
+registerAppLocale('zh', {})
+registerAppLocale('ja', {})
+registerAppLocale('ar', {})
 
 function Probe() {
   const { locale, setLocale, saveError, isSavingLocale } = useI18n()

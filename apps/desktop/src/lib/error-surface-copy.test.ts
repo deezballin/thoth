@@ -19,39 +19,23 @@ const codes = [
   'ssl_cert_verification'
 ] as const
 
-it.each(['zh', 'zh-hant', 'ja'] as const)(
-  'renders provider errors in %s without losing the failing provider identity',
-  locale => {
-    for (const layer of ['network', 'provider', 'endpoint', 'streaming'] as const) {
-      const surface = parseErrorSurface({ layer, code: 'unknown_failure', retryable: true })
-      const copy = errorCardText(TRANSLATIONS[locale].assistant.thread, surface)
-      const english = errorCardText(TRANSLATIONS.en.assistant.thread, surface)
-      expect(copy.title, layer).not.toBe(english.title)
-      expect(copy.body, layer).not.toBe(english.body)
-    }
+it('keeps the failing provider identity in the error card for every failure code', () => {
+  for (const code of codes) {
+    const surface = parseErrorSurface({
+      layer: 'provider',
+      code,
+      provider: 'fixture-provider',
+      provider_label: 'Provider Ω',
+      retryable: true
+    })
 
-    expect(TRANSLATIONS[locale].assistant.thread.errorGenericProvider).not.toBe(
-      TRANSLATIONS.en.assistant.thread.errorGenericProvider
-    )
+    const copy = errorCardText(TRANSLATIONS.en.assistant.thread, surface)
 
-    for (const code of codes) {
-      const surface = parseErrorSurface({
-        layer: 'provider',
-        code,
-        provider: 'fixture-provider',
-        provider_label: 'Provider Ω',
-        retryable: true
-      })
-
-      const copy = errorCardText(TRANSLATIONS[locale].assistant.thread, surface)
-      const english = errorCardText(TRANSLATIONS.en.assistant.thread, surface)
-      expect(copy.title, code).not.toBe(english.title)
-      expect(copy.body, code).not.toBe(english.body)
-      expect(copy.body, code).toContain('Provider Ω')
-      expect(copy.body, code).not.toContain('fixture-provider')
-    }
+    expect(copy.title, code).toBeTruthy()
+    expect(copy.body, code).toContain('Provider Ω')
+    expect(copy.body, code).not.toContain('fixture-provider')
   }
-)
+})
 
 it('does not blame a slow reply when the provider could not be reached', () => {
   // The backend stamps `timeout` for refused connections and DNS failures too

@@ -2,7 +2,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, expect, it, vi } from 'vitest'
 
 import type { DesktopUninstallSummary } from '@/global'
-import { I18nProvider, TRANSLATIONS, useI18n } from '@/i18n'
+import { I18nProvider, registerAppLocale, resolveTranslations, useI18n } from '@/i18n'
 import type { I18nContextValue } from '@/i18n'
 
 import { UninstallSection } from './uninstall-section'
@@ -86,24 +86,64 @@ it('keeps owned-install removal modes and confirms the selected mode', async ():
 it.each(['gui', 'lite', 'full'] as const)(
   'localizes confirmation for %s without changing mode or running before confirmation',
   async (mode: 'gui' | 'lite' | 'full'): Promise<void> => {
-    const run: ReturnType<typeof vi.fn> = vi.fn().mockResolvedValue({ ok: false })
-    vi.stubGlobal('hermesDesktop', {
-      uninstall: { summary: async (): Promise<DesktopUninstallSummary> => summary(true), run }
+    // Two registered packs stand in for the dropped bundled families: the open
+    // confirmation must repaint on a live switch, and the run still waits.
+    const disposePl = registerAppLocale('pl', {
+      translations: {
+        settings: {
+          uninstallSection: {
+            uninstallHermes: 'Deinstalacja Hermes',
+            confirmBody: 'To usuwa {0}. Tego nie można cofnąć.',
+            yesUninstall: 'Tak, deinstaluj',
+            options: {
+              gui: { title: 'Usuń tylko czat GUI', consequence: 'czat GUI (ten aplikacja i jej dane)' },
+              lite: { title: 'Usuń GUI i agenta, zachowaj dane', consequence: 'czat GUI i agenta Hermes (dane zostają)' },
+              full: { title: 'Usuń wszystko', consequence: 'WSZYSTKO — czat GUI, agenta i wszystkie dane' }
+            }
+          }
+        }
+      }
     })
-    render(
-      <I18nProvider configClient={null} initialLocale="zh">
-        <Surface />
-      </I18nProvider>
-    )
-    const zh: (typeof TRANSLATIONS)['zh']['settings']['uninstallSection'] = TRANSLATIONS.zh.settings.uninstallSection
-    await screen.findByText(zh.uninstallHermes)
-    fireEvent.click(screen.getByRole('button', { name: new RegExp(zh.options[mode].title) }))
-    expect(screen.getByText(zh.confirmBody(zh.options[mode].consequence))).toBeTruthy()
-    expect(run).not.toHaveBeenCalled()
-    await act((): Promise<void> => i18n.setLocale('ja'))
-    const ja: (typeof TRANSLATIONS)['ja']['settings']['uninstallSection'] = TRANSLATIONS.ja.settings.uninstallSection
-    expect(screen.getByText(ja.confirmBody(ja.options[mode].consequence))).toBeTruthy()
-    fireEvent.click(screen.getByRole('button', { name: ja.yesUninstall }))
-    expect(run).toHaveBeenCalledWith(mode)
+
+    const disposeJa = registerAppLocale('ja', {
+      translations: {
+        settings: {
+          uninstallSection: {
+            confirmBody: '{0} を削除します。この操作は元に戻せません。',
+            yesUninstall: 'はい、削除します',
+            options: {
+              gui: { title: 'チャット GUI のみを削除', consequence: 'チャット GUI（このアプリとそのデータ）' },
+              lite: { title: 'GUI + エージェントを削除、データは保持', consequence: 'チャット GUI と Hermes エージェント（設定・チャット・シークレットは保持）' },
+              full: { title: 'すべてを削除', consequence: 'すべて — チャット GUI、エージェント、すべての設定・チャット・シークレット・ログ' }
+            }
+          }
+        }
+      }
+    })
+
+    try {
+      const run: ReturnType<typeof vi.fn> = vi.fn().mockResolvedValue({ ok: false })
+      vi.stubGlobal('hermesDesktop', {
+        uninstall: { summary: async (): Promise<DesktopUninstallSummary> => summary(true), run }
+      })
+      render(
+        <I18nProvider configClient={null} initialLocale="pl">
+          <Surface />
+        </I18nProvider>
+      )
+      const pl = resolveTranslations('pl').settings.uninstallSection
+      await screen.findByText(pl.uninstallHermes)
+      fireEvent.click(screen.getByRole('button', { name: new RegExp(pl.options[mode].title) }))
+      expect(screen.getByText(pl.confirmBody(pl.options[mode].consequence))).toBeTruthy()
+      expect(run).not.toHaveBeenCalled()
+      await act((): Promise<void> => i18n.setLocale('ja'))
+      const ja = resolveTranslations('ja').settings.uninstallSection
+      expect(screen.getByText(ja.confirmBody(ja.options[mode].consequence))).toBeTruthy()
+      fireEvent.click(screen.getByRole('button', { name: ja.yesUninstall }))
+      expect(run).toHaveBeenCalledWith(mode)
+    } finally {
+      disposePl()
+      disposeJa()
+    }
   }
 )

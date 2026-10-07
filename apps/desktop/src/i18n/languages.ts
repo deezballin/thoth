@@ -20,54 +20,6 @@ export const LOCALE_OPTIONS = [
     name: LOCALE_ENDONYMS.en,
     englishName: 'English',
     configValue: 'en'
-  },
-  {
-    id: 'zh',
-    name: LOCALE_ENDONYMS.zh,
-    englishName: 'Simplified Chinese',
-    configValue: 'zh'
-  },
-  {
-    id: 'zh-hant',
-    name: LOCALE_ENDONYMS['zh-hant'],
-    englishName: 'Traditional Chinese',
-    configValue: 'zh-hant'
-  },
-  {
-    id: 'ja',
-    name: LOCALE_ENDONYMS.ja,
-    englishName: 'Japanese',
-    configValue: 'ja'
-  },
-  {
-    id: 'ar',
-    name: LOCALE_ENDONYMS.ar,
-    englishName: 'Arabic',
-    configValue: 'ar'
-  },
-  {
-    id: 'ru',
-    name: LOCALE_ENDONYMS.ru,
-    englishName: 'Russian',
-    configValue: 'ru'
-  },
-  {
-    id: 'fr',
-    name: LOCALE_ENDONYMS.fr,
-    englishName: 'French',
-    configValue: 'fr'
-  },
-  {
-    id: 'de',
-    name: LOCALE_ENDONYMS.de,
-    englishName: 'German',
-    configValue: 'de'
-  },
-  {
-    id: 'es',
-    name: LOCALE_ENDONYMS.es,
-    englishName: 'Spanish',
-    configValue: 'es'
   }
 ] as const satisfies readonly { configValue: string; englishName: string; id: BundledLocale; name: string }[]
 
@@ -133,80 +85,7 @@ export function languageOptions(): LanguageOption[] {
 const LOCALE_ALIASES: Record<string, BundledLocale> = {
   en: 'en',
   'en-us': 'en',
-  en_us: 'en',
-  zh: 'zh',
-  'zh-cn': 'zh',
-  zh_cn: 'zh',
-  'zh-hans': 'zh',
-  zh_hans: 'zh',
-  'zh-hans-cn': 'zh',
-  zh_hans_cn: 'zh',
-  'zh-tw': 'zh-hant',
-  zh_tw: 'zh-hant',
-  'zh-hk': 'zh-hant',
-  zh_hk: 'zh-hant',
-  'zh-mo': 'zh-hant',
-  zh_mo: 'zh-hant',
-  'zh-hant': 'zh-hant',
-  zh_hant: 'zh-hant',
-  'zh-hant-tw': 'zh-hant',
-  zh_hant_tw: 'zh-hant',
-  'zh-hant-hk': 'zh-hant',
-  zh_hant_hk: 'zh-hant',
-  ja: 'ja',
-  'ja-jp': 'ja',
-  ja_jp: 'ja',
-  ar: 'ar',
-  'ar-sa': 'ar',
-  ar_sa: 'ar',
-  'ar-ae': 'ar',
-  ar_ae: 'ar',
-  'ar-eg': 'ar',
-  ar_eg: 'ar',
-  arabic: 'ar',
-  العربية: 'ar',
-  ru: 'ru',
-  'ru-ru': 'ru',
-  ru_ru: 'ru',
-  'ru-by': 'ru',
-  'ru-kz': 'ru',
-  russian: 'ru',
-  'russian-russian': 'ru',
-  русский: 'ru',
-  руский: 'ru',
-  fr: 'fr',
-  'fr-fr': 'fr',
-  fr_fr: 'fr',
-  'fr-be': 'fr',
-  fr_be: 'fr',
-  'fr-ca': 'fr',
-  fr_ca: 'fr',
-  'fr-ch': 'fr',
-  fr_ch: 'fr',
-  french: 'fr',
-  français: 'fr',
-  francais: 'fr',
-  de: 'de',
-  'de-de': 'de',
-  de_de: 'de',
-  'de-at': 'de',
-  de_at: 'de',
-  'de-ch': 'de',
-  de_ch: 'de',
-  german: 'de',
-  deutsch: 'de',
-  es: 'es',
-  'es-es': 'es',
-  es_es: 'es',
-  'es-mx': 'es',
-  es_mx: 'es',
-  'es-ar': 'es',
-  es_ar: 'es',
-  'es-419': 'es',
-  es_419: 'es',
-  spanish: 'es',
-  español: 'es',
-  espanol: 'es'
+  en_us: 'en'
 }
 
 /** A language the app can render right now: bundled or registered. Aliases

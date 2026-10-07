@@ -62,16 +62,6 @@ describe('registerAppLocale', () => {
     expect(actions['nav.settings']).toBe(TRANSLATIONS.en.keybinds.actions['nav.settings'])
   })
 
-  it('layers a pack over the bundled catalog for a bundled id, not over English', () => {
-    registerAppLocale('de', { translations: { common: { save: 'Sichern' } } }, 'backend')
-
-    const de = resolveTranslations('de')
-
-    expect(de.common.save).toBe('Sichern')
-    expect(de.common.cancel).toBe(TRANSLATIONS.de.common.cancel)
-    expect(de.common.cancel).not.toBe(TRANSLATIONS.en.common.cancel)
-  })
-
   it('lets a later source win per key and drops exactly its own layer on dispose', () => {
     const disposeBackend = registerAppLocale(
       'pl',
@@ -150,7 +140,10 @@ describe('languages + registry', () => {
     expect(normalizeLocale('pl_PL')).toBe('en')
     expect(normalizeLocale('PL')).toBe('pl')
     expect(localeConfigValue('pl')).toBe('pl')
-    expect(normalizeLocale('zh-TW')).toBe('zh-hant')
+    // The dropped families no longer resolve: an unbundled, unregistered id
+    // settles on English instead of a catalog that is not compiled in.
+    expect(normalizeLocale('zh-TW')).toBe('en')
+    expect(isSupportedLocaleValue('zh-TW')).toBe(false)
   })
 
   it('lists bundled then registered languages by endonym, with registry rtl and source', () => {
@@ -160,8 +153,8 @@ describe('languages + registry', () => {
     const options = languageOptions()
     const ids = options.map(option => option.id)
 
-    expect(ids.slice(0, 9)).toEqual(Object.keys(TRANSLATIONS))
-    expect(ids.slice(9)).toEqual(['he', 'pl'])
+    expect(ids.slice(0, Object.keys(TRANSLATIONS).length)).toEqual(Object.keys(TRANSLATIONS))
+    expect(ids.slice(Object.keys(TRANSLATIONS).length)).toEqual(['he', 'pl'])
     expect(options.find(option => option.id === 'pl')).toMatchObject({
       endonym: 'Polski',
       englishName: 'Polish',
@@ -169,7 +162,7 @@ describe('languages + registry', () => {
       source: 'backend'
     })
     expect(options.find(option => option.id === 'he')).toMatchObject({ rtl: true, source: 'plugin:hermes-lang-he' })
-    expect(options.find(option => option.id === 'ar')?.rtl).toBe(true)
+    expect(options.find(option => option.id === 'en')?.rtl).toBe(false)
     expect(localeMeta('xx').endonym).toBe('xx')
   })
 })

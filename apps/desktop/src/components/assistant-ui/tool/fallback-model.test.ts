@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { setRuntimeI18nLocale } from '@/i18n'
+import { registerAppLocale, setRuntimeI18nLocale } from '@/i18n'
 
 import {
   buildToolView,
@@ -13,6 +13,20 @@ import {
   type ToolPart,
   toolPreviewOutcome
 } from './fallback-model'
+
+// English is the only bundled catalog now; the runtime-locale test drives a
+// registered ja pack instead of the dropped bundle: the gerund plus the
+// positional action/target template ({1} = target, {0} = action).
+registerAppLocale('ja', {
+  translations: {
+    assistant: {
+      tool: {
+        actions: { read: '読み取り', reading: '読み取り中' },
+        titleTemplates: { actionTarget: '{1} を{0}' }
+      }
+    }
+  }
+})
 
 const part = (overrides: Partial<ToolPart>): ToolPart => ({
   args: {},

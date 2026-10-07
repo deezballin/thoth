@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { atom } from 'nanostores'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { type I18nContextValue, I18nProvider, useI18n } from '@/i18n'
+import { type I18nContextValue, I18nProvider, registerAppLocale, useI18n } from '@/i18n'
 import type { CustomEndpointsResponse } from '@/types/hermes'
 
 const getCustomEndpoints = vi.fn()
@@ -42,6 +42,31 @@ vi.mock('@/store/notifications', () => ({
 const { CustomEndpointsSettings } = await import('./custom-endpoints-settings')
 const { $activeGatewayProfile, $profiles } = await import('@/store/profile')
 const { $settingsScopeOverride } = await import('@/store/settings-scope')
+
+// English is the only bundled catalog now; the localization test drives two
+// registered packs instead of the dropped zh / zh-hant bundles.
+registerAppLocale('zh', {
+  translations: {
+    settings: {
+      customEndpoints: {
+        emptyTitle: '暂无自定义端点',
+        fields: { defaultModel: '默认模型', endpointUrl: '端点 URL', name: '名称' }
+      }
+    }
+  }
+})
+registerAppLocale('zh-hant', {
+  translations: {
+    settings: {
+      customEndpoints: {
+        apiMode: 'API 模式',
+        autoDetect: '自動偵測',
+        fields: { name: '名稱' },
+        save: '儲存'
+      }
+    }
+  }
+})
 
 const emptyResponse: CustomEndpointsResponse = {
   current: { base_url: '', model: '', provider: '' },

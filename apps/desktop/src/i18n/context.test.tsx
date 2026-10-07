@@ -5,11 +5,11 @@ import type { HermesConfigRecord } from '@/hermes'
 
 import { TRANSLATIONS } from './catalog'
 import { type I18nConfigClient, I18nProvider, useI18n } from './context'
-import { registerAppLocale } from './registry'
+import { registerAppLocale, resetAppLocaleRegistry } from './registry'
 import { $requestedLocale } from './runtime'
 import type { Locale } from './types'
 
-function LanguageProbe({ target = 'zh' }: { target?: Locale }) {
+function LanguageProbe({ target = 'pl' }: { target?: Locale }) {
   const { isLoadingConfig, isSavingLocale, locale, saveError, setLocale, t } = useI18n()
 
   return (
@@ -30,6 +30,7 @@ function LanguageProbe({ target = 'zh' }: { target?: Locale }) {
 describe('I18nProvider', () => {
   afterEach(() => {
     cleanup()
+    resetAppLocaleRegistry()
     vi.restoreAllMocks()
   })
 
@@ -45,45 +46,32 @@ describe('I18nProvider', () => {
   })
 
   it('normalizes an initial locale alias and switches translations', async () => {
+    registerAppLocale('pl', { endonym: 'Polski', translations: { language: { label: 'Język' } } })
+
     render(
-      <I18nProvider configClient={null} initialLocale="zh-CN">
-        <LanguageProbe target="en" />
+      <I18nProvider configClient={null} initialLocale="EN-US">
+        <LanguageProbe target="pl" />
       </I18nProvider>
     )
 
-    expect(screen.getByTestId('locale').textContent).toBe('zh')
-    expect(screen.getByTestId('label').textContent).toBe('语言')
+    expect(screen.getByTestId('locale').textContent).toBe('en')
+    expect(screen.getByTestId('label').textContent).toBe('Language')
 
     fireEvent.click(screen.getByRole('button', { name: 'switch' }))
 
-    await waitFor(() => expect(screen.getByTestId('locale').textContent).toBe('en'))
-    expect(screen.getByTestId('label').textContent).toBe('Language')
-  })
-
-  it('loads the initial locale from display.language config', async () => {
-    const configClient: I18nConfigClient = {
-      getConfig: vi.fn().mockResolvedValue({ display: { language: 'zh-Hans' } }),
-      saveConfig: vi.fn()
-    }
-
-    render(
-      <I18nProvider configClient={configClient}>
-        <LanguageProbe />
-      </I18nProvider>
-    )
-
-    await waitFor(() => expect(screen.getByTestId('loading').textContent).toBe('false'))
-
-    expect(screen.getByTestId('locale').textContent).toBe('zh')
-    expect(screen.getByTestId('label').textContent).toBe('语言')
-    expect(configClient.saveConfig).not.toHaveBeenCalled()
+    await waitFor(() => expect(screen.getByTestId('locale').textContent).toBe('pl'))
+    expect(screen.getByTestId('label').textContent).toBe('Język')
   })
 
   it.each([
-    ['fr', 'fr'],
-    ['de-DE', 'de'],
-    ['es', 'es']
+    ['pl', 'pl'],
+    ['PL', 'pl']
   ] as const)('loads display.language=%s and renders the %s catalog', async (configured, locale) => {
+    registerAppLocale('pl', {
+      endonym: 'Polski',
+      translations: { language: { label: 'Język' }, common: { save: 'Zapisz' } }
+    })
+
     const configClient: I18nConfigClient = {
       getConfig: vi.fn().mockResolvedValue({ display: { language: configured } }),
       saveConfig: vi.fn()
@@ -98,20 +86,22 @@ describe('I18nProvider', () => {
     await waitFor(() => expect(screen.getByTestId('loading').textContent).toBe('false'))
 
     expect(screen.getByTestId('locale').textContent).toBe(locale)
-    expect(screen.getByTestId('label').textContent).toBe(TRANSLATIONS[locale].language.label)
+    expect(screen.getByTestId('label').textContent).toBe('Język')
     expect(screen.getByTestId('label').textContent).not.toBe(TRANSLATIONS.en.language.label)
     expect(screen.getByTestId('save').textContent).not.toBe(TRANSLATIONS.en.common.save)
     expect(configClient.saveConfig).not.toHaveBeenCalled()
   })
 
   it('keeps English usable when config loading fails', async () => {
+    registerAppLocale('pl', { endonym: 'Polski', translations: { language: { label: 'Język' } } })
+
     const configClient: I18nConfigClient = {
       getConfig: vi.fn().mockRejectedValue(new Error('config unavailable')),
       saveConfig: vi.fn()
     }
 
     render(
-      <I18nProvider configClient={configClient} initialLocale="zh">
+      <I18nProvider configClient={configClient} initialLocale="pl">
         <LanguageProbe />
       </I18nProvider>
     )
@@ -130,7 +120,7 @@ describe('I18nProvider', () => {
     }
 
     render(
-      <I18nProvider configClient={configClient} initialLocale="zh">
+      <I18nProvider configClient={configClient} initialLocale="en">
         <LanguageProbe />
       </I18nProvider>
     )
@@ -202,6 +192,8 @@ describe('I18nProvider', () => {
   })
 
   it('reads latest config before saving language and preserves unrelated values', async () => {
+    registerAppLocale('pl', { endonym: 'Polski' })
+
     const saveConfig = vi.fn().mockResolvedValue({ ok: true })
 
     const latestConfig: HermesConfigRecord = {
@@ -228,21 +220,23 @@ describe('I18nProvider', () => {
 
     await waitFor(() => expect(saveConfig).toHaveBeenCalledTimes(1))
     expect(saveConfig).toHaveBeenCalledWith({
-      display: { language: 'zh', skin: 'slate' },
+      display: { language: 'pl', skin: 'slate' },
       terminal: { cwd: '/new' }
     })
   })
 
-  it('applies RTL direction for Arabic and restores LTR on switch back', async () => {
+  it('applies RTL direction for a registered language and restores LTR on switch back', async () => {
+    registerAppLocale('he', { endonym: 'עברית', rtl: true }, 'plugin:hermes-lang-he')
+
     render(
-      <I18nProvider configClient={null} initialLocale="ar">
+      <I18nProvider configClient={null} initialLocale="he">
         <LanguageProbe target="en" />
       </I18nProvider>
     )
 
-    expect(screen.getByTestId('locale').textContent).toBe('ar')
+    expect(screen.getByTestId('locale').textContent).toBe('he')
     expect(document.documentElement.dir).toBe('rtl')
-    expect(document.documentElement.lang).toBe('ar')
+    expect(document.documentElement.lang).toBe('he')
 
     fireEvent.click(screen.getByRole('button', { name: 'switch' }))
 
@@ -273,10 +267,12 @@ describe('I18nProvider', () => {
   })
 
   it('retries a transient config failure and applies the persisted locale', async () => {
+    registerAppLocale('pl', { endonym: 'Polski' })
+
     const getConfig = vi
       .fn()
       .mockRejectedValueOnce(new Error('backend not ready yet'))
-      .mockResolvedValueOnce({ display: { language: 'zh-Hans' } })
+      .mockResolvedValueOnce({ display: { language: 'pl' } })
 
     const configClient: I18nConfigClient = {
       getConfig,
@@ -300,7 +296,7 @@ describe('I18nProvider', () => {
     await act(async () => {
       vi.advanceTimersByTime(3_000)
     })
-    expect(screen.getByTestId('locale').textContent).toBe('zh')
+    expect(screen.getByTestId('locale').textContent).toBe('pl')
     expect(getConfig).toHaveBeenCalledTimes(2)
 
     vi.useRealTimers()
@@ -316,7 +312,7 @@ describe('I18nProvider', () => {
     }
 
     render(
-      <I18nProvider configClient={configClient} initialLocale="zh">
+      <I18nProvider configClient={configClient} initialLocale="en">
         <LanguageProbe />
       </I18nProvider>
     )
@@ -384,24 +380,24 @@ describe('I18nProvider', () => {
 
     render(
       <I18nProvider configClient={configClient}>
-        <LanguageProbe target="ja" />
+        <LanguageProbe target="pl" />
       </I18nProvider>
     )
 
     await act(async () => {})
     expect(screen.getByTestId('locale').textContent).toBe('en')
 
-    // User picks Japanese while the startup retry is still pending.
+    // User picks Polish while the startup retry is still pending.
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'switch' }))
     })
-    expect(screen.getByTestId('locale').textContent).toBe('ja')
+    expect(screen.getByTestId('locale').textContent).toBe('pl')
 
     // The retry resolves with the stale on-disk value; the explicit pick wins.
     await act(async () => {
       vi.advanceTimersByTime(3_000)
     })
-    expect(screen.getByTestId('locale').textContent).toBe('ja')
+    expect(screen.getByTestId('locale').textContent).toBe('pl')
 
     vi.useRealTimers()
   })

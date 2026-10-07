@@ -8,7 +8,15 @@ import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import { I18nProvider, setRuntimeI18nLocale } from '@/i18n'
+import { I18nProvider, registerAppLocale, setRuntimeI18nLocale } from '@/i18n'
+
+// English is the only bundled catalog; a registered pack gives the strip a
+// second locale to follow (both the React title and its string twin).
+registerAppLocale('ru', {
+  translations: {
+    sidebar: { sessions: 'Сессии', terminal: 'Терминал', files: 'Файлы' }
+  }
+})
 
 const { registry } = await import('@/contrib/registry')
 

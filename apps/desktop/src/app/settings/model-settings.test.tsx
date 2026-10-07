@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type * as ConfigApi from '@/api/config'
-import { I18nProvider, TRANSLATIONS } from '@/i18n'
+import { I18nProvider, registerAppLocale, resolveTranslations, TRANSLATIONS } from '@/i18n'
 import { $notifications, clearNotifications } from '@/store/notifications'
 
 import { ModelSettings } from './model-settings'
@@ -474,9 +474,21 @@ describe('ModelSettings', () => {
     expect(screen.getByText('nous')).toBeTruthy()
   })
 
-  it.each(['zh', 'zh-hant'] as const)(
-    'localizes stale auxiliary warnings in %s without resetting assignments',
-    async locale => {
+  it('localizes stale auxiliary warnings through a registered pack without resetting assignments', async () => {
+    // The bundle is English-only now; a pack string where English has a
+    // function adapts into the positional formatter the banner renders with.
+    const dispose = registerAppLocale('pl', {
+      translations: {
+        settings: {
+          model: {
+            staleAuxBefore: '{0} zadań aux ({1}) wciąż działa na ',
+            resetAllToMain: 'Zresetuj wszystko do głównego'
+          }
+        }
+      }
+    })
+
+    try {
       getAuxiliaryModels.mockResolvedValueOnce({
         main: { provider: 'nous', model: 'hermes-4' },
         tasks: [{ task: 'curator', provider: 'openrouter', model: 'fixture-model', base_url: '' }]
@@ -484,23 +496,25 @@ describe('ModelSettings', () => {
       const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
       render(
         <MemoryRouter>
-          <I18nProvider configClient={null} initialLocale={locale}>
+          <I18nProvider configClient={null} initialLocale="pl">
             <QueryClientProvider client={client}>
               <ModelSettings />
             </QueryClientProvider>
           </I18nProvider>
         </MemoryRouter>
       )
-      expect(await screen.findByText(/仍由/)).toBeTruthy()
+      expect(await screen.findByText(/wciąż działa na/)).toBeTruthy()
       expect(screen.getByText('openrouter')).toBeTruthy()
       expect(
-        screen.getAllByRole('button', { name: TRANSLATIONS[locale].settings.model.resetAllToMain }).length
+        screen.getAllByRole('button', { name: resolveTranslations('pl').settings.model.resetAllToMain }).length
       ).toBeGreaterThan(0)
       expect(screen.queryByText(/still run on/)).toBeNull()
       expect(setModelAssignment).not.toHaveBeenCalled()
       client.clear()
+    } finally {
+      dispose()
     }
-  )
+  })
 
   it('shows a persistent banner when a loaded aux slot mismatches the main provider', async () => {
     getAuxiliaryModels.mockResolvedValueOnce({
@@ -609,14 +623,33 @@ describe('ModelSettings MoA preset editor', () => {
     saveMoaModels.mockImplementation((body: unknown) => Promise.resolve(body))
   })
 
-  it.each(['zh', 'zh-hant', 'ja'] as const)(
-    'localizes MoA preset and reference controls in %s without changing their saved identities',
-    async locale => {
+  it('localizes MoA preset and reference controls through a registered pack without changing their saved identities', async () => {
+    // Pack strings sit where English has functions, so they arrive as
+    // positional formatters — the same call shape the controls render with.
+    const dispose = registerAppLocale('pl', {
+      translations: {
+        settings: {
+          model: {
+            moaDescription: 'Model Mixture-of-Agents łączy wiele modeli w jeden głos.',
+            moaReferenceHint: 'doradza raz na turę domyślnie',
+            moaAggregatorBilled: 'model działający · rozliczany za uruchomienie',
+            moaReferenceTitle: 'Odniesienie {0}',
+            moaAggregator: 'Agregator',
+            moaAddReference: 'Dodaj model odniesienia',
+            moaSetDefault: 'Ustaw domyślny',
+            moaNewPresetPlaceholder: 'nowy preset',
+            moaReferenceToggle: '{0} odniesienie {1}'
+          }
+        }
+      }
+    })
+
+    try {
       const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-      const m = TRANSLATIONS[locale].settings.model
+      const m = resolveTranslations('pl').settings.model
       render(
         <MemoryRouter>
-          <I18nProvider configClient={null} initialLocale={locale}>
+          <I18nProvider configClient={null} initialLocale="pl">
             <QueryClientProvider client={client}>
               <ModelSettings subpage="moa" />
             </QueryClientProvider>
@@ -644,8 +677,10 @@ describe('ModelSettings MoA preset editor', () => {
         model: 'hermes-4',
         enabled: false
       })
+    } finally {
+      dispose()
     }
-  )
+  })
 
   async function openReferenceEditor() {
     renderModelSettings()

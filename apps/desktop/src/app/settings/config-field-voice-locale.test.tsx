@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, expect, it, vi } from 'vitest'
 
-import { I18nProvider, TRANSLATIONS } from '@/i18n'
+import { I18nProvider, registerAppLocale, resolveTranslations } from '@/i18n'
 
 import { ConfigField } from './config-field'
 import { fieldCopyForSchemaKey } from './field-copy'
@@ -9,12 +9,23 @@ import { fieldCopyForSchemaKey } from './field-copy'
 afterEach(cleanup)
 
 it('renders the translated Echo Transcripts copy without changing its toggle value', () => {
-  for (const locale of ['zh', 'zh-hant'] as const) {
+  // English is the only bundled catalog now; a registered pack carries the
+  // translated field copy and must still replace the English label in place.
+  const dispose = registerAppLocale('pl', {
+    translations: {
+      settings: {
+        fieldLabels: { 'stt.echoTranscripts': 'Rozpisywanie rozmowy' },
+        fieldDescriptions: { 'stt.echoTranscripts': 'Wysyła surową transkrypcję wiadomości głosowych do czatu.' }
+      }
+    }
+  })
+
+  try {
     const onChange = vi.fn()
-    const t = TRANSLATIONS[locale]
+    const t = resolveTranslations('pl')
 
     const { unmount } = render(
-      <I18nProvider configClient={null} initialLocale={locale}>
+      <I18nProvider configClient={null} initialLocale="pl">
         <ConfigField onChange={onChange} schema={{ type: 'boolean' }} schemaKey="stt.echo_transcripts" value={false} />
       </I18nProvider>
     )
@@ -25,6 +36,8 @@ it('renders the translated Echo Transcripts copy without changing its toggle val
     fireEvent.click(screen.getByRole('switch'))
     expect(onChange).toHaveBeenCalledWith(true)
     unmount()
+  } finally {
+    dispose()
   }
 })
 
