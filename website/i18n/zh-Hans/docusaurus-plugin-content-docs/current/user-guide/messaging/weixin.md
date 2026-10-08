@@ -12,7 +12,7 @@ description: "通过 iLink Bot API 将 Hermes Agent 连接到个人微信账号"
 将 Hermes 连接到 [微信](https://weixin.qq.com/)（WeChat），腾讯的个人即时通讯平台。该适配器使用腾讯的 **iLink Bot API** 对接个人微信账号——与企业微信（WeCom）不同。消息通过长轮询（long-polling）方式传递，无需公网端点或 webhook。
 
 :::info
-本适配器适用于**个人微信账号**（微信）。如需对接企业微信，请参阅 [WeCom 适配器](./wecom.md)。
+本适配器适用于**个人微信账号**（微信）。如需对接企业微信，请参阅 WeCom 适配器。
 :::
 
 :::warning iLink bot 身份——普通微信群可能无法使用

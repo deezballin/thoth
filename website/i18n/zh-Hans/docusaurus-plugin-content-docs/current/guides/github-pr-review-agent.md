@@ -50,7 +50,7 @@ description: "构建一个自动化 AI 代码审查器，监控你的仓库、�
   # Authenticate
   gh auth login
   ```
-- **已配置消息通知**（可选）— [Telegram](../user-guide/messaging/telegram.md) 或 [Discord](../user-guide/messaging/discord.md)
+- **已配置消息通知**（可选）— Telegram 或 Discord
 
 :::tip 没有消息通知？没关系
 使用 `deliver: "local"` 将审查结果保存到 `~/.hermes/cron/output/`。在接入通知之前用于测试非常方便。

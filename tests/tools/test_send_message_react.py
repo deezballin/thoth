@@ -8,7 +8,27 @@ import json
 from types import SimpleNamespace
 from unittest.mock import patch
 
+import pytest
+
 import tools.send_message_tool as smt
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _photon_registered():
+    """The photon adapter left core (platforms kill); react dispatch is generic, so keep a
+    minimal registry entry that lets Platform("photon") resolve for these fake-adapter tests."""
+    from gateway.platform_registry import PlatformEntry, platform_registry
+
+    platform_registry.register(
+        PlatformEntry(
+            name="photon",
+            label="Photon",
+            adapter_factory=lambda cfg: None,
+            check_fn=lambda: True,
+        )
+    )
+    yield
+    platform_registry.unregister("photon")
 
 
 class _FakePhotonAdapter:

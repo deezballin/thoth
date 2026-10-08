@@ -138,7 +138,7 @@ def _telegram_thread_kwargs(thread_id):
 def _strip_mdv2_safe(text):
     """Strip MarkdownV2 escapes for the plain-text fallback; identity if unavailable."""
     try:
-        from plugins.platforms.telegram.adapter import _strip_mdv2
+        from tools.telegram_format import _strip_mdv2
         return _strip_mdv2(text)
     except Exception:
         return text
@@ -250,8 +250,8 @@ def _telegram_format(message):
     if re.search(r'<[a-zA-Z/][^>]*>', message):
         return message, ParseMode.HTML, True
     try:
-        from plugins.platforms.telegram.adapter import TelegramAdapter
-        return TelegramAdapter.__new__(TelegramAdapter).format_message(message), ParseMode.MARKDOWN_V2, False
+        from tools.telegram_format import format_message
+        return format_message(message), ParseMode.MARKDOWN_V2, False
     except Exception:
         return message, ParseMode.MARKDOWN_V2, False  # formatting unavailable: send as-is
 
@@ -261,7 +261,7 @@ async def _send_telegram(token, chat_id, message, media_files=None, thread_id=No
     try:
         formatted, send_parse_mode, _has_html = _telegram_format(message)
         bot = _telegram_bot(token)
-        from plugins.platforms.telegram.telegram_ids import normalize_telegram_chat_id
+        from tools.telegram_ids import normalize_telegram_chat_id
         from gateway.platforms.base import BasePlatformAdapter, utf16_len
         # Telegram accepts a numeric chat_id OR an @username string; never force-int.
         # See #13206.

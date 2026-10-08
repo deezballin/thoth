@@ -478,6 +478,6 @@ That progression keeps the debugging surface small.
 
 - [Voice Mode feature reference](../user-guide/features/voice-mode.md)
 - [Messaging Gateway](../user-guide/messaging/index.md)
-- [Discord setup](../user-guide/messaging/discord.md)
-- [Telegram setup](../user-guide/messaging/telegram.md)
+- Discord setup
+- Telegram setup
 - [Configuration](../user-guide/configuration.md)

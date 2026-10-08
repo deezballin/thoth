@@ -9,10 +9,32 @@ import json
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
+import pytest
+
 from gateway.config import Platform
 from tools.send_message_tool import _send_to_platform, send_message_tool
 from tools.send_message_targets import _parse_target_ref
 
+
+@pytest.fixture(scope="module", autouse=True)
+def _killed_platforms_registered():
+    """buzz/photon adapters left core (platforms kill). These tests drive the GENERIC
+    _send_to_platform / resolve_send_target machinery with fake adapters, so register
+    minimal entries that let Platform("buzz"/"photon") resolve."""
+    from gateway.platform_registry import PlatformEntry, platform_registry
+
+    for name in ("buzz", "photon"):
+        platform_registry.register(
+            PlatformEntry(
+                name=name,
+                label=name.title(),
+                adapter_factory=lambda cfg: None,
+                check_fn=lambda: True,
+            )
+        )
+    yield
+    for name in ("buzz", "photon"):
+        platform_registry.unregister(name)
 
 def _run_async_immediately(coro):
     return asyncio.run(coro)

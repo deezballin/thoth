@@ -164,8 +164,8 @@ Whisper 有时会从静音或背景噪音中生成幻觉文字（如"Thank you f
 ## Gateway 语音回复（Telegram 和 Discord）
 
 如果尚未设置消息机器人，请参阅对应平台的指南：
-- [Telegram 设置指南](../messaging/telegram.md)
-- [Discord 设置指南](../messaging/discord.md)
+- Telegram 设置指南
+- Discord 设置指南
 
 启动 gateway 以连接到消息平台：
 
@@ -237,7 +237,7 @@ DISCORD_FREE_RESPONSE_CHANNELS=123456789,987654321
 
 #### 1. Discord Bot 权限
 
-如果您已为文字功能设置了 Discord Bot（参见 [Discord 设置指南](../messaging/discord.md)），需要额外添加语音权限。
+如果您已为文字功能设置了 Discord Bot（参见 Discord 设置指南），需要额外添加语音权限。
 
 前往 [Discord 开发者门户](https://discord.com/developers/applications) → 您的应用 → **Installation** → **Default Install Settings** → **Guild Install**：
 

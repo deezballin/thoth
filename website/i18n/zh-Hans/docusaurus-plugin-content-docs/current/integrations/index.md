@@ -80,9 +80,9 @@ Hermes 内置完整的浏览器自动化功能，提供多种后端选项，用�
 
 ## 消息平台
 
-Hermes 可作为 gateway（网关）机器人运行于 19+ 个消息平台，均通过同一 `gateway` 子系统配置：
+Hermes 可作为 gateway（网关）机器人运行于下列消息平台，均通过同一 `gateway` 子系统配置：
 
-- **[Telegram](../user-guide/messaging/telegram.md)**、**[Discord](../user-guide/messaging/discord.md)**、**[Slack](../user-guide/messaging/slack.md)**、**[WhatsApp](../user-guide/messaging/whatsapp.md)**、**[Signal](../user-guide/messaging/signal.md)**、**[Matrix](../user-guide/messaging/matrix.md)**、**[Mattermost](../user-guide/messaging/mattermost.md)**、**[Email](../user-guide/messaging/email.md)**、**[SMS](../user-guide/messaging/sms.md)**、**[DingTalk](../user-guide/messaging/dingtalk.md)**、**[Feishu/Lark](../user-guide/messaging/feishu.md)**、**[WeCom](../user-guide/messaging/wecom.md)**、**[WeCom Callback](../user-guide/messaging/wecom-callback.md)**、**[Weixin](../user-guide/messaging/weixin.md)**、**[BlueBubbles](../user-guide/messaging/bluebubbles.md)**、**[QQ Bot](../user-guide/messaging/qqbot.md)**、**[Yuanbao](../user-guide/messaging/yuanbao.md)**、**[Home Assistant](../user-guide/messaging/homeassistant.md)**（插件）、**[Microsoft Teams](../user-guide/messaging/teams.md)**、**[Webhooks](../user-guide/messaging/webhooks.md)**
+- **[Signal](../user-guide/messaging/signal.md)**、**[Weixin](../user-guide/messaging/weixin.md)**、**[BlueBubbles](../user-guide/messaging/bluebubbles.md)**、**[QQ Bot](../user-guide/messaging/qqbot.md)**、**[Yuanbao](../user-guide/messaging/yuanbao.md)**、**[Home Assistant](../user-guide/messaging/homeassistant.md)**（插件）、**[Microsoft Graph Webhook](../user-guide/messaging/msgraph-webhook.md)**、**[Open WebUI](../user-guide/messaging/open-webui.md)**、**[Webhooks](../user-guide/messaging/webhooks.md)**
 
 平台对比表和配置指南详见[消息 Gateway 概览](../user-guide/messaging/index.md)。
 

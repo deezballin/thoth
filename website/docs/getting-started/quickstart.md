@@ -264,7 +264,7 @@ Only after the base chat works. Pick what you need:
 hermes gateway setup    # Interactive platform configuration
 ```
 
-Connect [Telegram](../user-guide/messaging/telegram.md), [Discord](../user-guide/messaging/discord.md), [Slack](../user-guide/messaging/slack.md), [WhatsApp](../user-guide/messaging/whatsapp.md), [Signal](../user-guide/messaging/signal.md), [Email](../user-guide/messaging/email.md), [Home Assistant](../user-guide/messaging/homeassistant.md) (plugin), or [Microsoft Teams](../user-guide/messaging/teams.md).
+Connect [Signal](../user-guide/messaging/signal.md), [WhatsApp Business Cloud API](../user-guide/messaging/whatsapp-cloud.md), [Weixin](../user-guide/messaging/weixin.md), [BlueBubbles](../user-guide/messaging/bluebubbles.md), [QQ Bot](../user-guide/messaging/qqbot.md), [Yuanbao](../user-guide/messaging/yuanbao.md), [Home Assistant](../user-guide/messaging/homeassistant.md) (plugin), or [Microsoft Graph Webhook](../user-guide/messaging/msgraph-webhook.md).
 
 ### Automation and tools
 

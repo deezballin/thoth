@@ -430,11 +430,11 @@ You've got a working team Telegram assistant. Here are some next steps:
 
 - **[Security Guide](../user-guide/security.md)** — deep dive into authorization, container isolation, and command approval
 - **[Messaging Gateway](../user-guide/messaging/index.md)** — full reference for gateway architecture, session management, and chat commands
-- **[Telegram Setup](../user-guide/messaging/telegram.md)** — platform-specific details including voice messages and TTS
+- **Telegram Setup** — platform-specific details including voice messages and TTS
 - **[Scheduled Tasks](../user-guide/features/cron.md)** — advanced cron scheduling with delivery options and cron expressions
 - **[Context Files](../user-guide/features/context-files.md)** — AGENTS.md, SOUL.md, and .cursorrules for project knowledge
 - **[Personality](../user-guide/features/personality.md)** — built-in personality presets and custom persona definitions
-- **Add more platforms** — the same gateway can simultaneously run [Discord](../user-guide/messaging/discord.md), [Slack](../user-guide/messaging/slack.md), and [WhatsApp](../user-guide/messaging/whatsapp.md)
+- **Add more platforms** — the same gateway can simultaneously run Discord, Slack, and WhatsApp
 
 ---
 

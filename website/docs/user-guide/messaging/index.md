@@ -1,12 +1,12 @@
 ---
 sidebar_position: 1
 title: "Messaging Gateway"
-description: "Chat with Hermes from Telegram, Discord, Slack, WhatsApp, Signal, SMS, Email, Home Assistant, Mattermost, Matrix, DingTalk, Yuanbao, Microsoft Teams, LINE, Raft, Webhooks, or any OpenAI-compatible frontend via the API server — architecture and setup overview"
+description: "Chat with Hermes from Signal, WhatsApp Business Cloud, Weixin, BlueBubbles (iMessage), QQ, Yuanbao, Home Assistant, Webhooks, or any OpenAI-compatible frontend via the API server — architecture and setup overview"
 ---
 
 # Messaging Gateway
 
-Chat with Hermes from Telegram, Discord, Slack, WhatsApp, Signal, SMS, Email, Home Assistant, Mattermost, Matrix, DingTalk, Feishu/Lark, WeCom, Weixin, BlueBubbles (iMessage), QQ, Yuanbao, Microsoft Teams, LINE, ntfy, or your browser. The gateway is a single background process that connects to all your configured platforms, handles sessions, runs cron jobs, and delivers voice messages.
+Chat with Hermes from Signal, WhatsApp Business Cloud, Weixin, BlueBubbles (iMessage), QQ, Yuanbao, Home Assistant, or your browser. The gateway is a single background process that connects to all your configured platforms, handles sessions, runs cron jobs, and delivers voice messages.
 
 For the full voice feature set — including CLI microphone mode, spoken replies in messaging, and Discord voice-channel conversations — see [Voice Mode](../features/voice-mode.md) and [Use Voice Mode with Hermes](../../guides/use-voice-mode-with-hermes.md).
 
@@ -32,34 +32,13 @@ connected. An enabled platform can correctly show **Messaging gateway stopped**.
 
 | Platform | Voice | Images | Files | Threads | Reactions | Typing | Streaming |
 |----------|:-----:|:------:|:-----:|:-------:|:---------:|:------:|:---------:|
-| Telegram | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ |
-| Discord | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Slack | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Google Chat | — | ✅ | ✅ | ✅ | — | ✅ | — |
-| WhatsApp | — | ✅ | ✅ | — | — | ✅ | ✅ |
 | WhatsApp Cloud API | ✅ | ✅ | ✅ | — | — | ✅ | — |
 | Signal | — | ✅ | ✅ | — | — | ✅ | — |
-| SMS | — | — | — | — | — | — | — |
-| Email | — | ✅ | ✅ | ✅ | — | — | — |
 | Home Assistant (plugin) | — | — | — | — | — | — | — |
-| Mattermost | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ |
-| Matrix | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| DingTalk | — | ✅ | ✅ | — | ✅ | — | ✅ |
-| Feishu/Lark | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| WeCom | ✅ | ✅ | ✅ | — | — | — | — |
-| WeCom Callback | — | — | — | — | — | — | — |
 | Weixin | ✅ | ✅ | ✅ | — | — | ✅ | — |
 | BlueBubbles | — | ✅ | ✅ | — | ✅ | ✅ | — |
-| Photon (iMessage) | ✅ | ✅ | ✅ | — | ✅ | ✅ | — |
 | QQ | ✅ | ✅ | ✅ | — | — | ✅ | — |
 | Yuanbao | ✅ | ✅ | ✅ | — | — | ✅ | ✅ |
-| Microsoft Teams | — | ✅ | — | ✅ | — | ✅ | — |
-| LINE | — | ✅ | ✅ | — | — | ✅ | — |
-| ntfy | — | — | — | — | — | — | — |
-| Raft | — | — | — | — | — | — | — |
-| IRC | — | — | — | — | — | — | — |
-| Buzz | — | ✅ | — | ✅ | — | — | — |
-| SimpleX | ✅ | ✅ | ✅ | — | — | ✅ | — |
 
 **Voice** = TTS audio replies and/or voice message transcription. **Images** = send/receive images. **Files** = send/receive file attachments. **Threads** = threaded conversations. **Reactions** = emoji reactions on messages. **Typing** = typing indicator while processing. **Streaming** = progressive message updates via editing.
 
@@ -73,26 +52,12 @@ connected. An enabled platform can correctly show **Messaging gateway stopped**.
 flowchart TB
     subgraph Gateway["Hermes Gateway"]
         subgraph Adapters["Platform adapters"]
-            tg[Telegram]
-            dc[Discord]
-            wa[WhatsApp]
-            sl[Slack]
-            gc[Google Chat]
             sig[Signal]
-            sms[SMS]
-            em[Email]
             ha[Home Assistant]
-            mm[Mattermost]
-            mx[Matrix]
-            dt[DingTalk]
-    fs[Feishu/Lark]
-    wc[WeCom]
-    wcb[WeCom Callback]
     wx[Weixin]
     bb[BlueBubbles]
     qq[QQ]
     yb[Yuanbao]
-    ms[Microsoft Teams]
     api["API Server<br/>(OpenAI-compatible)"]
     wh[Webhooks]
         end
@@ -102,26 +67,12 @@ flowchart TB
         cron["Cron scheduler<br/>ticks every 60s"]
     end
 
-    tg --> store
-    dc --> store
-    wa --> store
-    sl --> store
-    gc --> store
     sig --> store
-    sms --> store
-    em --> store
     ha --> store
-    mm --> store
-    mx --> store
-    dt --> store
-    fs --> store
-    wc --> store
-    wcb --> store
     wx --> store
     bb --> store
     qq --> store
     yb --> store
-    ms --> store
     api --> store
     wh --> store
     store --> agent
@@ -423,7 +374,7 @@ gateway:
 
 #### Inspecting your access
 
-Use `/whoami` from any platform to see the active scope, your tier (admin / user / unrestricted), and which slash commands you can run. When an admin list is configured, `/help` and `/commands` show a non-admin only the commands they can actually run (`/help`, `/whoami`, plus `user_allowed_commands`); admins see the full catalog. See the [Telegram](./telegram.md#slash-command-access-control) and [Discord](./discord.md#slash-command-access-control) pages for platform-specific examples.
+Use `/whoami` from any platform to see the active scope, your tier (admin / user / unrestricted), and which slash commands you can run. When an admin list is configured, `/help` and `/commands` show a non-admin only the commands they can actually run (`/help`, `/whoami`, plus `user_allowed_commands`); admins see the full catalog. See the Telegram and Discord pages for platform-specific examples.
 
 ## Redirecting the Agent
 
@@ -724,34 +675,19 @@ Each platform has its own toolset:
 | Platform | Toolset | Capabilities |
 |----------|---------|--------------|
 | CLI | `hermes-cli` | Full access |
-| Telegram | `hermes-telegram` | Full tools including terminal |
-| Discord | `hermes-discord` | Full tools including terminal |
-| WhatsApp | `hermes-whatsapp` | Full tools including terminal |
 | WhatsApp Cloud API | `hermes-whatsapp` | Full tools including terminal (shares toolset with the Baileys bridge) |
-| Slack | `hermes-slack` | Full tools including terminal |
-| Google Chat | `hermes-google_chat` | Full tools including terminal |
 | Signal | `hermes-signal` | Full tools including terminal |
-| SMS | `hermes-sms` | Full tools including terminal |
-| Email | `hermes-email` | Full tools including terminal |
 | Home Assistant (plugin) | `hermes-homeassistant` | Full tools + HA device control (ha_list_entities, ha_get_state, ha_call_service, ha_list_services) from the `homeassistant` catalog plugin |
-| Mattermost | `hermes-mattermost` | Full tools including terminal |
-| Matrix | `hermes-matrix` | Full tools including terminal |
-| DingTalk | `hermes-dingtalk` | Full tools including terminal |
-| Feishu/Lark | `hermes-feishu` | Full tools including terminal |
-| WeCom | `hermes-wecom` | Full tools including terminal |
-| WeCom Callback | `hermes-wecom-callback` | Full tools including terminal |
 | Weixin | `hermes-weixin` | Full tools including terminal |
 | BlueBubbles | `hermes-bluebubbles` | Full tools including terminal |
 | QQBot | `hermes-qqbot` | Full tools including terminal |
 | Yuanbao | `hermes-yuanbao` | Full tools including terminal |
-| Microsoft Teams | `hermes-teams` | Full tools including terminal |
 | API Server | `hermes-api-server` | Full tools (drops `clarify`, `text_to_speech` — programmatic access doesn't have an interactive user) |
 | Webhooks | `hermes-webhook` | Full tools including terminal |
-| Raft | `hermes-raft` | Wake-only channel; agent uses Raft CLI for message I/O |
 
 ## Operating a multi-platform gateway
 
-A gateway typically runs several adapters at once (Telegram + Discord + Slack, etc.). The sections below cover day-2 operations that span all platforms.
+A gateway typically runs several adapters at once (Signal + Weixin + BlueBubbles, etc.). The sections below cover day-2 operations that span all platforms.
 
 ### `/platform` command
 
@@ -956,45 +892,21 @@ Tool-progress messages, the "still working…" heartbeat, and status-callback bu
 ```yaml
 display:
   platforms:
-    telegram:
-      cleanup_progress: true
-    discord:
+    signal:
       cleanup_progress: true
 ```
 
-Defaults to `false`. Only platforms whose adapter implements `delete_message` honor the setting (currently Telegram and Discord). Failed runs **skip** cleanup so the bubbles remain as breadcrumbs.
+Defaults to `false`. No bundled adapter currently implements `delete_message`, so the setting has no effect yet. Failed runs **skip** cleanup so the bubbles remain as breadcrumbs.
 
 ## Next Steps
 
-- [Telegram Setup](telegram.md)
-- [Discord Setup](discord.md)
-- [Slack Setup](slack.md)
-- [Google Chat Setup](google_chat.md)
-- [WhatsApp Setup](whatsapp.md)
 - [WhatsApp Business Cloud API Setup](whatsapp-cloud.md)
 - [Signal Setup](signal.md)
-- [SMS Setup (Twilio)](sms.md)
-- [Email Setup](email.md)
 - [Home Assistant Integration](homeassistant.md) (plugin catalog)
-- [Mattermost Setup](mattermost.md)
-- [Matrix Setup](matrix.md)
-- [DingTalk Setup](dingtalk.md)
-- [Feishu/Lark Setup](feishu.md)
-- [WeCom Setup](wecom.md)
-- [WeCom Callback Setup](wecom-callback.md)
 - [Weixin Setup (WeChat)](weixin.md)
 - [BlueBubbles Setup (iMessage)](bluebubbles.md)
-- [Photon Setup (iMessage)](photon.md)
 - [QQBot Setup](qqbot.md)
 - [Yuanbao Setup](yuanbao.md)
-- [Microsoft Teams Setup](teams.md)
 - [Microsoft Graph Webhook Listener](msgraph-webhook.md)
-- [LINE Setup](line.md)
-- [ntfy Setup](ntfy.md)
-- [SimpleX Chat Setup](simplex.md)
 - [Open WebUI + API Server](open-webui.md)
-- [Raft Setup](raft.md)
-- [IRC Setup](irc.md)
-- [Buzz Setup](buzz.md)
-- [A2A (Agent-to-Agent) Setup](a2a.md)
 - [Webhooks](webhooks.md)

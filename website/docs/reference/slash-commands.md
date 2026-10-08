@@ -19,11 +19,11 @@ Every messaging platform that supports a per-user allowlist (Telegram, Discord, 
 
 See the per-platform docs for examples — the structure is identical across platforms:
 
-- [Telegram](../user-guide/messaging/telegram.md#slash-command-access-control)
-- [Discord](../user-guide/messaging/discord.md)
-- [Slack](../user-guide/messaging/slack.md)
-- [Matrix](../user-guide/messaging/matrix.md)
-- [Mattermost](../user-guide/messaging/mattermost.md)
+- Telegram
+- Discord
+- Slack
+- Matrix
+- Mattermost
 - [Signal](../user-guide/messaging/signal.md)
 
 If `allow_admin_from` is unset for a scope, that scope stays in unrestricted backward-compat mode — every allowed user can run every command.
@@ -235,7 +235,7 @@ Commands support prefix matching: typing `/h` resolves to `/help`, `/mod` resolv
 ## Messaging slash commands
 
 > **Slack thread commands (`!` prefix):**
-> Slack itself blocks native slash commands inside message threads ("/queue is not supported in threads. Sorry!") and never delivers them to Hermes. Inside a Slack thread, use the `!` prefix instead — `!stop`, `!new`, `!status` — and the gateway dispatches it exactly like the slash form. `@Hermes !stop` and `@Hermes /stop` work in threads too. Only the first token is checked against the known command list, so messages like `!nice work` pass through to the agent unchanged. See [Using commands inside threads](../user-guide/messaging/slack.md#using-commands-inside-threads-the-cmd-prefix) for details.
+> Slack itself blocks native slash commands inside message threads ("/queue is not supported in threads. Sorry!") and never delivers them to Hermes. Inside a Slack thread, use the `!` prefix instead — `!stop`, `!new`, `!status` — and the gateway dispatches it exactly like the slash form. `@Hermes !stop` and `@Hermes /stop` work in threads too. Only the first token is checked against the known command list, so messages like `!nice work` pass through to the agent unchanged. See Using commands inside threads for details.
 
 The messaging gateway supports the following built-in commands inside Telegram, Discord, Slack, WhatsApp, Signal, Email, Home Assistant, and Teams chats:
 
@@ -253,7 +253,7 @@ The messaging gateway supports the following built-in commands inside Telegram, 
 | `/undo` | Remove the last exchange. |
 | `/sethome` (alias: `/set-home`) | Mark the current chat as the platform home channel for deliveries. |
 | `/compress [here [N] \| focus topic]` | Manually compress conversation context. `/compress here [N]` keeps the most recent N exchanges (default 2) verbatim and summarizes the rest. A focus topic narrows what a full summary preserves. |
-| `/topic [off\|help\|session-id]` | **Telegram DM only.** Manage user-managed multi-session topic mode. `/topic` enables it or shows status; `/topic off` disables it and clears bindings; `/topic help` shows usage; `/topic <session-id>` inside a topic restores a previous session. See [Multi-session DM mode](../user-guide/messaging/telegram.md#multi-session-dm-mode-topic). |
+| `/topic [off\|help\|session-id]` | **Telegram DM only.** Manage user-managed multi-session topic mode. `/topic` enables it or shows status; `/topic off` disables it and clears bindings; `/topic help` shows usage; `/topic <session-id>` inside a topic restores a previous session. See Multi-session DM mode. |
 | `/title [name]` | Set or show the session title. |
 | `/resume [name]` | Resume a previously named session. |
 | `/sessions [all] [search <query>]` | List previous sessions for this chat; the active session appears with a `(current)` marker. `/sessions search <query>` filters by title/id match (most recently active first); `/sessions all` lists across origins (admin only — non-admins get a notice and the chat-scoped list). |

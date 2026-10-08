@@ -272,7 +272,7 @@ description: "Hermes Agent 使用的所有环境变量完整参考"
 | `DISCORD_IGNORED_CHANNELS` | bot 永不响应的逗号分隔频道 ID |
 | `DISCORD_NO_THREAD_CHANNELS` | bot 不自动创建线程的逗号分隔频道 ID |
 | `DISCORD_REPLY_TO_MODE` | 回复引用行为：`off`、`first`（默认）或 `all` |
-| `DISCORD_ALLOW_MENTION_EVERYONE` | 允许 bot ping `@everyone`/`@here`（默认：`false`）。参见 [Mention 控制](../user-guide/messaging/discord.md#提及控制)。 |
+| `DISCORD_ALLOW_MENTION_EVERYONE` | 允许 bot ping `@everyone`/`@here`（默认：`false`）。参见 Mention 控制。 |
 | `DISCORD_ALLOW_MENTION_ROLES` | 允许 bot ping `@role` mention（默认：`false`）。 |
 | `DISCORD_ALLOW_MENTION_USERS` | 允许 bot ping 单个 `@user` mention（默认：`true`）。 |
 | `DISCORD_ALLOW_MENTION_REPLIED_USER` | 回复消息时 ping 原作者（默认：`true`）。 |
@@ -337,7 +337,7 @@ description: "Hermes Agent 使用的所有环境变量完整参考"
 | `FEISHU_ENCRYPT_KEY` | webhook 模式的可选加密密钥 |
 | `FEISHU_VERIFICATION_TOKEN` | webhook 模式的可选验证 token |
 | `FEISHU_ALLOWED_USERS` | 允许向 bot 发送消息的逗号分隔飞书用户 ID |
-| `FEISHU_ALLOW_BOTS` | `none`（默认）/`mentions`/`all`——接受来自其他 bot 的入站消息。参见 [bot 间消息传递](../user-guide/messaging/feishu.md#机器人间消息传递) |
+| `FEISHU_ALLOW_BOTS` | `none`（默认）/`mentions`/`all`——接受来自其他 bot 的入站消息。参见 bot 间消息传递 |
 | `FEISHU_REQUIRE_MENTION` | `true`（默认）/`false`——群组消息是否必须 @mention bot。可通过 `group_rules.<chat_id>.require_mention` 按聊天覆盖。 |
 | `FEISHU_HOME_CHANNEL` | cron 投递和通知的飞书聊天 ID |
 | `WECOM_BOT_ID` | 来自管理控制台的企业微信 AI Bot ID |
@@ -416,7 +416,7 @@ description: "Hermes Agent 使用的所有环境变量完整参考"
 | `API_SERVER_PORT` | API 服务器端口（默认：`8642`） |
 | `API_SERVER_HOST` | API 服务器主机/绑定地址（默认：`127.0.0.1`）。使用 `0.0.0.0` 开放网络访问——需要 `API_SERVER_KEY` 和严格的 `API_SERVER_CORS_ORIGINS` 白名单。 |
 | `API_SERVER_MODEL_NAME` | `/v1/models` 上公告的模型名称。默认为 profile 名称（默认 profile 为 `hermes-agent`）。适用于 Open WebUI 等前端需要每个连接使用不同模型名称的多用户场景。 |
-| `GATEWAY_PROXY_URL` | 将消息转发到的远程 Hermes API 服务器 URL（[代理模式](../user-guide/messaging/matrix.md#代理模式macos-上的-e2ee)）。设置后，gateway 仅处理平台 I/O——所有 agent 工作委托给远程服务器。也可通过 `config.yaml` 中的 `gateway.proxy_url` 配置。 |
+| `GATEWAY_PROXY_URL` | 将消息转发到的远程 Hermes API 服务器 URL（代理模式）。设置后，gateway 仅处理平台 I/O——所有 agent 工作委托给远程服务器。也可通过 `config.yaml` 中的 `gateway.proxy_url` 配置。 |
 | `GATEWAY_PROXY_KEY` | 代理模式下与远程 API 服务器认证的 Bearer token。必须与远程主机上的 `API_SERVER_KEY` 一致。 |
 | `MESSAGING_CWD` | 消息模式下终端命令的工作目录（默认：`~`） |
 | `GATEWAY_ALLOWED_USERS` | 跨所有平台允许的逗号分隔用户 ID |
@@ -448,7 +448,7 @@ Graph 事件（Teams 会议、日历、聊天等）的入站变更通知监听�
 
 ### LINE Messaging API
 
-由内置 LINE 平台插件（`plugins/platforms/line/`）使用。完整设置详见 [消息 Gateway → LINE](../user-guide/messaging/line.md)。
+由内置 LINE 平台插件（`plugins/platforms/line/`）使用。完整设置详见 消息 Gateway → LINE。
 
 | 变量 | 描述 |
 |----------|-------------|
@@ -485,7 +485,7 @@ Graph 事件（Teams 会议、日历、聊天等）的入站变更通知监听�
 | `NTFY_HOME_CHANNEL` | `deliver: ntfy` 的 cron 任务的默认投递目标。 |
 | `NTFY_HOME_CHANNEL_NAME` | 主频道的人类可读标签（默认为话题名称）。 |
 
-在使用不受信任的话题部署前，请参阅 [ntfy 消息指南](../user-guide/messaging/ntfy.md)——特别是**身份模型**部分。
+在使用不受信任的话题部署前，请参阅 ntfy 消息指南——特别是**身份模型**部分。
 
 ### 高级消息调优
 

@@ -427,7 +427,7 @@ no API server is enabled); it serves three kinds of profile-prefixed paths:
 - **WhatsApp (bridge) runs per paired profile.** Pair each secondary with
   `hermes -p work whatsapp`. Each profile uses its own session and bridge port;
   an unpaired profile is skipped with `whatsapp_unpaired` and a pairing remedy.
-  See [WhatsApp multi-profile setup](messaging/whatsapp.md#multiple-profiles).
+  See WhatsApp multi-profile setup.
 - **Relay remains shared ingress owned by the default profile.** Enable and
   configure Relay on the default profile, then route inbound to profiles via
   `profile_routes`. A secondary-only Relay configuration is reported as not served.

@@ -113,13 +113,13 @@ def test_api_server_profile_callback_resolves_routed_profile_adapter_fail_closed
     request = MagicMock()
     request.app = {}
 
-    api.gateway_runner = _Runner({Platform("google_chat"): default}, {"sec": {Platform("google_chat"): secondary}})
+    api.gateway_runner = _Runner({Platform("telegram"): default}, {"sec": {Platform("telegram"): secondary}})
     token = _api_request_profile.set("sec")
     try:
-        assert api._get_platform_callback_adapter(request, "google_chat") is secondary
-        api.gateway_runner = _Runner({Platform("google_chat"): default}, {"sec": {}})
-        assert api._get_platform_callback_adapter(request, "google_chat") is None
+        assert api._get_platform_callback_adapter(request, "telegram") is secondary
+        api.gateway_runner = _Runner({Platform("telegram"): default}, {"sec": {}})
+        assert api._get_platform_callback_adapter(request, "telegram") is None
     finally:
         _api_request_profile.reset(token)
     # No prefix: the primary map, unchanged.
-    assert api._get_platform_callback_adapter(request, "google_chat") is default
+    assert api._get_platform_callback_adapter(request, "telegram") is default

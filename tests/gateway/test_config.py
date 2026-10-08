@@ -185,20 +185,6 @@ class TestGetConnectedPlatforms:
         assert Platform.SLACK not in connected
 
 
-    def test_dingtalk_recognised_via_env_vars(self, monkeypatch):
-        """DingTalk configured via env vars (no extras) should still be
-        recognised as connected — covers the case where _apply_env_overrides
-        hasn't populated extras yet."""
-        monkeypatch.setenv("DINGTALK_CLIENT_ID", "env_cid")
-        monkeypatch.setenv("DINGTALK_CLIENT_SECRET", "env_sec")
-        config = GatewayConfig(
-            platforms={
-                Platform.DINGTALK: PlatformConfig(enabled=True, extra={}),
-            },
-        )
-        assert Platform.DINGTALK in config.get_connected_platforms()
-
-
 class TestStreamingConfig:
 
 
@@ -339,25 +325,6 @@ class TestLoadGatewayConfig:
             config.platforms[Platform.WEBHOOK].extra["secret"]
             == "${WEBHOOK_SECRET_UNSET_FOR_TEST}"
         )
-
-    def test_slack_ignored_channels_config_sets_env_bridge(self, tmp_path, monkeypatch):
-        hermes_home = tmp_path / ".hermes"
-        hermes_home.mkdir()
-        (hermes_home / "config.yaml").write_text(
-            "slack:\n"
-            "  ignored_channels:\n"
-            "    - C0123456789\n"
-            "    - C0987654321\n",
-            encoding="utf-8",
-        )
-
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
-        monkeypatch.delenv("SLACK_IGNORED_CHANNELS", raising=False)
-
-        load_gateway_config()
-
-        assert os.getenv("SLACK_IGNORED_CHANNELS") == "C0123456789,C0987654321"
-
 
     def test_typing_status_text_from_nested_platforms_block(self, tmp_path, monkeypatch):
         """``platforms.slack.typing_status_text`` reaches PlatformConfig via
@@ -882,39 +849,6 @@ class TestLoadGatewayConfig:
         # Env value preserved, not clobbered by yaml.
         assert os.environ.get("DISCORD_THREAD_REQUIRE_MENTION") == "true"
 
-
-    def test_bridges_nested_gateway_platforms_dingtalk_allowed_users_to_env(self, tmp_path, monkeypatch):
-        """gateway.platforms.dingtalk.extra.allowed_users must reach
-        DINGTALK_ALLOWED_USERS — it's the documented config.yaml alternative
-        to the env var (website/docs/user-guide/messaging/dingtalk.md), the
-        adapter reads it from PlatformConfig.extra, but gateway auth
-        (_is_user_authorized) only consults the env var.
-        """
-        hermes_home = tmp_path / ".hermes"
-        hermes_home.mkdir()
-        config_path = hermes_home / "config.yaml"
-        config_path.write_text(
-            "gateway:\n"
-            "  platforms:\n"
-            "    dingtalk:\n"
-            "      enabled: true\n"
-            "      extra:\n"
-            "        allowed_users:\n"
-            "          - user-id-1\n"
-            "          - user-id-2\n",
-            encoding="utf-8",
-        )
-
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
-        monkeypatch.delenv("DINGTALK_ALLOWED_USERS", raising=False)
-
-        config = load_gateway_config()
-
-        assert config.platforms[Platform.DINGTALK].extra["allowed_users"] == [
-            "user-id-1",
-            "user-id-2",
-        ]
-        assert os.environ.get("DINGTALK_ALLOWED_USERS") == "user-id-1,user-id-2"
 
     @pytest.mark.parametrize("yaml_text", ["gateway:\n  allow_all_users: true\n", "allow_all_users: true\n"])
     def test_allow_all_users_yaml_reaches_the_authz_gate(self, tmp_path, monkeypatch, yaml_text):
@@ -1632,12 +1566,11 @@ class TestTopLevelBlockVsAuthoredExtra:
         ("slack", {"extra": {"strict_mention": False, "allow_bots": True}},
          {"strict_mention": True}, None, None),
         ("slack", {"allow_bots": True}, {"strict_mention": True}, None, None),
-        ("slack", {"strict_mention": True, "extra": {"strict_mention": False}}, {}, None, None),
         ("slack", {"strict_mention": True}, {"strict_mention": True}, None, None),
         ("slack", {"reply_to_mode": "all"}, {}, None, None),
         ("telegram", {"extra": {"require_mention": False}}, {"require_mention": True}, False, None),
         ("telegram", {"extra": {"require_mention": False}}, {"require_mention": True}, False, "false"),
-    ], ids=["direct", "subdict", "fill", "block-own-extra", "equal", "no-bridged-key",
+    ], ids=["direct", "subdict", "fill", "equal", "no-bridged-key",
             "telegram-global-fallback", "operator-env"])
     def test_yaml_owner_reaches_adapter(self, platform, block, authored, global_value,
                                        operator_env, tmp_path, monkeypatch, caplog):
@@ -1674,19 +1607,11 @@ class TestTopLevelBlockVsAuthoredExtra:
         assert len(warnings) == len(conflicts)
         for key in conflicts:
             assert sum(bool(re.search(rf"\b{re.escape(key)}\b", msg)) for msg in warnings) == 1
-        if platform == "slack" and "strict_mention" in block:
-            assert os.environ["SLACK_STRICT_MENTION"] == str(expected["strict_mention"]).lower()
-        if "free_response_channels" in block:
-            assert os.environ["SLACK_THREAD_REQUIRE_MENTION"] == "true"
-            assert os.environ["SLACK_FREE_RESPONSE_CHANNELS"] == "C1,C2"
         if platform == "telegram":
-            from gateway.platform_registry import platform_registry
-            entry = next(e for e in platform_registry.all_entries() if e.name == "telegram")
-            cls = entry.adapter_factory.__globals__["TelegramAdapter"]
-            adapter = cls.__new__(cls)
-            adapter.config = PlatformConfig.from_dict(data["platforms"][platform])
-            assert adapter._telegram_require_mention() is (operator_env is None)
-            assert os.environ["TELEGRAM_REQUIRE_MENTION"] == (operator_env or "true")
+            # The telegram adapter's hook is gone, so only core's top-level require_mention
+            # bridge (bridge_core_env_settings) writes this env var — and it must leave an
+            # operator-set value alone.
+            assert os.environ["TELEGRAM_REQUIRE_MENTION"] == (operator_env or "false")
 
     @pytest.mark.parametrize("source,platform", [
         *((source, "slack") for source in ("legacy", "root", "root-extra", "nested",
@@ -1743,8 +1668,8 @@ class TestTopLevelBlockVsAuthoredExtra:
         if source == "legacy":
             assert extra["require_mention"] is False
             assert extra["strict_mention"] is False
-            assert os.environ["SLACK_REQUIRE_MENTION"] == "false"
-            assert os.environ["SLACK_STRICT_MENTION"] == "false"
+        # SLACK_* env bridges lived in the slack adapter's apply_yaml_config_fn hook,
+        # which died with plugins/platforms/slack.
         else:
             assert extra["require_mention"] is True
             assert extra["allow_from"] in (["U_ADMIN"], "U_ADMIN")
@@ -1753,13 +1678,6 @@ class TestTopLevelBlockVsAuthoredExtra:
                 assert extra["strict_mention"] is True
         if source != "managed-extra":
             assert not [r for r in caplog.records if "took precedence" in r.getMessage()]
-        if source == "root-sibling" and platform == "discord":
-            assert os.environ["DISCORD_ALLOWED_USERS"] == "U_ADMIN"
-        if source == "root-sibling" and platform == "telegram":
-            from gateway.platform_registry import platform_registry
-            entry = next(e for e in platform_registry.all_entries() if e.name == "telegram")
-            cls = entry.adapter_factory.__globals__["TelegramAdapter"]
-            adapter = cls.__new__(cls)
-            adapter.config = config.platforms[Platform.TELEGRAM]
-            assert adapter._telegram_require_mention() is True
-            assert os.environ["TELEGRAM_REQUIRE_MENTION"] == "true"
+        # DISCORD_ALLOWED_USERS and the telegram adapter's require_mention reader lived in
+        # plugins/platforms/{discord,telegram} and died with those adapters; the merge
+        # assertions above still cover the core precedence rules for these platform keys.

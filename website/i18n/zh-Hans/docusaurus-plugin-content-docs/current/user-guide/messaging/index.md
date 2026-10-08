@@ -1,12 +1,12 @@
 ---
 sidebar_position: 1
 title: "消息网关"
-description: "通过 Telegram、Discord、Slack、WhatsApp、Signal、SMS、Email、Home Assistant、Mattermost、Matrix、DingTalk、Yuanbao、Microsoft Teams、LINE、Webhooks 或任何兼容 OpenAI 的前端与 Hermes 对话 — 架构与配置概览"
+description: "通过 Signal、WhatsApp Business Cloud、Weixin、BlueBubbles（iMessage）、QQ、Yuanbao、Home Assistant、Webhooks 或任何兼容 OpenAI 的前端与 Hermes 对话 — 架构与配置概览"
 ---
 
 # 消息网关
 
-通过 Telegram、Discord、Slack、WhatsApp、Signal、SMS、Email、Home Assistant、Mattermost、Matrix、DingTalk、Feishu/Lark、WeCom、Weixin、BlueBubbles（iMessage）、QQ、Yuanbao、Microsoft Teams、LINE、ntfy 或浏览器与 Hermes 对话。网关是一个单一后台进程，连接所有已配置的平台，管理会话，运行 cron 任务，并传递语音消息。
+通过 Signal、WhatsApp Business Cloud、Weixin、BlueBubbles（iMessage）、QQ、Yuanbao、Home Assistant 或浏览器与 Hermes 对话。网关是一个单一后台进程，连接所有已配置的平台，管理会话，运行 cron 任务，并传递语音消息。
 
 完整的语音功能集——包括 CLI 麦克风模式、消息中的语音回复以及 Discord 语音频道对话——请参阅 [Voice Mode](../features/voice-mode.md) 和 [Use Voice Mode with Hermes](../../guides/use-voice-mode-with-hermes.md)。
 
@@ -14,28 +14,12 @@ description: "通过 Telegram、Discord、Slack、WhatsApp、Signal、SMS、Emai
 
 | 平台 | 语音 | 图片 | 文件 | 线程 | 表情反应 | 输入提示 | 流式输出 |
 |----------|:-----:|:------:|:-----:|:-------:|:---------:|:------:|:---------:|
-| Telegram | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ |
-| Discord | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Slack | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Google Chat | — | ✅ | ✅ | ✅ | — | ✅ | — |
-| WhatsApp | — | ✅ | ✅ | — | — | ✅ | ✅ |
 | Signal | — | ✅ | ✅ | — | — | ✅ | ✅ |
-| SMS | — | — | — | — | — | — | — |
-| Email | — | ✅ | ✅ | ✅ | — | — | — |
 | Home Assistant（插件） | — | — | — | — | — | — | — |
-| Mattermost | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ |
-| Matrix | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| DingTalk | — | ✅ | ✅ | — | ✅ | — | ✅ |
-| Feishu/Lark | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| WeCom | ✅ | ✅ | ✅ | — | — | — | — |
-| WeCom Callback | — | — | — | — | — | — | — |
 | Weixin | ✅ | ✅ | ✅ | — | — | ✅ | ✅ |
 | BlueBubbles | — | ✅ | ✅ | — | ✅ | ✅ | — |
 | QQ | ✅ | ✅ | ✅ | — | — | ✅ | — |
 | Yuanbao | ✅ | ✅ | ✅ | — | — | ✅ | ✅ |
-| Microsoft Teams | — | ✅ | — | ✅ | — | ✅ | — |
-| LINE | — | ✅ | ✅ | — | — | ✅ | — |
-| ntfy | — | — | — | — | — | — | — |
 
 **语音** = TTS 音频回复和/或语音消息转录。**图片** = 发送/接收图片。**文件** = 发送/接收文件附件。**线程** = 线程式对话。**表情反应** = 对消息添加 emoji 反应。**输入提示** = 处理时显示正在输入状态。**流式输出** = 通过编辑消息实现渐进式更新。
 
@@ -45,26 +29,12 @@ description: "通过 Telegram、Discord、Slack、WhatsApp、Signal、SMS、Emai
 flowchart TB
     subgraph Gateway["Hermes Gateway"]
         subgraph Adapters["Platform adapters"]
-            tg[Telegram]
-            dc[Discord]
-            wa[WhatsApp]
-            sl[Slack]
-            gc[Google Chat]
             sig[Signal]
-            sms[SMS]
-            em[Email]
             ha[Home Assistant]
-            mm[Mattermost]
-            mx[Matrix]
-            dt[DingTalk]
-    fs[Feishu/Lark]
-    wc[WeCom]
-    wcb[WeCom Callback]
     wx[Weixin]
     bb[BlueBubbles]
     qq[QQ]
     yb[Yuanbao]
-    ms[Microsoft Teams]
     api["API Server<br/>(OpenAI-compatible)"]
     wh[Webhooks]
         end
@@ -74,26 +44,12 @@ flowchart TB
         cron["Cron scheduler<br/>ticks every 60s"]
     end
 
-    tg --> store
-    dc --> store
-    wa --> store
-    sl --> store
-    gc --> store
     sig --> store
-    sms --> store
-    em --> store
     ha --> store
-    mm --> store
-    mx --> store
-    dt --> store
-    fs --> store
-    wc --> store
-    wcb --> store
     wx --> store
     bb --> store
     qq --> store
     yb --> store
-    ms --> store
     api --> store
     wh --> store
     store --> agent
@@ -261,7 +217,7 @@ gateway:
 
 #### 查看你的权限
 
-在任意平台使用 `/whoami` 查看当前范围、你的层级（管理员 / 普通用户 / 无限制）以及你可以运行的斜杠命令。平台特定示例请参阅 [Telegram](./telegram.md#slash-command-access-control) 和 [Discord](./discord.md#slash-command-access-control) 页面。
+在任意平台使用 `/whoami` 查看当前范围、你的层级（管理员 / 普通用户 / 无限制）以及你可以运行的斜杠命令。平台特定示例请参阅 Telegram 和 Discord 页面。
 
 ## 中断 Agent
 
@@ -426,32 +382,18 @@ launchd plist 是静态的——如果你在配置网关后安装了新工具（
 | 平台 | 工具集 | 功能 |
 |----------|---------|--------------|
 | CLI | `hermes-cli` | 完全访问 |
-| Telegram | `hermes-telegram` | 完整工具，包括终端 |
-| Discord | `hermes-discord` | 完整工具，包括终端 |
-| WhatsApp | `hermes-whatsapp` | 完整工具，包括终端 |
-| Slack | `hermes-slack` | 完整工具，包括终端 |
-| Google Chat | `hermes-google_chat` | 完整工具，包括终端 |
 | Signal | `hermes-signal` | 完整工具，包括终端 |
-| SMS | `hermes-sms` | 完整工具，包括终端 |
-| Email | `hermes-email` | 完整工具，包括终端 |
 | Home Assistant（插件） | `hermes-homeassistant` | 完整工具 + HA 设备控制（ha_list_entities、ha_get_state、ha_call_service、ha_list_services），由插件目录中的 `homeassistant` 插件提供 |
-| Mattermost | `hermes-mattermost` | 完整工具，包括终端 |
-| Matrix | `hermes-matrix` | 完整工具，包括终端 |
-| DingTalk | `hermes-dingtalk` | 完整工具，包括终端 |
-| Feishu/Lark | `hermes-feishu` | 完整工具，包括终端 |
-| WeCom | `hermes-wecom` | 完整工具，包括终端 |
-| WeCom Callback | `hermes-wecom-callback` | 完整工具，包括终端 |
 | Weixin | `hermes-weixin` | 完整工具，包括终端 |
 | BlueBubbles | `hermes-bluebubbles` | 完整工具，包括终端 |
 | QQBot | `hermes-qqbot` | 完整工具，包括终端 |
 | Yuanbao | `hermes-yuanbao` | 完整工具，包括终端 |
-| Microsoft Teams | `hermes-teams` | 完整工具，包括终端 |
 | API Server | `hermes-api-server` | 完整工具（去除 `clarify`、`send_message`、`text_to_speech`——程序化访问没有交互用户） |
 | Webhooks | `hermes-webhook` | 完整工具，包括终端 |
 
 ## 运营多平台网关
 
-网关通常同时运行多个适配器（Telegram + Discord + Slack 等）。以下章节涵盖跨所有平台的日常运维操作。
+网关通常同时运行多个适配器（Signal + Weixin + BlueBubbles 等）。以下章节涵盖跨所有平台的日常运维操作。
 
 ### `/platform` 命令
 
@@ -534,35 +476,19 @@ Scheduled auto-resume for N restart-interrupted session(s)
 ```yaml
 display:
   platforms:
-    telegram:
-      cleanup_progress: true
-    discord:
+    signal:
       cleanup_progress: true
 ```
 
-默认为 `false`。仅实现了 `delete_message` 的适配器平台支持此设置（目前为 Telegram 和 Discord）。运行失败时**跳过**清理，气泡保留作为调试线索。
+默认为 `false`。目前没有内置适配器实现 `delete_message`，因此该设置暂不生效。运行失败时**跳过**清理，气泡保留作为调试线索。
 
 ## 后续步骤
 
-- [Telegram 配置](telegram.md)
-- [Discord 配置](discord.md)
-- [Slack 配置](slack.md)
-- [Google Chat 配置](google_chat.md)
-- [WhatsApp 配置](whatsapp.md)
 - [Signal 配置](signal.md)
-- [SMS 配置（Twilio）](sms.md)
-- [Email 配置](email.md)
 - [Home Assistant 集成](homeassistant.md)（插件目录）
-- [Mattermost 配置](mattermost.md)
-- [Matrix 配置](matrix.md)
-- [DingTalk 配置](dingtalk.md)
-- [Feishu/Lark 配置](feishu.md)
-- [WeCom 配置](wecom.md)
-- [WeCom Callback 配置](wecom-callback.md)
 - [Weixin 配置（微信）](weixin.md)
 - [BlueBubbles 配置（iMessage）](bluebubbles.md)
 - [QQBot 配置](qqbot.md)
 - [Yuanbao 配置](yuanbao.md)
-- [Microsoft Teams 配置](teams.md)
 - [Open WebUI + API Server](open-webui.md)
 - [Webhooks](webhooks.md)

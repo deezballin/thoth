@@ -63,18 +63,17 @@ async def test_reply_prefix_injected_when_text_absent_from_history():
 @pytest.mark.asyncio
 async def test_telegram_long_reply_reaches_prompt_without_losing_later_items():
     """The native reply already has the full message; preparation must not trim it."""
-    from gateway.platforms.event import MessageType
-    from tests.gateway.test_telegram_reply_quote import _make_adapter, _make_message
-
     quoted = "\n".join(
         f"{index}. {company}: " + "Evidence from the supplied list. " * 12
         for index, company in enumerate(
-            ["GoCar", "Urban Drive", "DubCar", "GRPS", "Halucar"], 1
+            ["GoCar", "Urban Drive", "DubCar", "GRPS", "Halucar"]
         )
     )
-    event = _make_adapter()._build_message_event(
-        _make_message(text="Review all five companies.", reply_to_text=quoted),
-        MessageType.TEXT,
+    event = MessageEvent(
+        text="Review all five companies.",
+        source=_source(),
+        reply_to_message_id="42",
+        reply_to_text=quoted,
     )
     history = [{"role": "user", "content": "Previous request"}]
     result = await _make_runner()._prepare_inbound_message_text(

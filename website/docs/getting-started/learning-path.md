@@ -49,18 +49,16 @@ Use Hermes Agent as an interactive terminal assistant for writing, reviewing, an
 Pass files directly into your conversation with context files. Hermes Agent can read, edit, and run code in your projects.
 :::
 
-### "I want a Telegram/Discord bot"
+### "I want a messaging bot"
 
 Deploy Hermes Agent as a bot on your favorite messaging platform.
 
 1. [Installation](./installation.md)
 2. [Configuration](../user-guide/configuration.md)
 3. [Messaging Overview](../user-guide/messaging/index.md)
-4. [Telegram Setup](../user-guide/messaging/telegram.md)
-5. [Discord Setup](../user-guide/messaging/discord.md)
-6. [Voice Mode](../user-guide/features/voice-mode.md)
-7. [Use Voice Mode with Hermes](../guides/use-voice-mode-with-hermes.md)
-8. [Security](../user-guide/security.md)
+4. [Voice Mode](../user-guide/features/voice-mode.md)
+5. [Use Voice Mode with Hermes](../guides/use-voice-mode-with-hermes.md)
+6. [Security](../user-guide/security.md)
 
 For full project examples, see:
 - [Daily Briefing Bot](../guides/daily-briefing-bot.md)

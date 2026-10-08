@@ -59,7 +59,7 @@ def _parse_telegram(ref):
     parsed = _parse_regex_groups(_TELEGRAM_TOPIC_TARGET_RE)(ref)
     if parsed:
         return parsed
-    from plugins.platforms.telegram.telegram_ids import parse_telegram_username_target
+    from tools.telegram_ids import parse_telegram_username_target
     return _parse_nonempty(parse_telegram_username_target(ref) or "")
 
 

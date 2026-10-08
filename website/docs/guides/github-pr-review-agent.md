@@ -50,7 +50,7 @@ If you have a public endpoint available, check out [Automated GitHub PR Comments
   # Authenticate
   gh auth login
   ```
-- **Messaging configured** (optional) — [Telegram](../user-guide/messaging/telegram.md) or [Discord](../user-guide/messaging/discord.md)
+- **Messaging configured** (optional) — Telegram or Discord
 
 :::tip No messaging? No problem
 Use `deliver: "local"` to save reviews to `~/.hermes/cron/output/`. Great for testing before wiring up notifications.

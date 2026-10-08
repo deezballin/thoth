@@ -351,11 +351,11 @@ These are set automatically by the Docker terminal backend when `proxy.enabled: 
 | `DISCORD_IGNORED_CHANNELS` | Comma-separated channel IDs where the bot never responds |
 | `DISCORD_NO_THREAD_CHANNELS` | Comma-separated channel IDs where bot responds without auto-threading |
 | `DISCORD_REPLY_TO_MODE` | Reply-reference behavior: `off`, `first` (default), or `all` |
-| `DISCORD_ALLOW_MENTION_EVERYONE` | Allow the bot to ping `@everyone`/`@here` (default: `false`). See [Mention Control](../user-guide/messaging/discord.md#mention-control). |
+| `DISCORD_ALLOW_MENTION_EVERYONE` | Allow the bot to ping `@everyone`/`@here` (default: `false`). See Mention Control. |
 | `DISCORD_ALLOW_MENTION_ROLES` | Allow the bot to ping `@role` mentions (default: `false`). |
 | `DISCORD_ALLOW_MENTION_USERS` | Allow the bot to ping individual `@user` mentions (default: `true`). |
 | `DISCORD_ALLOW_MENTION_REPLIED_USER` | Ping the author when replying to their message (default: `true`). |
-| `DISCORD_MISSED_MESSAGE_BACKFILL` | Env fallback for `discord.missed_message_backfill.enabled`: replay messages missed while disconnected (default: `false`). See [Missed message backfill](../user-guide/messaging/discord.md#discordmissed_message_backfill). |
+| `DISCORD_MISSED_MESSAGE_BACKFILL` | Env fallback for `discord.missed_message_backfill.enabled`: replay messages missed while disconnected (default: `false`). See Missed message backfill. |
 | `DISCORD_MISSED_MESSAGE_BACKFILL_CHANNELS` | Comma-separated channel IDs to scan (fallback for `discord.missed_message_backfill.channels`; empty = `discord.free_response_channels`, `*` = every reachable text channel). |
 | `DISCORD_MISSED_MESSAGE_BACKFILL_WINDOW_SECONDS` | How far back a scan may look (fallback for `window_seconds`, default `21600`, minimum `60`). |
 | `DISCORD_MISSED_MESSAGE_BACKFILL_LIMIT` | Maximum messages fetched per channel per scan (fallback for `limit`, default `100`, 1–500). |
@@ -452,7 +452,7 @@ These are set automatically by the Docker terminal backend when `proxy.enabled: 
 | `FEISHU_ENCRYPT_KEY` | Optional encryption key for webhook mode |
 | `FEISHU_VERIFICATION_TOKEN` | Optional verification token for webhook mode |
 | `FEISHU_ALLOWED_USERS` | Comma-separated Feishu user IDs allowed to message the bot |
-| `FEISHU_ALLOW_BOTS` | `none` (default) / `mentions` / `all` — accept inbound messages from other bots. See [bot-to-bot messaging](../user-guide/messaging/feishu.md#bot-to-bot-messaging) |
+| `FEISHU_ALLOW_BOTS` | `none` (default) / `mentions` / `all` — accept inbound messages from other bots. See bot-to-bot messaging |
 | `FEISHU_REQUIRE_MENTION` | `true` (default) / `false` — whether group messages must @mention the bot. Override per-chat via `group_rules.<chat_id>.require_mention`. |
 | `FEISHU_HOME_CHANNEL` | Feishu chat ID for cron delivery and notifications |
 | `FEISHU_HOME_CHANNEL_NAME` | Display name for the Feishu home channel. |
@@ -551,7 +551,7 @@ These are set automatically by the Docker terminal backend when `proxy.enabled: 
 | `API_SERVER_PORT` | Port for the API server (default: `8642`) |
 | `API_SERVER_HOST` | Host/bind address for the API server (default: `127.0.0.1`). `API_SERVER_KEY` is still required on loopback; use a narrow `API_SERVER_CORS_ORIGINS` allowlist for browser access. |
 | `API_SERVER_MODEL_NAME` | Model name advertised on `/v1/models`. Defaults to the profile name (or `hermes-agent` for the default profile). Useful for multi-user setups where frontends like Open WebUI need distinct model names per connection. |
-| `GATEWAY_PROXY_URL` | URL of a remote Hermes API server to forward messages to ([proxy mode](../user-guide/messaging/matrix.md#proxy-mode-e2ee-on-macos)). When set, the gateway handles platform I/O only — all agent work is delegated to the remote server. Also configurable via `gateway.proxy_url` in `config.yaml`. |
+| `GATEWAY_PROXY_URL` | URL of a remote Hermes API server to forward messages to (proxy mode). When set, the gateway handles platform I/O only — all agent work is delegated to the remote server. Also configurable via `gateway.proxy_url` in `config.yaml`. |
 | `GATEWAY_PROXY_KEY` | Bearer token for authenticating with the remote API server in proxy mode. Must match `API_SERVER_KEY` on the remote host. |
 | `MESSAGING_CWD` | Deprecated compatibility fallback for gateway working directory. Prefer `terminal.cwd` in `config.yaml`. |
 | `GATEWAY_ALLOWED_USERS` | Comma-separated user IDs allowed across all platforms |
@@ -613,7 +613,7 @@ Inbound change-notification listener for Graph events (Teams meetings, calendar,
 
 ### LINE Messaging API
 
-Used by the bundled LINE platform plugin (`plugins/platforms/line/`). See [Messaging Gateway → LINE](../user-guide/messaging/line.md) for full setup.
+Used by the bundled LINE platform plugin (`plugins/platforms/line/`). See Messaging Gateway → LINE for full setup.
 
 | Variable | Description |
 |----------|-------------|
@@ -650,11 +650,11 @@ Used by the bundled LINE platform plugin (`plugins/platforms/line/`). See [Messa
 | `NTFY_HOME_CHANNEL` | Default delivery target for cron jobs with `deliver: ntfy`. |
 | `NTFY_HOME_CHANNEL_NAME` | Human label for the home channel (defaults to the topic name). |
 
-See [the ntfy messaging guide](../user-guide/messaging/ntfy.md) — particularly the **identity model** section — before deploying with untrusted topics.
+See the ntfy messaging guide — particularly the **identity model** section — before deploying with untrusted topics.
 
 ### IRC
 
-Connect Hermes to an IRC server. No external dependencies. See [the IRC messaging guide](../user-guide/messaging/irc.md).
+Connect Hermes to an IRC server. No external dependencies. See the IRC messaging guide.
 
 | Variable | Description |
 |----------|-------------|
@@ -671,7 +671,7 @@ Connect Hermes to an IRC server. No external dependencies. See [the IRC messagin
 
 ### SimpleX
 
-Connect Hermes to a [SimpleX Chat](https://simplex.chat/) network via a local `simplex-chat` daemon. See [the SimpleX messaging guide](../user-guide/messaging/simplex.md).
+Connect Hermes to a [SimpleX Chat](https://simplex.chat/) network via a local `simplex-chat` daemon. See the SimpleX messaging guide.
 
 | Variable | Description |
 |----------|-------------|
@@ -685,7 +685,7 @@ Connect Hermes to a [SimpleX Chat](https://simplex.chat/) network via a local `s
 
 ### Photon
 
-Connect Hermes to [Photon](https://photon.codes/) / Spectrum (iMessage and other Spectrum platforms) via the Node sidecar. See [the Photon messaging guide](../user-guide/messaging/photon.md).
+Connect Hermes to [Photon](https://photon.codes/) / Spectrum (iMessage and other Spectrum platforms) via the Node sidecar. See the Photon messaging guide.
 
 | Variable | Description |
 |----------|-------------|
@@ -724,7 +724,7 @@ Connect Hermes to [Photon](https://photon.codes/) / Spectrum (iMessage and other
 
 ### Microsoft Teams (adapter)
 
-The Microsoft Teams platform adapter (Bot Framework / Azure AD), distinct from the [Microsoft Graph (Teams Meetings)](#microsoft-graph-teams-meetings) integration above. See [the Teams messaging guide](../user-guide/messaging/teams.md).
+The Microsoft Teams platform adapter (Bot Framework / Azure AD), distinct from the [Microsoft Graph (Teams Meetings)](#microsoft-graph-teams-meetings) integration above. See the Teams messaging guide.
 
 | Variable | Description |
 |----------|-------------|

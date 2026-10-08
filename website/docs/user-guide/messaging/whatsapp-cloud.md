@@ -19,13 +19,6 @@ In exchange:
 - The Hermes gateway needs a **public HTTPS URL** so Meta can deliver inbound messages via webhook.
 - Replies more than 24 hours after the user's last message require a pre-approved **template** (this is Meta's "customer service window" rule, not a Hermes limit).
 
-If those constraints don't work for your use case, the [Baileys bridge integration](./whatsapp.md) is the alternative — personal account, no public URL needed, but unofficial and ban-prone.
-
-:::tip Which one should I use?
-- **Cloud API (this guide)** — running a real business bot, want stability, fine with the Meta verification + template paperwork
-- **[Baileys bridge](./whatsapp.md)** — personal projects, quick demos, single-user setups, willing to risk the bot phone number's account
-:::
-
 ---
 
 ## Quick start
@@ -235,8 +228,6 @@ All settings live in `~/.hermes/.env`.  Required values are in **bold**.
 | `WHATSAPP_CLOUD_API_VERSION` | `v20.0` | Meta Graph API version. Only override if a newer version is recommended in Meta's docs. |
 | `WHATSAPP_CLOUD_HOME_CHANNEL` | — | wa_id to use as the bot's home channel (for cron jobs etc). |
 
-You can have **both** the Baileys (`whatsapp`) and Cloud (`whatsapp_cloud`) adapters enabled simultaneously, targeting different phone numbers.
-
 ---
 
 ## Features
@@ -317,7 +308,7 @@ Message-template support (the workaround for outside-window sends) is not yet im
 
 ### Group chats
 
-The Cloud API has limited group support (capability-tier gated by Meta).  Hermes's `whatsapp_cloud` adapter currently handles **direct messages only** in v1.  If you need group chats, use the Baileys bridge.
+The Cloud API has limited group support (capability-tier gated by Meta).  Hermes's `whatsapp_cloud` adapter currently handles **direct messages only** in v1.
 
 ### Outbound rate limit
 
@@ -363,7 +354,7 @@ Same 401 root causes as outbound (`graph error 190`) — the access token is inv
 
 ### Bot replies appear as raw JSON / tool-call leakage
 
-Common cause: the toolset configured for `whatsapp_cloud` is missing the tools the agent wants to call.  Check `hermes tools list` and verify the platform is using `hermes-whatsapp` (the default Cloud adapter toolset, same as Baileys).
+Common cause: the toolset configured for `whatsapp_cloud` is missing the tools the agent wants to call.  Check `hermes tools list` and verify the platform is using `hermes-whatsapp` (the default Cloud adapter toolset).
 
 If the model emits tool-call-shaped text instead of a structured call, it usually means the toolset was effectively empty.  See `hermes_cli/platforms.py` for the platform → default toolset mapping.
 
@@ -390,32 +381,7 @@ This uses your Nous Portal access token instead of needing a separate OpenAI key
 
 ---
 
-## Comparison to the Baileys bridge
-
-| | Baileys (`hermes whatsapp`) | Cloud API (`hermes whatsapp-cloud`) |
-|---|---|---|
-| Account type | Personal | Business |
-| Setup | QR code scan | Meta app + WABA + token |
-| Dependencies | Node.js + npm | Pure Python (httpx + aiohttp) |
-| Process | Managed Node subprocess | aiohttp webhook server |
-| Public URL needed? | No | Yes |
-| Account ban risk | Yes (unofficial API) | No (officially supported) |
-| Inbound | Polling Node bridge | Webhook POST from Meta |
-| Outbound | Local bridge → Baileys | HTTPS to graph.facebook.com |
-| Groups | Full support | DMs only (v1) |
-| 24h window | No restriction | Hard rule — templates required after |
-| Voice notes (out) | Native | Native with ffmpeg, MP3 fallback otherwise |
-| Read receipts | No | Yes (blue double-checkmarks) |
-| Typing indicator | No | Yes (auto-dismisses on response) |
-| Interactive buttons | Text fallback only | Native (clarify, approval, slash-confirm) |
-| Production use | Risky (Meta can ban) | Designed for it |
-
-Most users running Hermes for personal projects prefer Baileys. Most users running customer-facing bots prefer Cloud API.
-
----
-
 ## See also
 
 - [Meta's official WhatsApp Business Cloud API docs](https://developers.facebook.com/documentation/business-messaging/whatsapp/) — authoritative reference for the underlying platform, pricing, App Review, and Meta-side rate limits.
-- [WhatsApp (Baileys bridge) Setup](whatsapp.md) — the alternative integration for personal projects.
 - [Messaging Platforms overview](index.md) — all messaging integrations at a glance.

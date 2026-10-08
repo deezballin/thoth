@@ -39,7 +39,7 @@ Before starting, make sure you have:
   hermes gateway           # Run in foreground
   ```
 - **Firecrawl API key** — set `FIRECRAWL_API_KEY` in your environment for web search
-- **Messaging configured** (optional but recommended) — [Telegram](../user-guide/messaging/telegram.md) or Discord set up with a home channel
+- **Messaging configured** (optional but recommended) — Telegram or Discord set up with a home channel
 
 :::tip No messaging? No problem
 You can still follow this tutorial using `deliver: "local"`. Briefings will be saved to `~/.hermes/cron/output/` and you can read them anytime.

@@ -469,6 +469,6 @@ Hermes 加入 Discord 语音频道（VC），监听用户语音，转录后运�
 
 - [语音模式功能参考](../user-guide/features/voice-mode.md)
 - [消息 Gateway](../user-guide/messaging/index.md)
-- [Discord 设置](../user-guide/messaging/discord.md)
-- [Telegram 设置](../user-guide/messaging/telegram.md)
+- Discord 设置
+- Telegram 设置
 - [配置](../user-guide/configuration.md)

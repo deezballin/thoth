@@ -1427,7 +1427,7 @@ group_sessions_per_user: true  # true = 群组/频道中每用户隔离，false 
 - 私信不受影响。Hermes 仍然像往常一样通过聊天/DM ID 键入 DM。
 - 线程与其父频道保持隔离；使用 `true` 时，每个参与者在线程内也获得自己的会话。
 
-有关行为详情和示例，请参阅[会话](./sessions.md)和 [Discord 指南](./messaging/discord.md)。
+有关行为详情和示例，请参阅[会话](./sessions.md)和 Discord 指南。
 
 ## 未授权 DM 行为
 

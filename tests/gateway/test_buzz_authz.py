@@ -19,7 +19,6 @@ SELF_PUBKEY = "9fd5c7ba6d3ef224da78f541e0fcb9c50f72cc63edb19aae76ac6a0474dfa860"
 SELF_NPUB = "npub1nl2u0wnd8mezfknc74q7pl9ec58h9nrrakce4tnk434qgaxl4psqe5twr6"
 OTHER_PUBKEY = "a" * 64
 
-_BUZZ_PLATFORM = Platform("buzz")
 
 _AUTH_ENV_VARS = (
     "BUZZ_ALLOWED_USERS",
@@ -62,7 +61,7 @@ def _make_runner():
 
 def _make_source(user_id: str, chat_type: str = "dm"):
     return SessionSource(
-        platform=_BUZZ_PLATFORM,
+        platform=Platform("buzz"),  # resolved after the buzz_registered fixture
         chat_id="ccc2bc1a-7a82-5a8f-8c4e-57a070cbe7cd",
         chat_type=chat_type,
         user_id=user_id,
@@ -152,7 +151,7 @@ def _make_runner_with_adapter(extra: dict):
     runner.config = GatewayConfig()
     runner.pairing_store = None
     runner.adapters = {
-        _BUZZ_PLATFORM: SimpleNamespace(
+        Platform("buzz"): SimpleNamespace(
             config=PlatformConfig(enabled=True, extra=extra),
             normalize_user_id=_normalize,
         )

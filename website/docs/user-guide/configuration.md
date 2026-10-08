@@ -2613,7 +2613,7 @@ group_sessions_per_user: true  # true = per-user isolation in groups/channels, f
 - Direct messages are unaffected. Hermes still keys DMs by chat/DM ID as usual.
 - Threads stay isolated from their parent channel either way; with `true`, each participant also gets their own session inside the thread.
 
-For the behavior details and examples, see [Sessions](./sessions.md) and the [Discord guide](./messaging/discord.md).
+For the behavior details and examples, see [Sessions](./sessions.md) and the Discord guide.
 
 ## Unauthorized DM Behavior
 

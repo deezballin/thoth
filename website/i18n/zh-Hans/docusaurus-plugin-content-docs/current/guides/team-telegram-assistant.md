@@ -430,11 +430,11 @@ hermes gateway stop && hermes gateway start
 
 - **[安全指南](../user-guide/security.md)**——深入了解授权、容器隔离和命令审批
 - **[消息 Gateway](../user-guide/messaging/index.md)**——gateway 架构、会话管理和聊天命令的完整参考
-- **[Telegram 设置](../user-guide/messaging/telegram.md)**——平台专属详情，包括语音消息和 TTS
+- **Telegram 设置**——平台专属详情，包括语音消息和 TTS
 - **[定时任务](../user-guide/features/cron.md)**——高级 cron 调度，含投递选项和 cron 表达式
 - **[上下文文件](../user-guide/features/context-files.md)**——用于项目知识的 AGENTS.md、SOUL.md 和 .cursorrules
 - **[个性设置](../user-guide/features/personality.md)**——内置个性预设和自定义角色定义
-- **添加更多平台**——同一 gateway 可同时运行 [Discord](../user-guide/messaging/discord.md)、[Slack](../user-guide/messaging/slack.md) 和 [WhatsApp](../user-guide/messaging/whatsapp.md)
+- **添加更多平台**——同一 gateway 可同时运行 Discord、Slack 和 WhatsApp
 
 ---
 
