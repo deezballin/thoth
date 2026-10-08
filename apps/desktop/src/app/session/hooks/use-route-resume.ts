@@ -63,7 +63,6 @@ function rawHashLooksLikeSession(): boolean {
   return (
     !hash.startsWith('/settings') &&
     !hash.startsWith('/capabilities') &&
-    !hash.startsWith('/messaging') &&
     !hash.startsWith('/artifacts')
   )
 }

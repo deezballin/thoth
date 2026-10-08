@@ -18,7 +18,7 @@ import type { Contribution } from '@/contrib/types'
 export const SIDEBAR_NAV_PREFS_AREA = 'sidebarNav.prefs'
 
 /** Payload (`data`) of a `sidebarNav.prefs` contribution. Ids are the nav rows'
- *  own ids: the core rows `'new-session' | 'capabilities' | 'messaging' |
+ *  own ids: the core rows `'new-session' | 'capabilities' |
  *  'artifacts' | 'cron'` (see `SidebarNavId`) or a `sidebar.nav` contribution's
  *  REGISTERED id — `ctx.register` namespaces it to `${pluginId}:${id}`. */
 export interface SidebarNavPrefsContribution {

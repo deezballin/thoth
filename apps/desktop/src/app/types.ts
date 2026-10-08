@@ -130,7 +130,6 @@ export type SidebarNavId =
   | 'capabilities'
   | 'command-center'
   | 'cron'
-  | 'messaging'
   | 'new-session'
   | 'settings'
   | 'subconscious'

@@ -14,7 +14,6 @@ export const SETTINGS_ROUTE = '/settings'
 export const COMMAND_CENTER_ROUTE = '/command-center'
 export const SESSION_IMPORT_ROUTE = '/session-import'
 export const CAPABILITIES_ROUTE = '/capabilities'
-export const MESSAGING_ROUTE = '/messaging'
 export const WEBHOOKS_ROUTE = '/webhooks'
 export const ARTIFACTS_ROUTE = '/artifacts'
 export const SUBCONSCIOUS_ROUTE = '/subconscious'
@@ -35,7 +34,6 @@ export type AppView =
   // so the sidebar kept a session highlighted and the titlebar kept the
   // session-title dropdown while a plugin page was showing.
   | 'extension'
-  | 'messaging'
   | 'profiles'
   | 'settings'
   | 'subconscious'
@@ -48,7 +46,6 @@ export type AppRouteId =
   | 'capabilities'
   | 'command-center'
   | 'cron'
-  | 'messaging'
   | 'new'
   | 'profiles'
   | 'settings'
@@ -67,7 +64,6 @@ export const APP_ROUTES = [
   { id: 'settings', path: SETTINGS_ROUTE, view: 'settings' },
   { id: 'command-center', path: COMMAND_CENTER_ROUTE, view: 'command-center' },
   { id: 'capabilities', path: CAPABILITIES_ROUTE, view: 'capabilities' },
-  { id: 'messaging', path: MESSAGING_ROUTE, view: 'messaging' },
   { id: 'webhooks', path: WEBHOOKS_ROUTE, view: 'webhooks' },
   { id: 'artifacts', path: ARTIFACTS_ROUTE, view: 'artifacts' },
   { id: 'cron', path: CRON_ROUTE, view: 'cron' },
@@ -179,7 +175,7 @@ export function isOverlayView(view: AppView): boolean {
  *  Contributed full pages (`extension`) hide the app clusters only while the
  *  page actually mounts `titleBar.*` chrome — those slots are mount-scoped, so
  *  a plugin page with no titlebar contribution keeps the app controls.
- *  First-party workspace pages (capabilities/messaging/artifacts) keep the clusters. */
+ *  First-party workspace pages (capabilities/artifacts) keep the clusters. */
 export function hidesFixedTitlebarClusters(view: AppView): boolean {
   return isOverlayView(view) || view === 'extension'
 }
@@ -248,7 +244,7 @@ export function appViewForPath(pathname: string): AppView {
 }
 
 /** Does `to` land on a full page rendered INSIDE the workspace pane
- *  (skills/messaging/artifacts/contributed routes)? Overlays don't count —
+ *  (skills/artifacts/contributed routes)? Overlays don't count —
  *  they float over whatever the workspace is already showing. */
 export function isWorkspacePageRoute(to: string): boolean {
   const view = appViewForPath(to)
@@ -256,7 +252,7 @@ export function isWorkspacePageRoute(to: string): boolean {
   return view !== 'chat' && !isOverlayView(view)
 }
 
-/** True while the workspace pane shows a FULL PAGE (skills/messaging/
+/** True while the workspace pane shows a FULL PAGE (skills/
  *  artifacts/plugin routes) instead of the chat. Published by the wiring
  *  (which owns the router location); the workspace pane contribution mirrors
  *  it as `headerVeto` so the zone tab bar stands down on pages. Overlays

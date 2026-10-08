@@ -5,7 +5,7 @@ import type * as React from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation } from 'react-router'
 
-import { PlatformAvatar } from '@/app/messaging/platform-icon'
+import { PlatformAvatar } from '@/components/platform-icon'
 import { StatusDot } from '@/components/status-dot'
 import { Button } from '@/components/ui/button'
 import { Codicon } from '@/components/ui/codicon'
@@ -145,7 +145,6 @@ import {
   ARTIFACTS_ROUTE,
   CAPABILITIES_ROUTE,
   CRON_ROUTE,
-  MESSAGING_ROUTE,
   SIDEBAR_NAV_AREA,
   type SidebarNavContribution,
   SUBCONSCIOUS_ROUTE
@@ -223,15 +222,9 @@ const SIDEBAR_NAV: SidebarNavItem[] = [
     route: CAPABILITIES_ROUTE,
     keybindActionId: 'nav.capabilities'
   },
-  {
-    id: 'messaging',
-    label: '',
-    icon: props => <Codicon name="comment" {...props} />,
-    route: MESSAGING_ROUTE,
-    keybindActionId: 'nav.messaging'
-  },
+
   // Artifacts and Scheduled jobs are outputs of running Hermes the developer
-  // way; Capabilities and Messaging are how anyone sets it up.
+  // way; Capabilities is how anyone sets it up.
   {
     id: 'artifacts',
     label: '',
@@ -1621,7 +1614,6 @@ export function ChatSidebar({
 
                 const active =
                   (item.id === 'capabilities' && currentView === 'capabilities') ||
-                  (item.id === 'messaging' && currentView === 'messaging') ||
                   (item.id === 'artifacts' && currentView === 'artifacts') ||
                   (item.id === 'cron' && currentView === 'cron') ||
                   (item.id === 'subconscious' && currentView === 'subconscious') ||
