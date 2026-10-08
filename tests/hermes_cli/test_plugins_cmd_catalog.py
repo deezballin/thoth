@@ -87,7 +87,10 @@ def _head(path: Path) -> str:
 def test_catalog_platform_mismatch_refuses_before_install(world):
     from hermes_platform.host.facts import os_family
     host = os_family()
-    other = "linux" if host == "windows" else "windows"
+    # os_family() speaks sys.platform vocabulary ('win32'), while a catalog entry speaks OS
+    # families that _PLATFORM_ALIASES normalizes INTO it — so pick a family that cannot
+    # normalize back to the running one, or the mismatch never happens on Windows.
+    other = "linux" if host.startswith("win") else "windows"
     entry = pc_cat.PluginCatalogEntry(
         name="cat-plugin", repo=world["repo"].as_uri(), sha=world["sha1"],
         description="d", maintainer="t", platforms=[other],

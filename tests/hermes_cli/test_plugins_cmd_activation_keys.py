@@ -47,9 +47,16 @@ def _lists():
     return set(plugins.get("enabled") or []), set(plugins.get("disabled") or [])
 
 
-def test_disable_bundled_platform_by_manifest_name_gates_the_loader(home):
+def test_disable_platform_by_manifest_name_gates_the_loader(home):
     """`hermes plugins disable photon-platform` must produce a key the loader's gate matches; the
-    CLI wrote ``platforms/photon`` while discovery keyed the adapter ``photon-platform``."""
+    CLI wrote ``platforms/photon`` while discovery keyed the adapter ``photon-platform``.
+
+    The adapter is scaffolded instead of taken from the tree: the platforms carve (thoth
+    01873b13f7) deleted all 21 bundled adapters, and the nested-key shape they exercised is the
+    half worth keeping covered.
+    """
+    _write_plugin(home / "plugins", "platforms/photon", "photon-platform")
+
     plugins_cmd.cmd_disable("photon-platform")
 
     enabled, disabled = _lists()
@@ -57,6 +64,7 @@ def test_disable_bundled_platform_by_manifest_name_gates_the_loader(home):
     gate = gate_manifest(photon, disabled, enabled)
     assert gate.action == "placeholder" and gate.error == "disabled via config"
     # And the key the CLI persists IS the loader's key — not merely an alias of it.
+    assert photon.key == "platforms/photon"
     assert photon.key in disabled
 
 

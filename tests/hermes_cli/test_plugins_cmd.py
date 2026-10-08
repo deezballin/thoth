@@ -166,6 +166,12 @@ class TestGitPullPluginDirAutostash:
         git(origin, "init", "-q", "-b", "main")
         git(origin, "config", "user.email", "t@t")
         git(origin, "config", "user.name", "t")
+        # Hermetic EOL policy. Hermes runs git through noninteractive_git_env(), which points
+        # GIT_CONFIG_SYSTEM/GLOBAL at /dev/null, so ITS core.autocrlf is unset while these direct
+        # git calls inherit the machine's system-wide autocrlf=true. Two actors disagreeing about
+        # line endings makes `stash apply` conflict on a non-overlapping edit; pin the repo so both
+        # convert identically instead of inheriting whatever the host configured.
+        git(origin, "config", "core.autocrlf", "false")
         pad = "\n".join(f"# pad {i}" for i in range(12))
         (origin / "plugin.py").write_text(
             f"VALUE = 1\n{pad}\nOTHER = 'a'\n", encoding="utf-8"
@@ -177,6 +183,7 @@ class TestGitPullPluginDirAutostash:
         git(tmp_path, "clone", "-q", str(origin), str(checkout))
         git(checkout, "config", "user.email", "t@t")
         git(checkout, "config", "user.name", "t")
+        git(checkout, "config", "core.autocrlf", "false")
         return origin, checkout, git
 
     @staticmethod
