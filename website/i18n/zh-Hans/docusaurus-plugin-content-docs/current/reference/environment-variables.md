@@ -156,23 +156,6 @@ description: "Hermes Agent 使用的所有环境变量完整参考"
 | `VERCEL_PROJECT_ID` | Vercel 项目 ID（与 `VERCEL_TOKEN` 配合使用） |
 | `VERCEL_TEAM_ID` | Vercel 团队 ID（与 `VERCEL_TOKEN` 配合使用） |
 | `VERCEL_OIDC_TOKEN` | Vercel 短期 OIDC token（仅用于开发的替代方案） |
-
-### Langfuse 可观测性
-
-内置 [`observability/langfuse`](../user-guide/features/built-in-plugins.md#observabilitylangfuse) 插件的环境变量。在 `~/.hermes/.env` 中设置。在这些变量生效之前，还必须启用该插件（`hermes plugins enable observability/langfuse`，或在 `hermes plugins` 中勾选）。
-
-| 变量 | 描述 |
-|----------|-------------|
-| `HERMES_LANGFUSE_PUBLIC_KEY` | Langfuse 项目公钥（`pk-lf-...`）。必填。 |
-| `HERMES_LANGFUSE_SECRET_KEY` | Langfuse 项目密钥（`sk-lf-...`）。必填。 |
-| `HERMES_LANGFUSE_BASE_URL` | Langfuse 服务器 URL（默认：`https://cloud.langfuse.com`）。自托管时设置。 |
-| `HERMES_LANGFUSE_ENV` | trace 上的环境标签（`production`、`staging` 等） |
-| `HERMES_LANGFUSE_RELEASE` | trace 上的发布/版本标签 |
-| `HERMES_LANGFUSE_SAMPLE_RATE` | SDK 采样率 0.0–1.0（默认：`1.0`） |
-| `HERMES_LANGFUSE_MAX_CHARS` | 序列化载荷的每字段截断长度（默认：`12000`） |
-| `HERMES_LANGFUSE_DEBUG` | `true` 可将详细插件日志输出到 `agent.log` |
-| `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` / `LANGFUSE_BASE_URL` | 标准 Langfuse SDK 变量名。当对应的 `HERMES_LANGFUSE_*` 未设置时作为回退。 |
-
 ### Nous Tool Gateway
 
 这些变量为付费 Nous 订阅者或自托管 gateway 部署配置 [Tool Gateway](../user-guide/features/tool-gateway.md)。大多数用户无需设置——gateway 通过 `hermes model` 或 `hermes tools` 自动配置。
@@ -448,7 +431,7 @@ Graph 事件（Teams 会议、日历、聊天等）的入站变更通知监听�
 
 ### LINE Messaging API
 
-由内置 LINE 平台插件（`plugins/platforms/line/`）使用。完整设置详见 消息 Gateway → LINE。
+由第三方 LINE 平台适配器（`plugins/platforms/line/`，本仓库未捆绑）使用。
 
 | 变量 | 描述 |
 |----------|-------------|

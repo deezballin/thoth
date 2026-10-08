@@ -22,7 +22,7 @@ The messaging gateway is the long-running process that connects Hermes to 20+ ex
 | `gateway/status.py` | Token lock management for profile-scoped gateway instances |
 | `gateway/builtin_hooks/` | Extension point for always-registered hooks (none shipped) |
 | `gateway/platform_registry.py` | Adapter registry, factories, and deferred (lazy) loaders for bundled platform plugins |
-| `plugins/platforms/<name>/` | Bundled messaging adapters (most platforms: `adapter.py` + `plugin.yaml`) |
+| `plugins/platforms/<name>/` | Third-party platform adapters (`adapter.py` + `plugin.yaml`; none bundled) |
 | `gateway/platforms/` | Shared `base.py` plus legacy/direct adapters (Signal, API server, webhooks, …) |
 
 ## Architecture Overview
@@ -143,25 +143,12 @@ Unlike the CLI (which uses `load_cli_config()` with hardcoded defaults), the gat
 
 ## Platform Adapters
 
-Most messaging platforms ship as plugin adapters under `plugins/platforms/<name>/adapter.py`; a few legacy adapters still live directly in `gateway/platforms/`. All extend `BasePlatformAdapter` from `gateway/platforms/base.py`:
+Platform adapters ship as plugins under `plugins/platforms/<name>/adapter.py` (none bundled in this tree); the adapters that stay in-tree live in `gateway/platforms/`. All extend `BasePlatformAdapter` from `gateway/platforms/base.py`:
 
 ```text
 plugins/platforms/                  # plugin-packaged adapters (one dir each)
-├── telegram/adapter.py     # Telegram Bot API (long polling or webhook)
-├── discord/adapter.py      # Discord bot via discord.py
-├── slack/adapter.py        # Slack Socket Mode
-├── whatsapp/adapter.py     # WhatsApp Business Cloud API
-├── matrix/adapter.py       # Matrix via mautrix (optional E2EE)
-├── mattermost/adapter.py   # Mattermost WebSocket API
-├── email/adapter.py        # Email via IMAP/SMTP
-├── sms/adapter.py          # SMS via Twilio
-├── dingtalk/adapter.py     # DingTalk WebSocket
-├── feishu/adapter.py       # Feishu/Lark WebSocket or webhook
-├── wecom/adapter.py        # WeCom (WeChat Work) callback
-├── line/adapter.py         # LINE Messaging API
-├── teams/adapter.py        # Microsoft Teams
-├── irc/adapter.py          # IRC (canonical scoped-lock example)
-└── …                       # google_chat, ntfy, photon, raft, simplex, …
+└── <name>/adapter.py       # third-party platform adapters dropped in here
+    + plugin.yaml           # none bundled in this tree
 
 gateway/platforms/                  # core base + legacy direct adapters
 ├── base.py              # BasePlatformAdapter — shared logic for all platforms

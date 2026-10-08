@@ -22,7 +22,7 @@ description: "消息 gateway 如何启动、授权用户、路由会话以及投
 | `gateway/status.py` | 面向 profile 范围的 gateway 实例的 token 锁管理 |
 | `gateway/builtin_hooks/` | 始终注册的 hook 扩展点（当前未内置任何 hook） |
 | `gateway/platform_registry.py` | 适配器注册表、工厂，以及对捆绑平台插件的延迟（惰性）加载 |
-| `plugins/platforms/<name>/` | 捆绑的消息适配器（多数平台：`adapter.py` + `plugin.yaml`） |
+| `plugins/platforms/<name>/` | 第三方平台适配器（`adapter.py` + `plugin.yaml`；本仓库未捆绑） |
 | `gateway/platforms/` | 共享的 `base.py` 与遗留/直接适配器（Signal、API server、webhooks 等） |
 
 ## 架构概览
@@ -145,25 +145,12 @@ Gateway 从多个来源读取配置：
 
 ## 平台适配器
 
-大多数消息平台以插件适配器形式位于 `plugins/platforms/<name>/adapter.py`；少数旧适配器仍直接位于 `gateway/platforms/`。它们都继承 `gateway/platforms/base.py` 中的 `BasePlatformAdapter`：
+平台适配器以插件形式位于 `plugins/platforms/<name>/adapter.py`（本仓库未捆绑）；保留在仓库内的适配器位于 `gateway/platforms/`。它们都继承 `gateway/platforms/base.py` 中的 `BasePlatformAdapter`：
 
 ```text
 plugins/platforms/                  # 插件打包的适配器（每个一个目录）
-├── telegram/adapter.py     # Telegram Bot API（长轮询或 webhook）
-├── discord/adapter.py      # Discord bot（通过 discord.py）
-├── slack/adapter.py        # Slack Socket Mode
-├── whatsapp/adapter.py     # WhatsApp Business Cloud API
-├── matrix/adapter.py       # Matrix（通过 mautrix，可选 E2EE）
-├── mattermost/adapter.py   # Mattermost WebSocket API
-├── email/adapter.py        # 电子邮件（通过 IMAP/SMTP）
-├── sms/adapter.py          # 短信（通过 Twilio）
-├── dingtalk/adapter.py     # 钉钉 WebSocket
-├── feishu/adapter.py       # 飞书/Lark WebSocket 或 webhook
-├── wecom/adapter.py        # 企业微信（WeCom）回调
-├── line/adapter.py         # LINE Messaging API
-├── teams/adapter.py        # Microsoft Teams
-├── irc/adapter.py          # IRC（作用域锁的标准示例）
-└── …                       # google_chat、ntfy、photon、raft、simplex 等
+└── <name>/adapter.py       # 第三方平台适配器放置处
+    + plugin.yaml           # 本仓库未捆绑任何平台适配器
 
 gateway/platforms/                  # 核心 base 与旧的直接适配器
 ├── base.py              # BasePlatformAdapter — 所有平台的共享逻辑

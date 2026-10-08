@@ -120,11 +120,7 @@ hermes-agent/
 │   └── platforms/            # Built-in adapters: signal, weixin, bluebubbles,
 │                             #   qqbot, whatsapp_cloud, yuanbao, webhook, api_server
 │
-├── plugins/platforms/        # Bundled platform plugins: telegram, discord, slack,
-│                             #   whatsapp, matrix, mattermost, email, sms, dingtalk,
-│                             #   feishu, wecom, irc, line, teams, google_chat,
-│                             #   buzz, ntfy, photon, raft, simplex
-│                             #   (Home Assistant: `homeassistant` catalog plugin)
+├── plugins/platforms/        # Platform adapter plugins — none bundled; drop yours here
 │
 ├── acp_adapter/              # ACP server (VS Code / Zed / JetBrains)
 ├── cron/                     # Scheduler (jobs.py, scheduler.py)

@@ -8,7 +8,7 @@ description: "Read-only telemetry contract for plugins: event families, correlat
 Hermes observer hooks are the read-only telemetry contract for plugins that
 need to reconstruct agent execution without changing runtime behavior. This
 contract supports trace, metrics, audit, replay, and export integrations such
-as Langfuse, OpenTelemetry-style collectors, and NeMo Relay.
+as OpenTelemetry-style collectors and NeMo Relay.
 
 Observer hooks are intentionally backend-neutral. They expose stable lifecycle
 events, correlation IDs, sanitized payloads, timing, status, and error fields.
@@ -323,8 +323,6 @@ nested agent work or security lifecycle events.
 
 ## Existing Consumers
 
-The bundled Langfuse plugin demonstrates direct hook-based observability for
-turns, provider requests, and tool calls.
 
 The native NeMo Relay SDK integration maps Hermes session, turn, LLM, and tool
 lifecycles to Relay. Relay's discovered user and system configuration, or an

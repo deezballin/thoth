@@ -141,7 +141,7 @@ def register(ctx):
 
 `~/.hermes/plugins/model-providers/<name>/` 和 `~/.hermes/plugins/memory/<name>/` 下的用户插件会覆盖同名内置插件 — `register_provider()` / `register_memory_provider()` 中后写者胜出。放入一个目录即可替换内置实现，无需修改仓库。
 
-子分类插件在 `hermes plugins list` 和交互式 `hermes plugins` UI 中以**路径派生的 key** 显示 — 例如 `observability/langfuse`、`image_gen/openai`、`platforms/teams`。该 key（而非 manifest 中的 `name:`）是传给 `hermes plugins enable …` / `disable …` 的值，也是在 `config.yaml` 的 `plugins.enabled` 下填写的字符串。
+子分类插件在 `hermes plugins list` 和交互式 `hermes plugins` UI 中以**路径派生的 key** 显示 — 例如 `image_gen/openai`、`image_gen/fal`。该 key（而非 manifest 中的 `name:`）是传给 `hermes plugins enable …` / `disable …` 的值，也是在 `config.yaml` 的 `plugins.enabled` 下填写的字符串。
 
 ## 插件默认关闭（少数例外）
 
@@ -172,7 +172,7 @@ hermes plugins disable <name>     # 从允许列表移除并添加到禁用列�
 
 | 插件类型 | 激活方式 |
 |---|---|
-| **内置平台插件**（IRC、Teams 等，位于 `plugins/platforms/`） | 自动加载，使所有内置 gateway 频道可用。实际频道通过 `config.yaml` 中的 `gateway.platforms.<name>.enabled` 开启。 |
+
 | **内置后端**（`plugins/image_gen/` 等下的图像生成 provider） | 自动加载，使默认后端"开箱即用"。通过 `config.yaml` 中的 `<category>.provider` 选择（例如 `image_gen.provider: openai`）。 |
 | **Memory provider**（`plugins/memory/`） | 全部发现；同时只有一个激活，由 `config.yaml` 中的 `memory.provider` 选择。 |
 | **Context engine**（`plugins/context_engine/`） | 全部发现；同时只有一个激活，由 `config.yaml` 中的 `context.engine` 选择。 |
@@ -223,7 +223,7 @@ Memory provider 和 context engine 是 **provider 插件** — 每种类型同�
 | `hermes <thing>` 的**子命令** | Python 插件 — `ctx.register_cli_command()` | [Extending the CLI](../../developer-guide/extending-the-cli.md) |
 | 插件附带的**skill** | Python 插件 — `ctx.register_skill()` | [Creating Skills](../../developer-guide/creating-skills.md) |
 | **推理后端**（LLM provider：OpenAI 兼容、Codex、Anthropic-Messages、Bedrock） | Provider 插件 — 在 `plugins/model-providers/<name>/` 中调用 `register_provider(ProviderProfile(...))` | **[Model Provider Plugins](../../developer-guide/model-provider-plugin.md)** · [Adding Providers](../../developer-guide/adding-providers.md) |
-| **Gateway 频道**（Discord / Telegram / IRC / Teams 等） | 平台插件 — 在 `plugins/platforms/<name>/` 中调用 `ctx.register_platform()` | [Adding Platform Adapters](../../developer-guide/adding-platform-adapters.md) |
+| **Gateway 频道**（Signal / Weixin / BlueBubbles 等） | 平台插件 — 在 `plugins/platforms/<name>/` 中调用 `ctx.register_platform()` | [Adding Platform Adapters](../../developer-guide/adding-platform-adapters.md) |
 | **Memory 后端**（Honcho、Mem0、Supermemory 等） | Memory 插件 — 在 `plugins/memory/<name>/` 中继承 `MemoryProvider` | [Memory Provider Plugins](../../developer-guide/memory-provider-plugin.md) |
 | **上下文压缩策略** | Context-engine 插件 — `ctx.register_context_engine()` | [Context Engine Plugins](../../developer-guide/context-engine-plugin.md) |
 | **图像生成后端**（DALL·E、SDXL 等） | 后端插件 — `ctx.register_image_gen_provider()` | [Image Generation Provider Plugins](../../developer-guide/image-gen-provider-plugin.md) |
@@ -267,11 +267,11 @@ hermes plugins install user/repo --no-enable         # 安装但保持禁用（�
 hermes plugins update my-plugin                      # 拉取最新版本
 hermes plugins remove my-plugin                      # 卸载
 hermes plugins enable my-plugin                      # 添加到允许列表（普通插件）
-hermes plugins enable observability/langfuse         # 添加到允许列表（子分类插件）
+hermes plugins enable image_gen/openai                 # 添加到允许列表（子分类插件）
 hermes plugins disable my-plugin                     # 从允许列表移除并添加到禁用列表
 ```
 
-对于子分类目录下的插件（例如 `plugins/observability/langfuse/`、`plugins/image_gen/openai/`），使用完整的 `<category>/<plugin>` key — 这正是 `hermes plugins list` 在 **Name** 列中显示的内容。
+对于子分类目录下的插件（例如 `plugins/image_gen/openai/`），使用完整的 `<category>/<plugin>` key — 这正是 `hermes plugins list` 在 **Name** 列中显示的内容。
 
 ### 更新检查、来源与依赖
 
@@ -310,7 +310,7 @@ Plugins
  → [✓] my-tool-plugin — Custom search tool
    [ ] webhook-notifier — Event hooks
    [ ] disk-cleanup — Auto-cleanup of ephemeral files [bundled]
-   [ ] observability/langfuse — Trace turns / LLM calls / tools to Langfuse [bundled]
+
 
   Provider Plugins
      Memory Provider          ▸ honcho
