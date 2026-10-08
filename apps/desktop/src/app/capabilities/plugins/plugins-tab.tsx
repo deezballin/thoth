@@ -367,7 +367,7 @@ function PackageRow({
               <div
                 className={cn(
                   'mt-0.5 text-[length:var(--conversation-caption-font-size)] break-words',
-                  desktop?.status === 'error' ? 'text-(--ui-danger,#f87171)' : 'text-(--ui-text-tertiary)'
+                  desktop?.status === 'error' ? 'text-(--ui-red)' : 'text-(--ui-text-tertiary)'
                 )}
               >
                 {desktop?.status === 'error' ? desktop.error : pkg.description}
@@ -421,7 +421,7 @@ function PackageRow({
               <Tip label={p.uninstallTip(pkg.name, scopeLabel)}>
                 <Button
                   aria-label={`${p.uninstall}: ${pkg.name}`}
-                  className="text-(--ui-text-tertiary) hover:text-(--ui-danger,#f87171)"
+                  className="text-(--ui-text-tertiary) hover:text-(--ui-red)"
                   disabled={busy}
                   onClick={() => onAgentRemove(agent)}
                   size="icon"
@@ -434,7 +434,7 @@ function PackageRow({
               <Tip label={p.uninstallDesktopTip(pkg.name)}>
                 <Button
                   aria-label={`${p.uninstall}: ${pkg.name}`}
-                  className="text-(--ui-text-tertiary) hover:text-(--ui-danger,#f87171)"
+                  className="text-(--ui-text-tertiary) hover:text-(--ui-red)"
                   onClick={() => onDesktopRemove(desktop)}
                   size="icon"
                   variant="ghost"

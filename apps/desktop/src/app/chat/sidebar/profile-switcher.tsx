@@ -1547,7 +1547,7 @@ function ProfileSquare({
                     {remoteHost && (
                       <span
                         aria-hidden="true"
-                        className="absolute -right-0.5 -top-0.5 grid size-2 place-items-center rounded-full bg-(--ui-panel-background)"
+                        className="absolute -right-0.5 -top-0.5 grid size-2 place-items-center rounded-full bg-(--ui-surface-background)"
                         data-slot="profile-remote-badge"
                       >
                         <Codicon name="globe" size="0.5rem" />

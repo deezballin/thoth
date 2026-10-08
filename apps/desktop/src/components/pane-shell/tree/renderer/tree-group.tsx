@@ -948,7 +948,7 @@ function StripDropCaret({ groupId, stripRef }: { groupId: string; stripRef: RefO
   return (
     <span
       aria-hidden
-      className="pointer-events-none absolute z-50 w-px -translate-x-1/2 bg-black dark:bg-white"
+      className="pointer-events-none absolute z-50 w-px -translate-x-1/2 bg-(--ui-base)"
       style={{
         height: targetRect.height * 0.6,
         left: x,

@@ -95,7 +95,7 @@ function ArtifactLiveView({ content, kind, title }: { content: string; kind: Art
 
   return (
     <iframe
-      className="block size-full border-0 bg-white"
+      className="block size-full border-0 bg-(--ui-bg-doc-canvas)"
       sandbox="allow-scripts"
       srcDoc={composeArtifactHtml(content)}
       // Deliberately raw white + forced light scheme: the frame hosts foreign

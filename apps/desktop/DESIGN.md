@@ -47,13 +47,13 @@ one-off at the call site.
 
 - **Chat is the home surface.** The transcript and composer stay primary; tools,
   previews, files, review, and terminal complement the conversation.
-- **Pages are durable destinations.** Chat, Skills, Messaging, and Artifacts
-  remain in shell chrome. Do not hide a distinct product noun inside an
-  unrelated page.
-- **Route overlays are short tasks.** Settings, Command Center, Cron, Profiles,
-  Agents, and Starmap render as `OverlayView` cards and return to the previous
-  route on close. Model/session pickers and dialogs layer above the current
-  surface; they are not navigation stacks.
+- **Pages are durable destinations.** Chat, Skills, Artifacts, and
+  Subconscious remain in shell chrome. Do not hide a distinct product noun
+  inside an unrelated page.
+- **Route overlays are short tasks.** Settings, Command Center, Cron,
+  Profiles, Agents, Webhooks, and Session Import render as `OverlayView`
+  cards and return to the previous route on close. Model/session pickers and
+  dialogs layer above the current surface; they are not navigation stacks.
 - **Panes are working context.** Preview, files, review, and terminal remain
   attached to the current task. Their state survives temporary hiding and chat
   switches where the underlying tool is meant to persist.
@@ -154,13 +154,19 @@ renderer and Electron's first window paint.
 | `--stroke-nous` | the overlay hairline (pairs with `shadow-nous`) |
 | `--ui-text-primary / -secondary / -tertiary` | text hierarchy |
 | `--ui-bg-quaternary` | soft control fill (secondary button) |
+| `--ui-bg-doc-canvas` | rendered document/iframe canvas — white in both themes |
 | `--ui-widget-surface-background` | fill for inline chat widgets (`WIDGET_SHELL_CLASS`) |
 | `--chrome-action-hover` | hover fill for quiet controls |
 | `--theme-primary`, `--ui-accent` | brand/accent |
 
-Never hardcode `border-gray-*`, `bg-white`, `text-black`, etc. The two tiles in
-`BrandMark` (white in light mode, `#0d1117` in dark) are the sanctioned literals
-(the mark needs a fixed backdrop).
+Never hardcode `border-gray-*`, `bg-white`, `text-black`, etc. The sanctioned
+literals are: the two tiles in `BrandMark` (white in light mode, `#0d1117` in
+dark — the mark needs a fixed backdrop); the Windows caption-button colors in
+`wslg-window-controls` (native OS chrome must match the OS); and the
+white-alpha chrome over `screen-hero`'s fixed dark media footer (the scrim
+never follows the theme). Rendered documents paint `--ui-bg-doc-canvas` —
+white in both themes — not a raw `bg-white`. `src/token-contract.test.ts`
+enforces both rules.
 
 ## Buttons — one component
 
@@ -516,15 +522,13 @@ long transcript or a busy terminal.
 
 - Every user-facing string goes through `useI18n()` (`src/i18n/context.tsx`).
   No literals in JSX.
-- **Update all locales together** — every catalog registered in
-  `src/i18n/catalog.ts`. A string change in `en.ts` that skips the others is a
-  regression (drifted punctuation, stale labels). Keep trailing-punctuation and
-  tone consistent across all of them. `fr`, `de`, and `es` are complete
-  `Translations` objects, so a key missing there fails the type check; the
-  `defineLocale()` overlays fall back to English instead.
-- **Sparse locales** (`ar`, `ru`) override the English base through
-  `defineLocale()`. Large catalogs are split by topic: the Arabic source lives
-  in `src/i18n/ar_<topic>.ts`, recomposed by `src/i18n/ar.ts`.
+- **English is the only bundled catalog.** `src/i18n/catalog.ts` registers
+  `en` alone; every other language arrives at runtime through
+  `registerAppLocale()` (plugin packs, backend `.desktop.yaml` packs) and
+  `resolveTranslations()` layers it over the English base. Add keys to
+  `en.ts` first — a key missing from a runtime pack falls back to English
+  instead of failing the type check. Keep trailing-punctuation and tone
+  consistent with the existing `en.ts` voice.
 
 ## State (TypeScript)
 

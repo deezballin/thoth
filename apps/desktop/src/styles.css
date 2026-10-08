@@ -308,8 +308,10 @@
       var(--theme-elevated-seed) var(--theme-mix-elevated),
       var(--theme-neutral-card)
     );
-    --ui-bg-card: color-mix(in srgb, var(--ui-accent) 4%, color-mix(in srgb, var(--ui-base) 4%, transparent));
-    --ui-bg-input: #fcfcfc;
+    /* Rendered document/iframe canvas (HTML/PDF/file previews): white paper in
+       both themes — documents don't follow the app theme. One token so the
+       value never appears as a raw `bg-white` class. */
+    --ui-bg-doc-canvas: #ffffff;
     --ui-bg-primary: color-mix(
       in srgb,
       var(--ui-accent) var(--theme-fill-primary-accent-mix),
@@ -391,7 +393,6 @@
       color-mix(in srgb, var(--ui-base) 3%, transparent)
     );
     --ui-sash-hover-border: color-mix(in srgb, var(--ui-accent) 18%, var(--ui-stroke-tertiary));
-    --ui-sash-hover-background: color-mix(in srgb, var(--ui-accent) 6%, transparent);
     --ui-surface-background: var(--ui-bg-editor);
     --ui-sidebar-surface-background: var(--ui-bg-sidebar);
     --ui-chat-surface-background: var(--ui-bg-chrome);
@@ -411,7 +412,6 @@
       var(--theme-bubble-seed) var(--theme-mix-bubble),
       var(--theme-neutral-card)
     );
-    --ui-chat-bubble-opaque-background: var(--ui-bg-editor);
     --ui-inline-code-background: color-mix(in srgb, #141414 5%, transparent);
     --ui-inline-code-foreground: color-mix(in srgb, #141414 88%, transparent);
     --ui-selection-background: color-mix(in srgb, #ffd24a 55%, transparent);

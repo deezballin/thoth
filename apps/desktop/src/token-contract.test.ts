@@ -1,0 +1,193 @@
+import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { join, relative, resolve } from 'node:path'
+
+import { describe, expect, it } from 'vitest'
+
+// Static-analysis guard for the token contract (DESIGN.md — "Stroke & color
+// tokens"). Two rules, both source-text scans in the same category as an
+// ESLint rule:
+//
+// 1. No raw color literals in shipped classes — `bg-white`, `text-black`,
+//    `border-gray-*`, or a hex arbitrary value (`bg-[#c42b1c]`). Colors flow
+//    through tokens so skins and dark mode can move them. Fixed-backdrop
+//    surfaces that must NOT follow the theme are allowlisted below and named
+//    as sanctioned literals in DESIGN.md.
+// 2. No phantom tokens — every `--ui-*`, `--theme-*`, `--chrome-*`,
+//    `--stroke-nous` and `--shadow-nous` reference in shipped code or CSS
+//    must resolve to a definition (a stylesheet rule, or a runtime write in
+//    `themes/context.tsx`). A reference with no definition compiles fine and
+//    silently falls back to `currentColor`/`transparent` — that is how
+//    `--ui-danger`, `--ui-border` and `--ui-panel-background` shipped broken.
+//
+// This is a source-text scan, not a behavior test.
+
+const SRC_DIR = resolve(__dirname)
+
+/** Fixed-backdrop surfaces exempt from rule 1 (paths relative to src/). */
+const RAW_COLOR_ALLOWLIST = new Set([
+  // Windows caption-button chrome — must match the OS, not the theme.
+  'app/shell/wslg-window-controls.tsx',
+  // Media-hero status footer — white-alpha chrome over a fixed black scrim.
+  'plugins/hermes-bots/screen-hero.tsx'
+])
+
+/** Class-literal colors DESIGN.md forbids. */
+const RAW_COLOR_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
+  { label: 'bg-white', pattern: /\bbg-white\b/gu },
+  { label: 'text-black', pattern: /\btext-black\b/gu },
+  { label: 'border-gray-*', pattern: /\bborder-gray-\d/gu },
+  { label: 'hex arbitrary value', pattern: /-\[#/gu }
+]
+
+/** The token families DESIGN.md defines: `--ui-*`, `--theme-*`, `--chrome-*`,
+ *  plus the two standalone names. Matched anywhere in shipped source. */
+const TOKEN_FAMILY = /--(?:ui-|theme-|chrome-)[a-z][a-z0-9-]*|--stroke-nous|--shadow-nous/gu
+
+/** `--name:` declarations in a stylesheet. */
+const CSS_DECLARATION = /(--[a-z][a-z0-9-]*):/gu
+
+/** Runtime writes: object keys (`'--theme-primary': c.primary`) and setters
+ *  (`setPersistentCssVar('--ui-success', …)`, `style.setProperty(…)`). */
+const RUNTIME_WRITE =
+  /['"](--[a-z][a-z0-9-]*)['"]\s*:|set(?:PersistentCssVar|Property)\(\s*['"](--[a-z][a-z0-9-]*)['"]/gu
+
+// Recursively walk a directory and collect all shipped .ts/.tsx/.css paths.
+function collectShippedFiles(dir: string): string[] {
+  const results: string[] = []
+
+  for (const entry of readdirSync(dir)) {
+    if (entry === 'node_modules' || entry === 'dist' || entry === '__tests__') {
+      continue
+    }
+
+    const fullPath = join(dir, entry)
+
+    if (statSync(fullPath).isDirectory()) {
+      results.push(...collectShippedFiles(fullPath))
+    } else if (/\.(?:ts|tsx|css)$/u.test(entry) && !entry.includes('.test.')) {
+      results.push(fullPath)
+    }
+  }
+
+  return results
+}
+
+function toPosix(path: string): string {
+  return path.split('\\').join('/')
+}
+
+function findAll(content: string, pattern: RegExp): RegExpExecArray[] {
+  pattern.lastIndex = 0
+
+  return [...content.matchAll(pattern)]
+}
+
+function lineOf(content: string, index: number): number {
+  return content.slice(0, index).split('\n').length
+}
+
+/** Rule 1 — raw color literals in class strings, minus the sanctioned set. */
+function rawColorViolations(content: string, relativePath: string): string[] {
+  if (RAW_COLOR_ALLOWLIST.has(relativePath)) {
+    return []
+  }
+
+  const violations: string[] = []
+
+  for (const { label, pattern } of RAW_COLOR_PATTERNS) {
+    for (const match of findAll(content, pattern)) {
+      violations.push(`${relativePath}:${lineOf(content, match.index ?? 0)} — ${label} (\`${match[0]}\`)`)
+    }
+  }
+
+  return violations
+}
+
+/** Rule 2 — every token-family reference must resolve to a definition. */
+function phantomTokenViolations(files: Array<{ path: string; content: string }>): string[] {
+  const defined = new Set<string>()
+  const references: Array<{ name: string; path: string; line: number }> = []
+
+  for (const file of files) {
+    const defPatterns = file.path.endsWith('.css') ? [CSS_DECLARATION] : [RUNTIME_WRITE]
+
+    for (const defPattern of defPatterns) {
+      for (const match of findAll(file.content, defPattern)) {
+        const name = match[1] ?? match[2]
+
+        if (name) {
+          defined.add(name)
+        }
+      }
+    }
+
+    for (const match of findAll(file.content, TOKEN_FAMILY)) {
+      references.push({ name: match[0], path: file.path, line: lineOf(file.content, match.index ?? 0) })
+    }
+  }
+
+  const missing = new Map<string, { path: string; line: number; count: number }>()
+
+  for (const reference of references) {
+    if (defined.has(reference.name)) {
+      continue
+    }
+
+    const seen = missing.get(reference.name)
+
+    if (seen) {
+      seen.count += 1
+    } else {
+      missing.set(reference.name, { path: reference.path, line: reference.line, count: 1 })
+    }
+  }
+
+  return [...missing].map(
+    ([name, at]) =>
+      `${name} — referenced at ${at.path}:${at.line}${at.count > 1 ? ` (+${at.count - 1} more)` : ''}, never defined`
+  )
+}
+
+const SRC_FILES = collectShippedFiles(SRC_DIR).map(path => ({
+  path: toPosix(relative(SRC_DIR, path)),
+  content: readFileSync(path, 'utf-8')
+}))
+
+describe('token contract', () => {
+  it('flags raw color utilities and spares the sanctioned set', () => {
+    expect(rawColorViolations('<div className="bg-white" />', 'a.tsx')).toHaveLength(1)
+    expect(
+      rawColorViolations('<div className="hover:bg-white/10 text-black border-gray-300 bg-[#c42b1c]" />', 'a.tsx')
+    ).toHaveLength(4)
+    expect(rawColorViolations('<div className="bg-(--ui-bg-card) hover:text-(--ui-red)" />', 'a.tsx')).toEqual([])
+    expect(rawColorViolations('<div className="bg-white" />', 'app/shell/wslg-window-controls.tsx')).toEqual([])
+  })
+
+  it('spot-checks the phantom-token detector', () => {
+    const files = [
+      { path: 'styles.css', content: ':root { --ui-good: #fff; }' },
+      { path: 'a.tsx', content: 'color: var(--ui-good); background: var(--ui-phantom);' }
+    ]
+
+    expect(phantomTokenViolations(files)).toEqual(['--ui-phantom — referenced at a.tsx:1, never defined'])
+  })
+
+  it('ships no raw color literals outside the sanctioned set', () => {
+    const violations: string[] = []
+
+    for (const file of SRC_FILES) {
+      if (file.path.endsWith('.css')) {
+        continue
+      }
+
+      violations.push(...rawColorViolations(file.content, file.path))
+    }
+
+    expect(violations, violations.join('\n')).toEqual([])
+  })
+
+  it('defines every token family reference', () => {
+    const violations = phantomTokenViolations(SRC_FILES)
+    expect(violations, violations.join('\n')).toEqual([])
+  })
+})

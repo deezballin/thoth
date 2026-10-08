@@ -1198,7 +1198,7 @@ export function LocalFilePreview({
       <div className="h-full w-full overflow-hidden bg-transparent">
         <iframe
           aria-label={target.label}
-          className="h-full w-full border-0 bg-white"
+          className="h-full w-full border-0 bg-(--ui-bg-doc-canvas)"
           src={pdfUrl}
           title={target.label}
         />

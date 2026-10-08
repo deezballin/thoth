@@ -1537,7 +1537,7 @@ export function PreviewPane({
           />
           {isRemoteHtml && (
             <iframe
-              className="absolute inset-0 size-full border-0 bg-white"
+              className="absolute inset-0 size-full border-0 bg-(--ui-bg-doc-canvas)"
               referrerPolicy="no-referrer"
               sandbox=""
               srcDoc={remoteHtmlDocument || ''}
