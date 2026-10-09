@@ -762,7 +762,7 @@ function buildWindowsInteractiveCommand(remoteCwd = '') {
     )
   }
 
-  script.push('$host.UI.RawUI.WindowTitle="Hermes SSH"', 'powershell.exe -NoLogo')
+  script.push('$host.UI.RawUI.WindowTitle="Thoth SSH"', 'powershell.exe -NoLogo')
 
   return powerShellCommand(script.join(';'))
 }

@@ -12888,7 +12888,7 @@ function reportPrimaryRecoveryCrashLoop(code: number | null, signal: string | nu
   }
 
   const message =
-    'Hermes backend keeps crashing right after it restarts; not restarting it again. Relaunch Hermes Desktop.'
+    'Thoth backend keeps crashing right after it restarts; not restarting it again. Relaunch Thoth Desktop.'
 
   rememberLog(`[supervisor] ${message}`)
   sendBackendExit({ code, signal, error: message })
@@ -12975,7 +12975,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
   // otherwise SIGTERMs the running instance's live backend (#87295).
   if (!isPrimaryInstance) {
     rememberLog('[boot] non-primary instance: skipping backend machinery')
-    throw new Error('Hermes Desktop is already running in another window.')
+    throw new Error('Thoth Desktop is already running in another window.')
   }
 
   await reapOrphanedBackendsOnce()
@@ -13066,7 +13066,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
 
       updateBootProgress({
         phase: 'backend.ready',
-        message: 'Remote Hermes backend is ready',
+        message: 'Remote Thoth backend is ready',
         progress: 94,
         running: true,
         error: null
@@ -13163,7 +13163,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
 
       updateBootProgress({
         phase: 'backend.ready',
-        message: 'Attached to the running Hermes backend',
+        message: 'Attached to the running Thoth backend',
         progress: 94,
         running: true,
         error: null
@@ -13430,7 +13430,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
 
     updateBootProgress({
       phase: 'backend.ready',
-      message: 'Hermes backend is ready. Finalizing desktop startup',
+      message: 'Thoth backend is ready. Finalizing desktop startup',
       progress: 94,
       running: true,
       error: null
@@ -14915,7 +14915,7 @@ function createWindow() {
         const exit = details?.exitCode === undefined ? '' : `, exit code ${String(details.exitCode)}`
         rememberLog(`[renderer:main] renderer terminated while live (reason=${reason}${exit}); surfacing recovery page`)
         void loadRendererLoadErrorPage(mainWindow, {
-          title: 'Hermes desktop UI was terminated',
+          title: 'Thoth desktop UI was terminated',
           errorDescription:
             `The desktop UI process was terminated unexpectedly (reason: ${reason}${exit}). ` +
             'Your sessions and the background gateway are unaffected — reload to continue.',
@@ -17845,7 +17845,7 @@ ipcMain.handle('hermes:quick-entry:submit', (event, payload) => {
   }
 
   if (!mainWindow || mainWindow.isDestroyed()) {
-    return { code: 'no-primary', message: 'The primary Hermes window is unavailable.', ok: false, retryable: true }
+    return { code: 'no-primary', message: 'The primary Thoth window is unavailable.', ok: false, retryable: true }
   }
 
   const target =

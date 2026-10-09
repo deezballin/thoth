@@ -922,7 +922,7 @@ describe('useGatewayBoot remote reconnect loop (real hook, fake socket)', () => 
     // After ~45s waitForHermes gives up and getConnection rejects → boot()
     // catch → failDesktopBoot → the BootFailureOverlay recovery surface.
     await act(async () => {
-      rejectConn(new Error('Hermes backend did not become ready: timeout'))
+      rejectConn(new Error('Thoth backend did not become ready: timeout'))
       await vi.advanceTimersByTimeAsync(0)
     })
 
@@ -2368,10 +2368,10 @@ describe('useGatewayBoot remote reconnect loop (real hook, fake socket)', () => 
     // ~45s readiness wait, indefinitely.
     const desktop = fakeDesktop()
     desktop.getConnection = vi.fn(async () => {
-      throw new Error('Hermes backend did not become ready: getaddrinfo ENOTFOUND gateway.tailnet.example')
+      throw new Error('Thoth backend did not become ready: getaddrinfo ENOTFOUND gateway.tailnet.example')
     })
     desktop.getBootProgress = vi.fn(async () => ({
-      error: 'Hermes backend did not become ready: getaddrinfo ENOTFOUND gateway.tailnet.example',
+      error: 'Thoth backend did not become ready: getaddrinfo ENOTFOUND gateway.tailnet.example',
       fakeMode: false,
       message: 'Desktop boot failed',
       phase: 'backend.error',
