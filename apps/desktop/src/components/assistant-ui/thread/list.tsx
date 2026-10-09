@@ -1573,7 +1573,7 @@ const ThreadMessageListInner: FC<ThreadMessageListProps> = ({
         >
           {!renderEmpty && (hiddenCount > 0 || olderAvailable) && (
             <button
-              className="mx-auto mb-(--conversation-turn-gap) rounded-full border border-border/65 bg-(--composer-fill) px-3 py-1 text-xs text-muted-foreground hover:text-foreground"
+              className="mx-auto mb-(--conversation-turn-gap) rounded-full border border-(--ui-stroke-tertiary) bg-(--composer-fill) px-3 py-1 text-xs text-muted-foreground hover:text-foreground"
               onClick={showEarlier}
               type="button"
             >

@@ -153,13 +153,13 @@ function AttachmentPill({ attachment, onRemove }: { attachment: ComposerAttachme
               'flex max-w-56 items-center gap-2 rounded-2xl border bg-background/50 px-2 py-1.5 text-left shadow-chip transition-colors disabled:cursor-default',
               hasUploadError
                 ? 'border-destructive/45 hover:border-destructive/60'
-                : 'border-border/60 hover:border-primary/35 hover:bg-accent/45'
+                : 'border-(--ui-stroke-tertiary) hover:border-primary/35 hover:bg-accent/45'
             )}
             disabled={!canPreview}
             onClick={() => void openAttachment()}
             type="button"
           >
-            <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-lg border border-border/55 bg-muted/35 text-muted-foreground">
+            <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-lg border border-(--ui-stroke-tertiary) bg-muted/35 text-muted-foreground">
               {(attachment.thumbnailUrl || attachment.previewUrl) && attachment.kind === 'image' ? (
                 <img
                   alt={attachment.label}
@@ -200,7 +200,7 @@ function AttachmentPill({ attachment, onRemove }: { attachment: ComposerAttachme
           {onRemove && (
             <button
               aria-label={c.removeAttachment(attachment.label)}
-              className="absolute -right-1 -top-1 grid size-3.5 place-items-center rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 shadow-xs transition hover:bg-accent hover:text-foreground group-hover/attachment:opacity-100 focus-visible:opacity-100"
+              className="absolute -right-1 -top-1 grid size-3.5 place-items-center rounded-full border border-(--ui-stroke-tertiary) bg-background text-muted-foreground opacity-0 shadow-xs transition hover:bg-accent hover:text-foreground group-hover/attachment:opacity-100 focus-visible:opacity-100"
               onClick={() => onRemove(attachment.id)}
               type="button"
             >

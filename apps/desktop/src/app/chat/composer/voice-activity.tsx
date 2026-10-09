@@ -177,7 +177,7 @@ export function VoiceActivity({ state }: { state: VoiceActivityState }) {
     <div
       aria-live="polite"
       className={cn(
-        'flex h-8 items-center gap-2 rounded-xl border border-border/55 bg-muted/55 px-2.5 text-xs text-muted-foreground',
+        'flex h-8 items-center gap-2 rounded-xl border border-(--ui-stroke-tertiary) bg-muted/55 px-2.5 text-xs text-muted-foreground',
         'shadow-chip-strong backdrop-blur-sm'
       )}
       role="status"
