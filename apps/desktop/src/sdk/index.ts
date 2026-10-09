@@ -1858,6 +1858,9 @@ export { Kbd, KbdGroup } from '@/components/ui/kbd'
  *  page loads) — the same one every core page uses. */
 export { Loader, type LoaderType } from '@/components/ui/loader'
 export { LogView } from '@/components/ui/log-view'
+/** THE floating-list surface — every menu/popup list paints through this, in
+ *  app code and plugins alike, so a list reads the same wherever it opens. */
+export { menuSurfaceClass } from '@/components/ui/menu'
 export { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 /** Full-row / region click target. Imposes NO styling — the caller keeps its own
  *  layout classes — it just bakes in `type="button"` and a stable `data-slot`.

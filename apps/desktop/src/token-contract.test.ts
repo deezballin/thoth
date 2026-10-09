@@ -18,6 +18,10 @@ import { describe, expect, it } from 'vitest'
 //    `themes/context.tsx`). A reference with no definition compiles fine and
 //    silently falls back to `currentColor`/`transparent` — that is how
 //    `--ui-danger`, `--ui-border` and `--ui-panel-background` shipped broken.
+// 3. Elevation follows the contract (DESIGN.md — "Surfaces & elevation"):
+//    floating panels wear the `shadow-nous` + `border-(--stroke-nous)` pair,
+//    every menu/popup list paints through `menu.ts`'s `menuSurfaceClass`,
+//    and `shadow-xl`/`shadow-2xl` one-offs stay out of surface chrome.
 //
 // This is a source-text scan, not a behavior test.
 
@@ -189,5 +193,69 @@ describe('token contract', () => {
   it('defines every token family reference', () => {
     const violations = phantomTokenViolations(SRC_FILES)
     expect(violations, violations.join('\n')).toEqual([])
+  })
+})
+
+/** Floating panels DESIGN.md names as `shadow-nous` + `border-(--stroke-nous)`
+ *  wearers, pinned so a redesign can't quietly reintroduce one-off chrome. */
+const NOUS_PAIR_FILES = [
+  // Base Dialog — the primitive every dialog composes.
+  'components/ui/dialog.tsx',
+  // Route overlays (settings, command-center, agents, cron, profiles, …).
+  'app/overlays/overlay-view.tsx',
+  // Floating cmdk pickers that build their own DialogPrimitive box.
+  'components/session-picker.tsx',
+  // Session switcher / floating panes / command palette chrome.
+  'app/floating-hud.ts'
+]
+
+/** The exact `menu.ts` list fill. If it appears anywhere else, a list is
+ *  painting itself instead of importing `menuSurfaceClass`. */
+const MENU_SURFACE_FILL = 'bg-[color-mix(in_srgb,var(--ui-bg-elevated)_96%,transparent)]'
+
+/** Content imagery where a heavy drop shadow IS the affordance (lightbox). */
+const SHADOW_ONEOFF_ALLOWLIST = new Set(['components/chat/zoomable-image.tsx'])
+
+describe('surface elevation contract', () => {
+  const shipped = (relative: string) => {
+    const file = SRC_FILES.find(f => f.path === relative)
+    expect(file, `${relative} must exist in the shipped-source scan`).toBeDefined()
+
+    return file!.content
+  }
+
+  it('keeps named floating panels on the nous pair', () => {
+    for (const relative of NOUS_PAIR_FILES) {
+      const content = shipped(relative)
+      expect(content, `${relative} must wear shadow-nous`).toContain('shadow-nous')
+      expect(content, `${relative} must wear border-(--stroke-nous)`).toContain('border-(--stroke-nous)')
+      expect(content, `${relative} must not carry a per-overlay shadow one-off`).not.toMatch(
+        /shadow-(?:lg|xl|2xl)\b/u
+      )
+      expect(content, `${relative} must not swap the overlay hairline for stroke-secondary`).not.toContain(
+        'border border-(--ui-stroke-secondary)'
+      )
+    }
+  })
+
+  it('paints every menu list through menu.ts', () => {
+    const offenders = SRC_FILES.filter(
+      file => !file.path.endsWith('.test.ts') && !file.path.endsWith('.test.tsx') && file.path !== 'components/ui/menu.ts'
+    )
+      .filter(file => file.content.includes(MENU_SURFACE_FILL))
+      .map(file => file.path)
+
+    expect(offenders, offenders.join('\n')).toEqual([])
+  })
+
+  it('ships no shadow-xl/shadow-2xl chrome outside the sanctioned set', () => {
+    const offenders = SRC_FILES.filter(
+      file => !file.path.endsWith('.test.ts') && !file.path.endsWith('.test.tsx')
+    )
+      .filter(file => !SHADOW_ONEOFF_ALLOWLIST.has(file.path))
+      .filter(file => file.content.includes('shadow-2xl') || file.content.includes('shadow-xl'))
+      .map(file => file.path)
+
+    expect(offenders, offenders.join('\n')).toEqual([])
   })
 })

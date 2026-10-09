@@ -15,9 +15,12 @@ const { host } = vi.hoisted(() => ({ host: {} as Record<string, unknown> }))
 vi.mock('@hermes/plugin-sdk', async () => {
   const { pluginSdkMock } = await import('./group-test-utils')
   const base = await pluginSdkMock(host)
+  // The real surface string, not a stub — the mention popover composes it.
+  const { menuSurfaceClass } = await import('@/components/ui/menu')
 
   return {
     ...base,
+    menuSurfaceClass,
     Button: (props: React.ComponentProps<'button'>) => <button type="button" {...props} />,
     cn: (...values: unknown[]) => values.filter(Boolean).join(' '),
     Codicon: () => null,
