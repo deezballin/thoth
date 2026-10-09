@@ -174,7 +174,7 @@ function allowedUninstallModes(kind: InstallKind): string[] {
 function nativeRemovalInstructions(kind, platform, appPath = null) {
   if (kind === 'nix') {
     return (
-      'This Hermes desktop app was installed by Nix. Uninstall it the same way you installed it: ' +
+      'This Thoth desktop app was installed by Nix. Uninstall it the same way you installed it: ' +
       'remove hermes-agent from your flake or profile, then rebuild.'
     )
   }

@@ -26,7 +26,7 @@ function downloadUrl(url: string): URL {
   }
 
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-    throw new Error(`Unsupported Hermes backend URL protocol: ${parsed.protocol}`)
+    throw new Error(`Unsupported Thoth backend URL protocol: ${parsed.protocol}`)
   }
 
   return parsed

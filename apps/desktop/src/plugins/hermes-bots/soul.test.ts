@@ -95,6 +95,16 @@ describe('composeSoul', () => {
 
     expect(sectionCount(cloned)).toBe(1)
   })
+
+  it('ships the house voice with a generated identity, protocol appended once', async () => {
+    const { composeSoul } = await loadSoul()
+
+    const soul = composeSoul({ description: 'literature review', name: 'researcher', roster, title: 'Researcher' })
+
+    expect(soul).toMatch(/## How you show up/)
+    expect(soul).toMatch(/Questioning comes before/)
+    expect(sectionCount(soul)).toBe(1)
+  })
 })
 
 describe('one-shot backfill for profiles that predate the protocol', () => {

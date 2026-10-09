@@ -485,7 +485,7 @@ type BotsMessages = {
 
 const en: BotsMessages = {
   editor: {
-    fullConfigHint: 'Full configuration needs a newer gateway (restart it after updating Hermes).',
+    fullConfigHint: 'Full configuration needs a newer gateway (restart it after updating Thoth).',
     liveCapabilities: 'Capabilities (applies immediately — skills, tools, MCP)',
     editSoul: 'SOUL.md (persona + agent-messaging protocol)',
     remoteCapabilitiesHint:
@@ -524,8 +524,8 @@ const en: BotsMessages = {
     createEmpty: 'Create empty (skip bundled skills)',
     nameTakenHint: 'That name is taken — pick another before configuring capabilities.',
     nameFirstHint: 'Name the bot first — a draft profile is created when you open this tab (discarded if you cancel).',
-    newerDesktop: 'Skills need a newer Hermes Desktop.',
-    newerGateway: 'Capability catalog needs a newer gateway (restart it after updating Hermes).',
+    newerDesktop: 'Skills need a newer Thoth Desktop.',
+    newerGateway: 'Capability catalog needs a newer gateway (restart it after updating Thoth).',
     emptySkillsHint: '“Create empty” is checked — no bundled skills will be installed.',
     defaultToolsHint: 'Leaving all (or none) checked keeps the default toolset behavior.',
     catalog: 'catalog',
@@ -541,7 +541,7 @@ const en: BotsMessages = {
     lockedHint: 'Face locked — renaming won’t change it.',
     unlockedHint: 'Face follows the name.',
     noImageModel:
-      'No image model available. If you just enabled one (or updated Hermes), restart the gateway: Ctrl+K → "Restart gateway".',
+      'No image model available. If you just enabled one (or updated Thoth), restart the gateway: Ctrl+K → "Restart gateway".',
     checkingImage: 'Checking image backend…',
     chooseImage: 'Choose an image…',
     editDescription: (name, profile) => `Appearance and role for ${name} (${profile}).`,
@@ -591,7 +591,7 @@ const en: BotsMessages = {
     unavailable: 'Unavailable',
     retryNow: 'Retry now',
     rosterUnavailable: reason =>
-      `Roster unavailable: ${reason}. If your gateway predates profiles.list, update Hermes and restart the gateway.`,
+      `Roster unavailable: ${reason}. If your gateway predates profiles.list, update Thoth and restart the gateway.`,
     waitingForGateway:
       'Waiting for the gateway connection… (remote gateways can take a few seconds; retries automatically)'
   },
@@ -655,11 +655,11 @@ const en: BotsMessages = {
     advanced: 'Advanced',
     advancedHint: 'Advanced — model, skills, toolsets, SOUL.md',
     advancedFailed: 'Advanced configuration failed',
-    openAnotherChatUnsupported: 'Update Hermes Desktop to open another Bot chat.',
-    remoteConnectionsUnsupported: 'Update Hermes Desktop to chat with bots on other connections.',
-    openNeedsUpdateTitle: 'This bot lives on an older Hermes',
+    openAnotherChatUnsupported: 'Update Thoth Desktop to open another Bot chat.',
+    remoteConnectionsUnsupported: 'Update Thoth Desktop to chat with bots on other connections.',
+    openNeedsUpdateTitle: 'This bot lives on an older Thoth',
     openNeedsUpdateMessage: connectionLabel => `Update ${connectionLabel}, then try again.`,
-    openUnreachableTitle: 'Hermes couldn’t reach the computer this bot runs on',
+    openUnreachableTitle: 'Thoth couldn’t reach the computer this bot runs on',
     openUnreachableMessage: 'Check it is online and try again.',
     openChatFailedTitle: botName => `Could not open ${botName}’s chat`,
     openChatFailedMessage: 'Try again.',
@@ -791,7 +791,7 @@ const en: BotsMessages = {
     setupFailed: 'Setup failed',
     signIn: 'Sign in…',
     setUp: 'Set up…',
-    skillsHub: 'Hermes Skills Hub',
+    skillsHub: 'Thoth Skills Hub',
     filterSkills: 'Filter skills…',
     searchHub: 'Search the hub (community + well-known sources)…',
     noMcpServers: 'No MCP servers configured or in the catalog.'
@@ -803,7 +803,7 @@ const en: BotsMessages = {
     unsupportedBody: 'Bot screens run on Linux gateway hosts. This bot uses the host\u2019s own display.',
     notInstalledTitle: 'Screen packages missing',
     notInstalledBody: 'The gateway host needs TigerVNC and the Xfce core to give this bot a screen. Run on the host:',
-    installHint: 'Runs on the gateway host as the user Hermes runs as; sudo is asked for once, through Hermes.',
+    installHint: 'Runs on the gateway host as the user Thoth runs as; sudo is asked for once, through Thoth.',
     install: 'Install on host',
     installing: 'Installing…',
     installCancelled: 'Install cancelled: no sudo password was provided.',
@@ -825,9 +825,9 @@ const en: BotsMessages = {
     portalStopped: 'Stopped',
     portalNotInstalled: 'Not installed on host',
     portalUnsupported: 'Not available on this host',
-    portalUnavailable: 'Update the bot\u2019s Hermes to use Screen',
-    portalUnavailableManaged: 'Screen is not available on this managed Hermes release yet',
-    unavailableTitle: 'Screen needs a newer Hermes',
+    portalUnavailable: 'Update the bot\u2019s Thoth to use Screen',
+    portalUnavailableManaged: 'Screen is not available on this managed Thoth release yet',
+    unavailableTitle: 'Screen needs a newer Thoth',
     autoOpenMenu: 'Open Screen when the bot uses it',
     autoOpenOnToast: name => `${name}’s Screen opens when it starts using its desktop`,
     autoOpenOffToast: name => `${name}’s Screen stays closed until you open it`,
@@ -847,7 +847,7 @@ const en: BotsMessages = {
     handBack: 'Hand back',
     handBackForce: 'Hand back (force)',
     handBackForceHint: 'Release a lease held by a viewer that is no longer here, e.g. after a reload.',
-    openNeedsUpdate: 'Update Hermes Desktop to open bot screens.',
+    openNeedsUpdate: 'Update Thoth Desktop to open bot screens.',
     youControl: 'You are in control',
     otherControls: 'Another viewer is in control',
     agentControls: 'Bot is in control',

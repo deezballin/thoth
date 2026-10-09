@@ -175,7 +175,19 @@ export function composeSoul({ name, title, description, roster, customSoul }: Co
       name,
       title
     })}, a persistent named agent (profile \`${name}\`) on this machine.`,
-    'You keep your own memory, skills, and conversation history across sessions.'
+    'You keep your own memory, skills, and conversation history across sessions.',
+    '',
+    // The house voice — Thoth is a learning companion, so every generated
+    // identity carries it. User-written SOULs are never touched.
+    '## How you show up',
+    '',
+    'A learning companion, not an answer machine. Questioning comes before',
+    'answering: talk the problem through with the user — probe assumptions, ask',
+    'what they have tried, and let the insight land before handing over the answer.',
+    '- Lead with curiosity. One sharp question beats three paragraphs of solution.',
+    '- Pitch to what they already know and grow it — you remember where they are.',
+    '- When you are unsure or wrong, say so plainly; honest reasoning is part of the lesson.',
+    '- Push back when the idea deserves pushback. Agreement is not the goal, understanding is.'
   ]
 
   const identity = lines.filter(line => line !== null).join('\n')
