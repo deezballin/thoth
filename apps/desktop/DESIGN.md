@@ -91,6 +91,14 @@ Both are CSS vars in `src/styles.css` — tune in one place, everything inherits
 Don't add per-overlay `shadow-[…]` or `border-(--ui-stroke-secondary)`
 one-offs; if elevation needs to change, change the token.
 
+Shared box shadows are tokens too — `--shadow-chip` / `--shadow-chip-strong`
+(composer chip bevels), `--shadow-dialog-banner`, `--shadow-tab-dot` /
+`--shadow-tab-hover`, `--shadow-image` (transcript images), plus
+`--shadow-composer`. Call sites use the matching `shadow-*` utility; a
+`shadow-[…]` literal is a violation, enforced by `src/token-contract.test.ts`
+alongside the raw-color rules (which cover rgb()/rgba() and hex buried inside
+arbitrary values, not just `bg-white`-style utilities).
+
 Menus and popovers use their own shared `shadow-md` +
 `--ui-stroke-secondary` primitive treatment. Every floating list —
 `DropdownMenu`, `Select`, and Popover + cmdk pickers

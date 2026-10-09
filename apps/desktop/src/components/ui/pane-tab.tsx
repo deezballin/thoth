@@ -40,7 +40,7 @@ const TAB_ACTIVE_UNDERLINE = 'shadow-[inset_0_-2px_0_var(--pane-tab-active-accen
 // the raw (unmixed) card seed. Hover DARKENS: surfaces this close in value need
 // a darkening wash to register at all.
 const TAB_IDLE =
-  'text-(--ui-text-tertiary) [--tab-bg:var(--pane-tab-strip-bg,var(--ui-sidebar-surface-background))] hover:shadow-[inset_0_0_0_100vmax_color-mix(in_srgb,#000_var(--ui-tab-hover-darken),transparent)] hover:text-(--ui-text-secondary)'
+  'text-(--ui-text-tertiary) [--tab-bg:var(--pane-tab-strip-bg,var(--ui-sidebar-surface-background))] hover:shadow-tab-hover hover:text-(--ui-text-secondary)'
 
 // A tab riding a multi-tab selection: an accent wash over whatever surface the
 // tab sits on. A background-image gradient (not a shadow) so it stacks cleanly
@@ -166,7 +166,7 @@ export const PaneTab = React.forwardRef<HTMLDivElement, PaneTabProps>(function P
             vertical ? 'bottom-1.5 left-1/2 -translate-x-1/2' : 'right-1.5 top-1/2 -translate-y-1/2'
           )}
         >
-          <span className="size-2 rounded-full bg-amber-500 shadow-[0_0_0_2px_var(--tab-bg),0_1px_2px_rgba(0,0,0,0.45)] dark:bg-amber-400" />
+          <span className="size-2 rounded-full bg-amber-500 shadow-tab-dot dark:bg-amber-400" />
         </span>
       )}
       {onClose && !vertical && (

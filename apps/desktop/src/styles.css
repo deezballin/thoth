@@ -195,6 +195,24 @@
     0 0 0 0.0625rem color-mix(in srgb, var(--dt-foreground) 8%, transparent),
     0 0.75rem 2rem color-mix(in srgb, #000 12%, transparent);
   --shadow-composer: 0 0.0625rem 0.125rem color-mix(in srgb, #000 5%, transparent);
+  /* Shared box-shadow tokens — the only homes for a shadow. Call sites use the
+     `shadow-chip` family / `shadow-dialog-banner` / `shadow-tab-dot` /
+     `shadow-image` utilities; a `shadow-[…]` literal is a contract violation
+     (DESIGN.md — Surfaces & elevation, checklist). */
+  /* Top-edge glass bevel on small composer chips (attachment pills). */
+  --shadow-chip: inset 0 0.0625rem 0 color-mix(in srgb, #fff 18%, transparent);
+  /* The same bevel at voice-pill strength. */
+  --shadow-chip-strong: inset 0 0.0625rem 0 color-mix(in srgb, #fff 35%, transparent);
+  /* The dialog banner's fold under the body's rounded bottom edge. */
+  --shadow-dialog-banner: inset 0 0.4375rem 0.4375rem -0.25rem color-mix(in srgb, #000 28%, transparent);
+  /* Pane-tab activity dot: ring keyed to the per-strip --tab-bg + a drop. */
+  --shadow-tab-dot: 0 0 0 0.125rem var(--tab-bg), 0 0.0625rem 0.125rem color-mix(in srgb, #000 45%, transparent);
+  /* Pane-tab hover veil — paints the whole tab with a darken mix whose amount
+     is the themeable --ui-tab-hover-darken knob. */
+  --shadow-tab-hover: inset 0 0 0 100vmax color-mix(in srgb, #000 var(--ui-tab-hover-darken, 8%), transparent);
+  /* Inline transcript images — a soft contact + ambient drop. */
+  --shadow-image: 0 0.0625rem 0.125rem color-mix(in srgb, #000 4%, transparent),
+    0 0.625rem 1.5rem color-mix(in srgb, #000 5%, transparent);
 }
 
 @layer base {

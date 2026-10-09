@@ -8,7 +8,8 @@ import { describe, expect, it } from 'vitest'
 // ESLint rule:
 //
 // 1. No raw color literals in shipped classes — `bg-white`, `text-black`,
-//    `border-gray-*`, or a hex arbitrary value (`bg-[#c42b1c]`). Colors flow
+//    `border-gray-*`, a hex arbitrary value (`bg-[#c42b1c]`, or buried in a
+//    color-mix), or rgb()/rgba() inside an arbitrary value. Colors flow
 //    through tokens so skins and dark mode can move them. Fixed-backdrop
 //    surfaces that must NOT follow the theme are allowlisted below and named
 //    as sanctioned literals in DESIGN.md.
@@ -40,7 +41,12 @@ const RAW_COLOR_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
   { label: 'bg-white', pattern: /\bbg-white\b/gu },
   { label: 'text-black', pattern: /\btext-black\b/gu },
   { label: 'border-gray-*', pattern: /\bborder-gray-\d/gu },
-  { label: 'hex arbitrary value', pattern: /-\[#/gu }
+  { label: 'hex arbitrary value', pattern: /-\[[^\]]*#[0-9a-fA-F]/gu },
+  // rgb()/rgba() hidden inside an arbitrary value (shadow-[...rgba(0,0,0,.4)],
+  // bg-[radial-gradient(...rgba(...))]) — the hole the inset-bevel shadows
+  // shipped through. Scoped to bracket values, so JSX style props and CSS
+  // files stay outside this rule's remit.
+  { label: 'rgb()/rgba() in an arbitrary value', pattern: /-\[[^\]]*rgba?\(/gu }
 ]
 
 /** The token families DESIGN.md defines: `--ui-*`, `--theme-*`, `--chrome-*`,
