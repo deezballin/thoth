@@ -166,7 +166,7 @@ export const PaneTab = React.forwardRef<HTMLDivElement, PaneTabProps>(function P
             vertical ? 'bottom-1.5 left-1/2 -translate-x-1/2' : 'right-1.5 top-1/2 -translate-y-1/2'
           )}
         >
-          <span className="size-2 rounded-full bg-amber-500 shadow-tab-dot dark:bg-amber-400" />
+          <span className="size-2 rounded-full bg-(--ui-warning) shadow-tab-dot dark:bg-(--ui-warning)" />
         </span>
       )}
       {onClose && !vertical && (

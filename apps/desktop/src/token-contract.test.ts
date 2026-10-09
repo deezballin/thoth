@@ -8,11 +8,12 @@ import { describe, expect, it } from 'vitest'
 // ESLint rule:
 //
 // 1. No raw color literals in shipped classes — `bg-white`, `text-black`,
-//    `border-gray-*`, a hex arbitrary value (`bg-[#c42b1c]`, or buried in a
-//    color-mix), or rgb()/rgba() inside an arbitrary value. Colors flow
-//    through tokens so skins and dark mode can move them. Fixed-backdrop
-//    surfaces that must NOT follow the theme are allowlisted below and named
-//    as sanctioned literals in DESIGN.md.
+//    a raw palette utility (`text-emerald-600`, `bg-amber-500/15`), a hex
+//    arbitrary value (`bg-[#c42b1c]`, or buried in a color-mix), or rgb()/
+//    rgba() inside an arbitrary value. Colors flow through tokens so skins
+//    and dark mode can move them. Fixed-backdrop surfaces that must NOT
+//    follow the theme, and sanctioned content palettes (hue = data), are
+//    allowlisted below and named as sanctioned literals in DESIGN.md.
 // 2. No phantom tokens — every `--ui-*`, `--theme-*`, `--chrome-*`,
 //    `--stroke-nous` and `--shadow-nous` reference in shipped code or CSS
 //    must resolve to a definition (a stylesheet rule, or a runtime write in
@@ -33,14 +34,32 @@ const RAW_COLOR_ALLOWLIST = new Set([
   // Windows caption-button chrome — must match the OS, not the theme.
   'app/shell/wslg-window-controls.tsx',
   // Media-hero status footer — white-alpha chrome over a fixed black scrim.
-  'plugins/hermes-bots/screen-hero.tsx'
+  'plugins/hermes-bots/screen-hero.tsx',
+  // Sanctioned content palettes (hue = data, not status) — named in DESIGN.md.
+  // The terminal's 16-color table, GFM alert tones, reaction accents, rendered
+  // markdown previews, and the screen-share panes' fixed-contrast chrome.
+  'lib/ansi.ts',
+  'components/assistant-ui/embeds/alert.tsx',
+  'components/assistant-ui/thread/message-reactions.tsx',
+  'app/chat/right-rail/preview-file.tsx',
+  'plugins/hermes-bots/screen-pane.tsx',
+  'plugins/hermes-bots/screen-portal.tsx',
+  'plugins/hermes-bots/screen-install.tsx'
 ])
 
 /** Class-literal colors DESIGN.md forbids. */
 const RAW_COLOR_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
   { label: 'bg-white', pattern: /\bbg-white\b/gu },
   { label: 'text-black', pattern: /\btext-black\b/gu },
-  { label: 'border-gray-*', pattern: /\bborder-gray-\d/gu },
+  // Raw palette utilities (`text-emerald-600`, `bg-amber-500/15`,
+  // `border-gray-300`) — status hues flow through --ui-success/warning/
+  // danger/info, chrome hues through the surface tokens. Sanctioned content
+  // palettes live in the allowlist above.
+  {
+    label: 'raw palette utility',
+    pattern:
+      /\b(?:bg|text|border|ring)-(?:red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|slate|zinc|neutral|stone|gray)-\d{1,3}/gu
+  },
   { label: 'hex arbitrary value', pattern: /-\[[^\]]*#[0-9a-fA-F]/gu },
   // rgb()/rgba() hidden inside an arbitrary value (shadow-[...rgba(0,0,0,.4)],
   // bg-[radial-gradient(...rgba(...))]) — the hole the inset-bevel shadows
@@ -169,7 +188,9 @@ describe('token contract', () => {
     expect(
       rawColorViolations('<div className="hover:bg-white/10 text-black border-gray-300 bg-[#c42b1c]" />', 'a.tsx')
     ).toHaveLength(4)
+    expect(rawColorViolations('<div className="text-emerald-600 dark:bg-amber-500/15 ring-red-500" />', 'a.tsx')).toHaveLength(3)
     expect(rawColorViolations('<div className="bg-(--ui-bg-card) hover:text-(--ui-red)" />', 'a.tsx')).toEqual([])
+    expect(rawColorViolations('<div className="text-emerald-600" />', 'lib/ansi.ts')).toEqual([])
     expect(rawColorViolations('<div className="bg-white" />', 'app/shell/wslg-window-controls.tsx')).toEqual([])
   })
 

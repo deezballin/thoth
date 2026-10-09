@@ -187,9 +187,9 @@ export function VersionHero({
         </p>
       </div>
       {(version?.bundleSwapPending || version?.bundleOutOfSync) && (
-        <div className="mx-auto w-full max-w-2xl rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-left text-sm">
+        <div className="mx-auto w-full max-w-2xl rounded-xl border border-(--ui-warning)/40 bg-(--ui-warning)/10 px-4 py-3 text-left text-sm">
           <div className="flex items-start gap-2">
-            <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" />
+            <AlertTriangle className="mt-0.5 size-4 shrink-0 text-(--ui-warning) dark:text-(--ui-warning)" />
             <div className="min-w-0">
               <p className="font-medium">{version.bundleSwapPending ? u.bundleSwapPending : u.bundleOutOfSync}</p>
               <p className="mt-1 text-xs text-muted-foreground">
@@ -299,7 +299,7 @@ export function UpdateStatusCard({
         {view.tone === 'available' ? (
           <Codicon className="mt-0.5 size-4 shrink-0 text-primary" name="cloud-download" size="1rem" />
         ) : view.tone === 'error' || view.tone === 'unsupported' ? null : (
-          <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-(--ui-success) dark:text-(--ui-success)" />
         )}
         <div className="min-w-0">
           <p className="font-medium">{view.line}</p>

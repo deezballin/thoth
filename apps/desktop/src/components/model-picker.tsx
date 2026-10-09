@@ -488,7 +488,7 @@ function ModelPrice({ price, isCurrent }: { price?: ModelPricing; isCurrent: boo
           <span
             className={cn(
               'rounded-sm px-1 py-0.5 text-[0.62rem] font-semibold',
-              isCurrent ? 'bg-primary-foreground/20' : 'bg-amber-500/15 text-amber-700 dark:text-amber-400'
+              isCurrent ? 'bg-primary-foreground/20' : 'bg-(--ui-warning)/15 text-(--ui-warning) dark:text-(--ui-warning)'
             )}
           >
             -{price.discount_percent}%
@@ -497,7 +497,7 @@ function ModelPrice({ price, isCurrent }: { price?: ModelPricing; isCurrent: boo
         <span
           className={cn(
             'shrink-0 rounded-sm px-1 py-0.5 text-[0.62rem] font-semibold uppercase tracking-wide',
-            isCurrent ? 'bg-primary-foreground/20' : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+            isCurrent ? 'bg-primary-foreground/20' : 'bg-(--ui-success)/15 text-(--ui-success) dark:text-(--ui-success)'
           )}
         >
           {copy.free}
@@ -520,7 +520,7 @@ function ModelPrice({ price, isCurrent }: { price?: ModelPricing; isCurrent: boo
         <span
           className={cn(
             'rounded-sm px-1 py-0.5 text-[0.62rem] font-semibold',
-            isCurrent ? 'bg-primary-foreground/20' : 'bg-amber-500/15 text-amber-700 dark:text-amber-400'
+            isCurrent ? 'bg-primary-foreground/20' : 'bg-(--ui-warning)/15 text-(--ui-warning) dark:text-(--ui-warning)'
           )}
         >
           -{price.discount_percent}%
@@ -565,7 +565,7 @@ function ProviderHeading({ provider }: { provider: ModelOptionProvider }) {
   // route by name — the label is copy.
   const tierBadge =
     provider.free_tier === true || provider.free_tier_row === true ? (
-      <span className="rounded-sm bg-emerald-500/15 px-1 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
+      <span className="rounded-sm bg-(--ui-success)/15 px-1 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-(--ui-success) dark:text-(--ui-success)">
         {copy.freeTier}
       </span>
     ) : provider.free_tier === false ? (

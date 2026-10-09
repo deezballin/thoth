@@ -297,7 +297,7 @@ export function BotRow({ bot, onDelete, onEdit, onGroup, onNewSection, showHandl
             <Tip label={botAttentionHint(attention.reason)}>
               <Codicon
                 aria-label={b.roster.needsAttention}
-                className="shrink-0 text-[0.6875rem] text-amber-600 dark:text-amber-300"
+                className="shrink-0 text-[0.6875rem] text-(--ui-warning) dark:text-(--ui-warning)"
                 name="warning"
               />
             </Tip>
@@ -588,7 +588,7 @@ export function GroupRow({ active, group, members, needsYou, onOpen, onDisband, 
           <Tip label={availabilityLabel}>
             <span
               aria-label={availabilityLabel}
-              className="absolute -bottom-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-(--ui-bg-primary) text-[0.625rem] text-amber-600 ring-1 ring-(--ui-stroke-tertiary) dark:text-amber-300"
+              className="absolute -bottom-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-(--ui-bg-primary) text-[0.625rem] text-(--ui-warning) ring-1 ring-(--ui-stroke-tertiary) dark:text-(--ui-warning)"
             >
               <Codicon name="debug-disconnect" />
             </span>

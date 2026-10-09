@@ -897,7 +897,7 @@ export function GroupChatWorkspace({ group, members, onBack, visible = true }: G
           aria-label={availabilityLabel}
           className={cn(
             'shrink-0 text-[0.65rem] text-(--ui-text-quaternary)',
-            members.length > 0 && availableMembers < members.length && 'text-amber-600 dark:text-amber-300'
+            members.length > 0 && availableMembers < members.length && 'text-(--ui-warning) dark:text-(--ui-warning)'
           )}
         >
           {members.length > 0 && availableMembers < members.length

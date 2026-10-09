@@ -166,15 +166,23 @@ renderer and Electron's first window paint.
 | `--ui-widget-surface-background` | fill for inline chat widgets (`WIDGET_SHELL_CLASS`) |
 | `--chrome-action-hover` | hover fill for quiet controls |
 | `--theme-primary`, `--ui-accent` | brand/accent |
+| `--ui-success` / `--ui-warning` / `--ui-danger` / `--ui-info` | status hues — theme-adaptive (light `#059669` / `#d97706` / `#dc2626` / `#0284c7`, dark `#34d399` / `#fbbf24` / `#f87171` / `#38bdf8`); the only way status colors are written |
 
-Never hardcode `border-gray-*`, `bg-white`, `text-black`, etc. The sanctioned
-literals are: the two tiles in `BrandMark` (white in light mode, `#0d1117` in
-dark — the mark needs a fixed backdrop); the Windows caption-button colors in
-`wslg-window-controls` (native OS chrome must match the OS); and the
-white-alpha chrome over `screen-hero`'s fixed dark media footer (the scrim
-never follows the theme). Rendered documents paint `--ui-bg-doc-canvas` —
-white in both themes — not a raw `bg-white`. `src/token-contract.test.ts`
-enforces both rules.
+Never hardcode `border-gray-*`, `bg-white`, `text-black`, or any raw palette
+utility (`text-emerald-600`, `bg-amber-500/15`) — status hues flow through
+`--ui-success` / `--ui-warning` / `--ui-danger` / `--ui-info`, so skins and
+dark mode can move them with one variable. The sanctioned literals are: the
+two tiles in `BrandMark` (white in light mode, `#0d1117` in dark — the mark
+needs a fixed backdrop); the Windows caption-button colors in
+`wslg-window-controls` (native OS chrome must match the OS); the white-alpha
+chrome over `screen-hero`'s fixed dark media footer (the scrim never follows
+the theme); and the sanctioned content palettes where hue = data, not status —
+`lib/ansi.ts` (the terminal's 16-color table), GFM alert tones in
+`embeds/alert.tsx`, reaction accents in `message-reactions.tsx`, rendered
+markdown in `preview-file.tsx`, and the screen-share panes' fixed-contrast
+chrome (`screen-pane` / `screen-portal` / `screen-install`). Rendered
+documents paint `--ui-bg-doc-canvas` — white in both themes — not a raw
+`bg-white`. `src/token-contract.test.ts` enforces all of it.
 
 ## Buttons — one component
 

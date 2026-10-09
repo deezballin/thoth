@@ -241,7 +241,7 @@ function RowOutcome({
 
     return (
       <div className="grid min-w-0 gap-1">
-        <p className={cn(CAPTION, 'text-emerald-600 dark:text-emerald-400')} role="status">
+        <p className={cn(CAPTION, 'text-(--ui-success) dark:text-(--ui-success)')} role="status">
           {parts.filter(Boolean).join(' · ')}
           {target.tools.length > 0 ? (
             <>

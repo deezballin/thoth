@@ -257,6 +257,15 @@
     --ui-accent-secondary: var(--theme-primary);
     --ui-warm: var(--theme-warm);
     --ui-red: #cf2d56;
+    /* Semantic status set — the ONE place a success/warning/danger/info color
+       is chosen. Raw `text-emerald-600`-style palette utilities are banned by
+       src/token-contract.test.ts; sanctioned content palettes (ANSI terminal
+       table, GFM alert tones, reaction accents, rendered-doc preview,
+       screen-share chrome) are allowlisted there and named in DESIGN.md. */
+    --ui-success: #059669;
+    --ui-warning: #d97706;
+    --ui-danger: #dc2626;
+    --ui-info: #0369a1;
     --ui-orange: #db704b;
     --ui-yellow: #c08532;
     --ui-green: #1f8a65;
@@ -617,6 +626,10 @@
 
     /* Dark-only accent palette overrides. */
     --ui-red: #e75e78;
+    --ui-success: #34d399;
+    --ui-warning: #fbbf24;
+    --ui-danger: #f87171;
+    --ui-info: #7dd3fc;
     --ui-green: #55a583;
     --ui-cyan: #6f9ba6;
     --ui-diff-add-foreground: color-mix(in srgb, var(--ui-green) 62%, #fff);
