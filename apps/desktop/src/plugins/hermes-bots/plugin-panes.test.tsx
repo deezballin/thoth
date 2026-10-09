@@ -25,7 +25,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // The app provider the plugin's tab label renders under; a plugin test may reach it.
 // eslint-disable-next-line no-restricted-imports
-import { I18nProvider } from '@/i18n'
+import { I18nProvider, registerAppLocale } from '@/i18n'
 
 import type * as DataModule from './data'
 import type * as RoutingModule from './routing'
@@ -127,12 +127,27 @@ function recordingContext() {
     storage: { get: async () => undefined, set: async () => undefined }
   }
 
-  return {
+  let disposed = false
+
+  const dispose = () => {
+    if (disposed) {
+      return
+    }
+
+    disposed = true
+    disposers.forEach(fn => fn())
+  }
+
+  const harness = {
     ctx: ctx as unknown as PluginContext,
-    dispose: () => disposers.forEach(fn => fn()),
+    dispose,
     find: (id: string) => registrations.find(registration => registration.id === id),
     unregisters
   }
+
+  harnesses.push(harness)
+
+  return harness
 }
 
 /** Nanostore stand-ins for the SDK's per-pane visibility stores. */
@@ -158,10 +173,25 @@ function paneStores() {
  *  tree store mid-mutation. */
 const settle = () => new Promise(resolve => setTimeout(resolve, 0))
 
+/** Every harness this file created, so a failing assertion can never leak a
+ *  registered listener into the next test (the shared `$groupChatWorkspace`
+ *  mock atom made exactly that pollute "drops a remembered Close": the tab
+ *  label test failed mid-body, skipped its `harness.dispose()`, and its zombie
+ *  group listener re-registered the routines pane with an armed restore flag). */
+const harnesses: Array<{ dispose: () => void }> = []
+
 beforeEach(() => {
   vi.clearAllMocks()
   mocks.botChatOwnsWorkspace.mockReturnValue(false)
   mocks.sessionOwnsWorkspace.mockReturnValue(false)
+})
+
+afterEach(() => {
+  // Disposers are idempotent, so an explicit in-test dispose plus this safety
+  // net is fine; a test that died mid-body gets its teardown here.
+  for (const harness of harnesses.splice(0)) {
+    harness.dispose()
+  }
 })
 
 afterEach(() => {
@@ -180,17 +210,32 @@ describe('the Bots pane dock', () => {
 
     const tabTitle = harness.find('pane')!.data!.tabTitle as () => ReactNode
 
-    const inLocale = (locale: string) =>
-      renderToStaticMarkup(
-        <I18nProvider configClient={null} initialLocale={locale}>
-          {tabTitle()}
-        </I18nProvider>
-      )
+    // The bundled catalog is English-only (runtime packs register the rest),
+    // so layer a real `ru` registration the way a backend language pack does —
+    // otherwise `normalizeLocale('ru')` falls back to `en` and the assertion
+    // below would compare English with English instead of testing liveness.
+    const unregisterRu = registerAppLocale('ru', {
+      endonym: 'Русский',
+      englishName: 'Russian',
+      translations: { 'common.bots': 'Боты' }
+    })
 
-    expect(inLocale('en')).toBeTruthy()
-    expect(inLocale('ru')).not.toBe(inLocale('en'))
+    try {
+      const inLocale = (locale: string) =>
+        renderToStaticMarkup(
+          <I18nProvider configClient={null} initialLocale={locale}>
+            {tabTitle()}
+          </I18nProvider>
+        )
 
-    harness.dispose()
+      // Registration-time `title` is English; the rendered label must come
+      // from the live locale the tab subscribes to.
+      expect(inLocale('en')).toBe('Bots')
+      expect(inLocale('ru')).not.toBe(inLocale('en'))
+    } finally {
+      unregisterRu()
+      harness.dispose()
+    }
   })
 })
 
