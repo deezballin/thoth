@@ -10,10 +10,10 @@
  * The mock server walks through a multi-turn script when it sees the
  * trigger keyword:
  *
- *   Turn 1: "Let me start by planning the approach." + todo tool_call
- *   Turn 2: "Now checking the details before answering." + todo tool_call
- *   Turn 3: (no text) + todo tool_call          → NO interim (no visible text)
- *   Turn 4: "Found something interesting worth noting." + todo tool_call
+ *   Turn 1: "Let me start by planning the approach." + tool_call (todo_list bridge)
+ *   Turn 2: "Now checking the details before answering." + tool_call (todo_list bridge)
+ *   Turn 3: (no text) + tool_call (todo_list bridge)          → NO interim (no visible text)
+ *   Turn 4: "Found something interesting worth noting." + tool_call (todo_list bridge)
  *   Turn 5: "All done! Here is the complete summary..." (final, stop)
  *
  * Two describe blocks exercise the config flag both ways:
@@ -39,12 +39,13 @@
 
 import { expect, type Page, test } from '@playwright/test'
 
+import { INTERIM_TEXTS, restartMockServer } from '../../../tests-js/scripts/mock-server'
+
 import {
   type MockBackendFixture,
   setupMockBackend,
   waitForAppReady,
 } from './fixtures'
-import { INTERIM_TEXTS, restartMockServer } from '../../../tests-js/scripts/mock-server'
 
 // ─── Helpers ──────────────────────────────────────────────────────────
 

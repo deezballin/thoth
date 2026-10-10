@@ -73,9 +73,11 @@ test('a fresh (non-clone) bot gets a runnable model block on disk', async () => 
   await expect.poll(() => existsSync(cfgPath), { timeout: 30_000 }).toBe(true)
   const cfg = readFileSync(cfgPath, 'utf8')
   expect(cfg).toMatch(/^model:/m)
-  expect(cfg).toMatch(/provider:\s*mock/)
+  // The inherited model rides bare `custom` and its endpoint travels inline:
+  // runtime_provider's bare-custom trust path reads `model.base_url`
+  // (runtime_provider.py::_config_base_url_trustworthy_for_bare_custom), so no
+  // `providers:` gateway entry is required for the first turn to run.
+  expect(cfg).toMatch(/provider:\s*custom\s*$/m)
   expect(cfg).toMatch(/default:\s*mock-model/)
-  // The inherited model rides a custom `providers:` gateway; its definition must travel with it
-  // or the first turn dies with "Unknown provider 'mock'".
-  expect(cfg).toMatch(/^providers:\n\s+mock:/m)
+  expect(cfg).toMatch(/base_url:\s*http:\/\/127\.0\.0\.1:\d+\/v1\s*$/m)
 })

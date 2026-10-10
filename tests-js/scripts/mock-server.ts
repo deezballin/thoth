@@ -95,25 +95,33 @@ export interface ScriptedTurn {
   }>
 }
 
+/**
+ * Tool calls ride the `tool_call` bridge wrapping `todo_list`: under default
+ * config the Todo tool is deferred behind tool_search (`todo` is only a legacy
+ * replay alias), so a direct call is rejected by turn validation as
+ * "invalid tool call" after 3 strikes and ends the turn partial — the exact
+ * banner the interim spec guards against. The bridge is how a live model
+ * calls a deferred tool.
+ */
 const INTERIM_SCRIPT: ScriptedTurn[] = [
   {
     text: 'Let me start by planning the approach.',
-    toolCalls: [{ name: 'todo', args: { todos: [{ id: '1', content: 'Plan', status: 'in_progress' }] } }],
+    toolCalls: [{ name: 'tool_call', args: { calls: [{ name: 'todo_list', arguments: { todos: [{ id: '1', content: 'Plan', status: 'in_progress' }] } }] } }],
   },
   {
     text: 'Now checking the details before answering.',
-    toolCalls: [{ name: 'todo', args: { todos: [{ id: '2', content: 'Check details', status: 'in_progress' }] } }],
+    toolCalls: [{ name: 'tool_call', args: { calls: [{ name: 'todo_list', arguments: { todos: [{ id: '2', content: 'Check details', status: 'in_progress' }] } }] } }],
   },
   {
     // No visible text alongside this tool call — should NOT produce an
     // interim message. The agent fires _emit_interim_assistant_message
     // but _interim_assistant_visible_text returns "" so it's a no-op.
     text: '',
-    toolCalls: [{ name: 'todo', args: { todos: [{ id: '3', content: 'Silent step', status: 'completed' }] } }],
+    toolCalls: [{ name: 'tool_call', args: { calls: [{ name: 'todo_list', arguments: { todos: [{ id: '3', content: 'Silent step', status: 'completed' }] } }] } }],
   },
   {
     text: 'Found something interesting worth noting.',
-    toolCalls: [{ name: 'todo', args: { todos: [{ id: '4', content: 'Note finding', status: 'completed' }] } }],
+    toolCalls: [{ name: 'tool_call', args: { calls: [{ name: 'todo_list', arguments: { todos: [{ id: '4', content: 'Note finding', status: 'completed' }] } }] } }],
   },
   {
     // Final answer — different from all interim texts.
@@ -336,14 +344,21 @@ const TASK_PANEL_RESUME_SCRIPT: ScriptedTurn[] = [
     text: TASK_PANEL_RESUME_TEXT,
     toolCalls: [
       {
-        name: 'todo',
+        name: 'tool_call',
         args: {
-          todos: [
-            { id: 'design', content: 'Design the restored layout', status: 'completed' },
-            { id: 'implement', content: 'Implement the measured clearance', status: 'in_progress' },
-            { id: 'verify', content: 'Verify the latest message stays visible', status: 'pending' },
-            { id: 'review', content: 'Review the visual regression', status: 'pending' },
-            { id: 'ship', content: 'Ship the focused fix', status: 'pending' },
+          calls: [
+            {
+              name: 'todo_list',
+              arguments: {
+                todos: [
+                  { id: 'design', content: 'Design the restored layout', status: 'completed' },
+                  { id: 'implement', content: 'Implement the measured clearance', status: 'in_progress' },
+                  { id: 'verify', content: 'Verify the latest message stays visible', status: 'pending' },
+                  { id: 'review', content: 'Review the visual regression', status: 'pending' },
+                  { id: 'ship', content: 'Ship the focused fix', status: 'pending' },
+                ],
+              },
+            },
           ],
         },
       },
@@ -374,7 +389,7 @@ export const TOOL_THEN_FAILURE_TEXT = 'Let me note the plan before answering.'
 
 const TOOL_THEN_FAILURE_TURN: ScriptedTurn = {
   text: TOOL_THEN_FAILURE_TEXT,
-  toolCalls: [{ name: 'todo', args: { todos: [{ id: '1', content: 'Answer the room', status: 'in_progress' }] } }],
+  toolCalls: [{ name: 'tool_call', args: { calls: [{ name: 'todo_list', arguments: { todos: [{ id: '1', content: 'Answer the room', status: 'in_progress' }] } }] } }],
 }
 
 const BLOCKING_CLARIFY_TURN: ScriptedTurn = {
