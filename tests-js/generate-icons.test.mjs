@@ -1,13 +1,31 @@
 import fs from 'node:fs'
+import { spawnSync } from 'node:child_process'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, test, vi } from 'vitest'
 import { generateIcons } from '../scripts/generate-icons.mjs'
 
+// CI exports HERMES_PYTHON via setup-pm; locally the repo venv (or any
+// Pillow/resvg-capable interpreter on PATH) plays that role. Probing keeps
+// this lane runnable on bare machines instead of dying on 'import PIL'.
+function runtimePython() {
+  const candidates = [
+    process.env.HERMES_PYTHON,
+    fileURLToPath(new URL('../.venv/bin/python', import.meta.url)),
+    fileURLToPath(new URL('../.venv/Scripts/python.exe', import.meta.url)),
+    'python',
+  ].filter(Boolean)
+  for (const candidate of candidates) {
+    const probe = spawnSync(candidate, ['-c', 'import PIL, resvg_py'], { stdio: 'ignore' })
+    if (probe.status === 0) return candidate
+  }
+  throw new Error('icon acceptance requires an interpreter with Pillow and resvg-py (set HERMES_PYTHON)')
+}
+
 test('the real wrapper builds and checks native icon artifacts in an independent output', () => {
   const out = fs.mkdtempSync(path.join(os.tmpdir(), 'hermes-icons-'))
-  const env = { ...process.env, HERMES_HOME: path.join(out, 'home'),
+  const env = { ...process.env, HERMES_PYTHON: runtimePython(), HERMES_HOME: path.join(out, 'home'),
     HERMES_RUNTIME_DIR: path.join(out, 'tools'), HERMES_PAYLOAD_TAG: 'v1.2.3', HERMES_BUILD_COMMIT: '',
     PYTHONPATH: path.join(out, 'foreign-site'), PYTHONHOME: path.join(out, 'foreign-python') }
   try {
