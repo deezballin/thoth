@@ -162,7 +162,7 @@ def test_canary_changes_only_desktop_background_preserving_art_and_native_geomet
             # Compare art in direct renders. Tiny container frames use LANCZOS,
             # whose ringing legitimately depends on adjacent background colors.
             if path.suffix == ".png" and original.width >= 256:
-                ink = (255, 255, 255, 255) if is_dark_tile(path) else (0, 0, 0, 255)
+                ink = (232, 232, 234, 255) if is_dark_tile(path) else (23, 23, 26, 255)  # INKS #e8e8ea/#17171a
                 assert [p == ink for p in original.get_flattened_data()] == [p == ink for p in yellow.get_flattened_data()]
     assert_unbranded_outputs(stable, canary)
 
@@ -209,13 +209,13 @@ def test_commit_icons_are_red_and_print_only_the_actual_seven_digit_prefix(gener
         (2, 6, 10, 18, 31, 2, 2), (31, 16, 16, 30, 1, 1, 30),
         (14, 16, 16, 30, 17, 17, 14),
     )
-    # The portrait renders in front of the badge (her hair crosses its lower rows), so a
-    # cell is only judged where the stable icon shows no art at that spot; every glyph
-    # must still be identified by a majority of its uncovered cells.
+    # The badge band sits above the crescent, so every glyph cell is judged (the
+    # "stable icon shows no art" guard stays for safety); each glyph must still be
+    # identified by a majority of its cells.
     for name in ("icon.png", "icon-dark.png"):
         image = Image.open(first / "apps/desktop/assets" / name).convert("RGB")
         unbadged = Image.open(stable / "apps/desktop/assets" / name).convert("RGB")
-        art = (0, 0, 0) if name == "icon.png" else (255, 255, 255)
+        art = (23, 23, 26) if name == "icon.png" else (232, 232, 234)  # INKS #17171a/#e8e8ea
         for digit, rows in enumerate(expected):
             judged = 0
             for y, row in enumerate(rows):
@@ -256,7 +256,7 @@ def manifest_fills(package):
     assert "border" not in layers, "the ring is disabled everywhere"
     # A fixed "image-name" makes actool ignore the per-appearance images, so
     # the art layer picks its image through specializations only, with a dark
-    # one (else dark mode shows the black girl on the dark fill). Clear and
+    # one (else dark mode shows the dark-ink crescent on the dark fill). Clear and
     # Tinted come from the single mono layer, shown only under "tinted" while
     # the art layer hides there.
     art, mono = layers["art"], layers["mono"]
@@ -272,9 +272,9 @@ def manifest_fills(package):
 
 
 def test_layered_macos_icon_mono_layer_and_flavor_stays_in_the_fill(generate, monkeypatch):
-    """macOS 26 masks the layers itself. The girl is dragged past the plate edge
-    so the mask crops her (no gap below), the mono layer is one image of two
-    materials — near-black frosted ink and white — so nothing stacks, and build
+    """macOS 26 masks the layers itself. The crescent rides fully inside the
+    plate so the system's own mask crops nothing, the mono layer is one image
+    of one material (near-black frosted glass) so nothing stacks, and build
     flavors recolour the fill in icon.json only; the layers never change."""
     module = load_generator(monkeypatch)
     stable = generate("v1.2.3") / "apps/desktop/assets" / LAYERED_ICON
@@ -285,20 +285,21 @@ def test_layered_macos_icon_mono_layer_and_flavor_stays_in_the_fill(generate, mo
     for name in ("art-light.png", "art-dark.png"):
         layer = Image.open(stable / "Assets" / name).convert("RGBA")
         assert layer.size == (canvas, canvas)
+        assert layer.getchannel("A").getbbox() is not None, f"{name}: the crescent must be present"
         bottom_row = layer.crop((0, canvas - 1, canvas, canvas)).getchannel("A").getbbox()
-        assert bottom_row is not None, f"{name}: the girl must reach the plate edge"
+        assert bottom_row is None, f"{name}: the crescent must stay inside the plate"
     mono = Image.open(stable / "Assets" / "mono.png").convert("RGBA")
     ink_tone = round(module.MONO_INK[0] * 255)
     tones = {px[0] for px in mono.getdata() if px[3] > 127}
-    assert tones == {ink_tone, 255}, tones
+    assert tones == {ink_tone}, tones  # one shape, one material
     light_art = Image.open(stable / "Assets" / "art-light.png").convert("RGBA")
     dark_art = Image.open(stable / "Assets" / "art-dark.png").convert("RGBA")
-    for x, y in ((canvas // 2, canvas // 2), (canvas // 3, canvas // 3), (2 * canvas // 3, canvas // 2)):
-        px = mono.getpixel((x, y))
-        if dark_art.getpixel((x, y))[3] > 200:      # the girl's white parts stay white and opaque
-            assert px[:3] == (255, 255, 255) and px[3] == 255, (x, y, px)
-        elif light_art.getpixel((x, y))[3] > 200:   # her black parts become the frosted ink
-            assert px[0] == ink_tone and abs(px[3] - round(module.MONO_INK[1] * 255)) <= 1, (x, y, px)
+    for x, y in ((canvas // 2, canvas // 2), (canvas // 3, canvas // 3), (2 * canvas // 3, canvas // 2),
+                 (canvas // 2, canvas - 1), (1, 1)):
+        coverage = light_art.getpixel((x, y))[3]
+        assert dark_art.getpixel((x, y))[3] == coverage, (x, y)  # both inks share the crescent's shape
+        # The mono layer is exactly that shape at the frosted tone/opacity, nothing else.
+        assert mono.getpixel((x, y)) == (ink_tone, ink_tone, ink_tone, round(coverage * module.MONO_INK[1])), (x, y)
 
     for name in ("art-light.png", "art-dark.png", "mono.png"):
         assert (stable / "Assets" / name).read_bytes() == (canary / "Assets" / name).read_bytes(), name
@@ -377,7 +378,7 @@ def test_msix_logos_resolve_every_slot_windows_draws(generate, monkeypatch):
         dark = Image.open(appx / f"Square44x44Logo.targetsize-{size}_altform-unplated.png").convert("RGBA")
         light = Image.open(appx / f"Square44x44Logo.targetsize-{size}_altform-lightunplated.png").convert("RGBA")
         assert plain.size == dark.size == light.size == (size, size)
-        edge = (max(1, size // 24), size // 2)  # on the plate, left of the girl
+        edge = (max(1, size // 24), size // 2)  # on the plate, left of the mark
         assert light.getpixel(edge)[:3] == plain.getpixel(edge)[:3] == light_plate == (255, 255, 255), size
         dark_plate = dark.getpixel(edge)
         assert dark_plate[3] == 255 and max(dark_plate[:3]) < 60, (size, dark_plate)

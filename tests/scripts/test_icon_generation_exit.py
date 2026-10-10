@@ -1,7 +1,6 @@
 """Icon generation reports per-target failures without hiding later targets."""
 import importlib.util
 import io
-import re
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -20,16 +19,16 @@ def test_svg_readers_accept_bom_without_rewriting_assets(tmp_path, monkeypatch, 
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    path = tmp_path / "art.svg"
-    element = '<path d="M0 0 L1 1" aria-label="café 東京"/>'
+    path = tmp_path / "thoth-crescent.svg"
+    element = '<path fill-rule="evenodd" d="M0 0 L1 1" aria-label="café 東京"/>'
     declaration = '<?xml version="1.0" encoding="UTF-8"?>\n' if editor_export else ""
     namespaces = ' xmlns="http://www.w3.org/2000/svg" xmlns:editor="urn:editor"'
     metadata = '<editor:namedview editor:zoom="1"/>' if editor_export else ""
     document = f'<svg{namespaces} viewBox="0 0 20 30">{metadata}{element}</svg>'
     raw = bom + (declaration + document).encode("utf-8")
     path.write_bytes(raw)
-    art = SimpleNamespace(girls={"black": path}, paths={}, backgrounds=tmp_path, colors=None)
-    assert module.girl_path(art, "black") == element
+    art = SimpleNamespace(crescent=path, path_cache=None, backgrounds=tmp_path, colors=None)
+    assert module.art_path(art) == element
     inner, width, height = module.background_inner(art, path.name)
     composed = ET.fromstring(f'<svg xmlns="http://www.w3.org/2000/svg">{inner}</svg>')
     assert (width, height) == (20, 30)
@@ -38,9 +37,9 @@ def test_svg_readers_accept_bom_without_rewriting_assets(tmp_path, monkeypatch, 
     ]
     assert path.read_bytes() == raw
     path.write_bytes(bom + b"<svg/>")
-    art.paths.clear()
+    art.path_cache = None
     with pytest.raises(AssertionError, match="no <path>"):
-        module.girl_path(art, "black")
+        module.art_path(art)
     with pytest.raises(AssertionError, match="viewBox"):
         module.background_inner(art, path.name)
 
@@ -55,7 +54,7 @@ def test_write_status_includes_every_target(tmp_path, monkeypatch, capsys, failu
     spec.loader.exec_module(module)
     source = tmp_path / "immutable source"
     source.mkdir()
-    monkeypatch.setattr(module, "IconArt", lambda root: root)
+    monkeypatch.setattr(module, "IconArt", lambda root, **_flavor: root)
     monkeypatch.setattr(sys, "argv", [str(script), "--source", str(source), "--out", str(tmp_path)])
 
     image = io.BytesIO()
@@ -90,12 +89,14 @@ def test_write_status_includes_every_target(tmp_path, monkeypatch, capsys, failu
 
 
 @pytest.mark.parametrize("platform", ["", "mac-"])
-@pytest.mark.parametrize("appearance,girl", [("light", "black"), ("dark", "white")])
+@pytest.mark.parametrize("appearance,ink", [("light", "dark"), ("dark", "light")])
 @pytest.mark.parametrize("colors", [None, ("#f5cc32", "#443808"), ("#e34850", "#4a1117")])
-def test_icon_portrait_sits_on_the_plain_tile_inside_the_outer_silhouette(monkeypatch, platform, appearance, girl, colors):
+def test_crescent_mark_sits_centered_on_the_plain_tile_inside_the_outer_silhouette(
+        monkeypatch, platform, appearance, ink, colors):
     """The tile keeps the background's own geometry and fill with no stroke
-    (the ring is disabled), the portrait is clipped to that outline and its
-    lowest nodes are dragged past the bottom edge so the clip crops her."""
+    (the ring is disabled); the crescent rides in a centered MARK_FRACTION
+    square, fitted ('meet', never distorted), and the whole group is clipped
+    to the outer silhouette so neither mark nor badge can paint past the plate."""
     monkeypatch.setitem(sys.modules, "resvg_py", ModuleType("resvg_py"))
     source = Path(__file__).resolve().parents[2]
     spec = importlib.util.spec_from_file_location("icon_geometry_under_test", source / "scripts/generate_icons.py")
@@ -104,13 +105,13 @@ def test_icon_portrait_sits_on_the_plain_tile_inside_the_outer_silhouette(monkey
     spec.loader.exec_module(module)
     assert module.BORDER_ENABLED is False
     art = SimpleNamespace(
-        backgrounds=source / "assets/backgrounds", colors=colors, commit="0123456",
-        bboxes={girl: (0, 0, 100, 90)}, paths={girl: '<path d="M 0 0 L 100 0 L 100 90 L 0 90 z"/>'},
+        backgrounds=source / "assets/backgrounds", colors=colors, commit="",
+        crescent=source / "assets/thoth-crescent.svg", path_cache=None,
     )
     name = f"squircle-{platform}{appearance}.svg"
     ns = {"svg": "http://www.w3.org/2000/svg"}
     original = ET.parse(art.backgrounds / name).find("svg:rect", ns)
-    result = ET.fromstring(module.compose_svg(art, girl, name))
+    result = ET.fromstring(module.compose_svg(art, ink, name))
     tile = result.find("svg:rect", ns)
     assert original is not None and tile is not None
     geometry = tuple(float(original.attrib[key]) for key in ("x", "y", "width", "height", "rx"))
@@ -121,40 +122,25 @@ def test_icon_portrait_sits_on_the_plain_tile_inside_the_outer_silhouette(monkey
     clip = result.find("svg:defs/svg:clipPath/svg:rect", ns)
     assert clip is not None
     assert tuple(float(clip.attrib[key]) for key in ("x", "y", "width", "height", "rx")) == geometry
-    group = result[-1]
-    portrait = group[-1]
-    portraits = [child for child in group if child.tag == f"{{{ns['svg']}}}svg"]
-    assert portraits == [portrait], "extend the existing contour, not a duplicate strip"
-    # The commit badge rides inside the same clip, so its anti-aliased edge can
-    # never add alpha outside the plate (visible at targetsize-16..30).
-    assert [child.tag for child in group[:-1]] == [f"{{{ns['svg']}}}g"]
-    assert portrait.get("preserveAspectRatio") == "xMidYMax meet"
-    assert tuple(float(portrait.attrib[key]) for key in ("x", "y", "width", "height")) == module.GIRL_BOXES[name]
     clip_path = result.find("svg:defs/svg:clipPath", ns)
     assert clip_path is not None
+    group = result[-1]
     assert group.get("clip-path") == f"url(#{clip_path.attrib['id']})"
-    assert portrait.get("overflow") == "visible"
-    assert len(result.findall(".//svg:path", ns)) == 2  # one badge and one portrait
-    # The dragged bottom node lands below the tile: the clip, not a gap, ends her.
-    x, y, width, height, _ = geometry
-    _, by, bw, bh = art.bboxes[girl]
-    box_y, box_h = module.GIRL_BOXES[name][1], module.GIRL_BOXES[name][3]
-    scale = min(module.GIRL_BOXES[name][2] / bw, box_h / bh)
-    lowest_raw_y = max(float(v) for v in re.findall(r"[-+]?\d*\.?\d+", portrait[0].attrib["d"])[1::2])
-    lowest_tile_y = box_y + box_h - bh * scale + (lowest_raw_y - by) * scale  # xMidYMax: bottom-aligned
-    assert lowest_tile_y == pytest.approx(y + height + width * module.EDGE_OVERSHOOT)
-
-
-def test_bottom_node_drag_preserves_upper_geometry_and_path_transform(monkeypatch):
-    monkeypatch.setitem(sys.modules, "resvg_py", ModuleType("resvg_py"))
-    script = Path(__file__).resolve().parents[2] / "scripts/generate_icons.py"
-    spec = importlib.util.spec_from_file_location("icon_nodes_under_test", script)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    path = ET.fromstring('<path transform="matrix(2,0,0,2,10,-100)" d="M 0 0 C 0 90 10 98 20 100 L 0 100 z"/>')
-    module.drag_bottom_nodes(path, cutoff=80, band=20, distance=10)
-    assert path.get("transform") == "matrix(2,0,0,2,10,-100)"
-    assert path.get("d") == "M 0 0 C 0 90 10 102.48 20 105 L 0 105 z"
-    with pytest.raises(ValueError, match="absolute M/L/C"):
-        module.drag_bottom_nodes(ET.fromstring('<path d="m 0 0 l 1 1"/>'), cutoff=0, band=1, distance=1)
+    marks = [child for child in group if child.tag == f"{{{ns['svg']}}}svg"]
+    assert len(marks) == 1, "one nested mark layer only"
+    mark = marks[0]
+    assert mark.get("preserveAspectRatio") == "xMidYMid meet"
+    assert mark.get("overflow") is None, "the fitted mark needs no overflow"
+    assert mark.get("viewBox") == " ".join(str(value) for value in module.CRESCENT_BBOX)
+    x, y, w, h, _ = geometry
+    side = w * module.MARK_FRACTION
+    assert side < w, "the mark never fills the whole plate"
+    expected_box = (x + (w - side) / 2.0, y + (h - side) / 2.0, side, side)
+    assert tuple(float(mark.attrib[key]) for key in ("x", "y", "width", "height")) == pytest.approx(expected_box)
+    paths = result.findall(".//svg:path", ns)
+    assert len(paths) == 1  # no badge without a commit; the crescent is one path
+    assert paths[0].get("fill") == module.INKS[ink]
+    assert paths[0].get("fill-rule") == "evenodd"
+    # The composed mark is the exact BrandMark path, byte for byte.
+    from_art = ET.fromstring(module.art_path(art))
+    assert paths[0].get("d") == from_art.get("d")
