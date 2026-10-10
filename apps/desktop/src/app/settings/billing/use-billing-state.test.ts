@@ -86,10 +86,22 @@ describe('deriveBillingView', () => {
             title: 'Remote spending wyłączone',
             message: 'Remote spending jest wyłączone dla tego konta.'
           },
-          roleRequired: { title: 'Wymagana rola administratora', message: 'Dodawanie środków wymaga roli administratora.' },
-          idempotencyConflict: { title: 'Rozpocznij nowe doładowanie', message: '🔴 Ten klucz opłaty został już użyty.' },
-          noPaymentMethod: { title: 'Brak zapisanej karty', message: '💳 Brak zapisanej karty do opłat terminalowych.' },
-          orgAccessDenied: { title: 'Brak dostępu do organizacji', message: 'Token nie jest powiązany z Twoją organizacją.' },
+          roleRequired: {
+            title: 'Wymagana rola administratora',
+            message: 'Dodawanie środków wymaga roli administratora.'
+          },
+          idempotencyConflict: {
+            title: 'Rozpocznij nowe doładowanie',
+            message: '🔴 Ten klucz opłaty został już użyty.'
+          },
+          noPaymentMethod: {
+            title: 'Brak zapisanej karty',
+            message: '💳 Brak zapisanej karty do opłat terminalowych.'
+          },
+          orgAccessDenied: {
+            title: 'Brak dostępu do organizacji',
+            message: 'Token nie jest powiązany z Twoją organizacją.'
+          },
           monthlyCapExceeded: {
             title: 'Osiągnięto miesięczny limit',
             messageReached: '🔴 Osiągnięto miesięczny limit.',
@@ -97,8 +109,14 @@ describe('deriveBillingView', () => {
           },
           rateLimited: { title: 'Zbyt wiele prób opłat', message: '🟡 Spróbuj ponownie za {0} min.' },
           stripeUnavailable: { title: 'Stripe ma problemy', message: 'Stripe ma problemy — spróbuj za {0} min' },
-          upgradeCapExceeded: { title: 'Dzienny limit zmian planu', message: 'Dzienny limit zmian planu — spróbuj jutro.' },
-          endpointUnavailable: { title: 'Endpoint rozliczeń niedostępny', message: 'Endpoint rozliczeń nie zwrócił poprawnej odpowiedzi.' },
+          upgradeCapExceeded: {
+            title: 'Dzienny limit zmian planu',
+            message: 'Dzienny limit zmian planu — spróbuj jutro.'
+          },
+          endpointUnavailable: {
+            title: 'Endpoint rozliczeń niedostępny',
+            message: 'Endpoint rozliczeń nie zwrócił poprawnej odpowiedzi.'
+          },
           timeout: { title: 'Przekroczono limit czasu', message: 'Żądanie rozliczeń przekroczyło limit czasu.' },
           transport: { title: 'Błąd połączenia', message: 'Nie udało się połączyć z endpointem rozliczeń.' },
           default: { title: 'Nieznany błąd', message: 'Nie udało się przetworzyć płatności.' }

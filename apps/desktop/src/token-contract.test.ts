@@ -188,7 +188,9 @@ describe('token contract', () => {
     expect(
       rawColorViolations('<div className="hover:bg-white/10 text-black border-gray-300 bg-[#c42b1c]" />', 'a.tsx')
     ).toHaveLength(4)
-    expect(rawColorViolations('<div className="text-emerald-600 dark:bg-amber-500/15 ring-red-500" />', 'a.tsx')).toHaveLength(3)
+    expect(
+      rawColorViolations('<div className="text-emerald-600 dark:bg-amber-500/15 ring-red-500" />', 'a.tsx')
+    ).toHaveLength(3)
     expect(rawColorViolations('<div className="bg-(--ui-bg-card) hover:text-(--ui-red)" />', 'a.tsx')).toEqual([])
     expect(rawColorViolations('<div className="text-emerald-600" />', 'lib/ansi.ts')).toEqual([])
     expect(rawColorViolations('<div className="bg-white" />', 'app/shell/wslg-window-controls.tsx')).toEqual([])
@@ -256,9 +258,7 @@ describe('surface elevation contract', () => {
       const content = shipped(relative)
       expect(content, `${relative} must wear shadow-nous`).toContain('shadow-nous')
       expect(content, `${relative} must wear border-(--stroke-nous)`).toContain('border-(--stroke-nous)')
-      expect(content, `${relative} must not carry a per-overlay shadow one-off`).not.toMatch(
-        /shadow-(?:lg|xl|2xl)\b/u
-      )
+      expect(content, `${relative} must not carry a per-overlay shadow one-off`).not.toMatch(/shadow-(?:lg|xl|2xl)\b/u)
       expect(content, `${relative} must not swap the overlay hairline for stroke-secondary`).not.toContain(
         'border border-(--ui-stroke-secondary)'
       )
@@ -267,7 +267,8 @@ describe('surface elevation contract', () => {
 
   it('paints every menu list through menu.ts', () => {
     const offenders = SRC_FILES.filter(
-      file => !file.path.endsWith('.test.ts') && !file.path.endsWith('.test.tsx') && file.path !== 'components/ui/menu.ts'
+      file =>
+        !file.path.endsWith('.test.ts') && !file.path.endsWith('.test.tsx') && file.path !== 'components/ui/menu.ts'
     )
       .filter(file => file.content.includes(MENU_SURFACE_FILL))
       .map(file => file.path)
@@ -276,9 +277,7 @@ describe('surface elevation contract', () => {
   })
 
   it('ships no shadow-xl/shadow-2xl chrome outside the sanctioned set', () => {
-    const offenders = SRC_FILES.filter(
-      file => !file.path.endsWith('.test.ts') && !file.path.endsWith('.test.tsx')
-    )
+    const offenders = SRC_FILES.filter(file => !file.path.endsWith('.test.ts') && !file.path.endsWith('.test.tsx'))
       .filter(file => !SHADOW_ONEOFF_ALLOWLIST.has(file.path))
       .filter(file => file.content.includes('shadow-2xl') || file.content.includes('shadow-xl'))
       .map(file => file.path)

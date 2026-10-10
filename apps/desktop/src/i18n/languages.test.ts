@@ -14,7 +14,25 @@ describe('desktop i18n languages', () => {
     // Phase 4 dropped the eight non-English families: config and OS values
     // that used to map onto them must settle on English instead of naming a
     // catalog the binary cannot render.
-    for (const value of ['zh', 'zh-CN', 'zh-Hans', 'zh-TW', 'zh_HK', 'ja', 'ja-JP', 'ar', 'AR-SA', 'ru', 'RU-RU', 'fr', 'FR-CA', 'de', 'DE-AT', 'es', 'ES-419']) {
+    for (const value of [
+      'zh',
+      'zh-CN',
+      'zh-Hans',
+      'zh-TW',
+      'zh_HK',
+      'ja',
+      'ja-JP',
+      'ar',
+      'AR-SA',
+      'ru',
+      'RU-RU',
+      'fr',
+      'FR-CA',
+      'de',
+      'DE-AT',
+      'es',
+      'ES-419'
+    ]) {
       expect(normalizeLocale(value), value).toBe(DEFAULT_LOCALE)
       expect(isSupportedLocaleValue(value), value).toBe(false)
     }

@@ -97,7 +97,10 @@ it.each(['gui', 'lite', 'full'] as const)(
             yesUninstall: 'Tak, deinstaluj',
             options: {
               gui: { title: 'Usuń tylko czat GUI', consequence: 'czat GUI (ten aplikacja i jej dane)' },
-              lite: { title: 'Usuń GUI i agenta, zachowaj dane', consequence: 'czat GUI i agenta Hermes (dane zostają)' },
+              lite: {
+                title: 'Usuń GUI i agenta, zachowaj dane',
+                consequence: 'czat GUI i agenta Hermes (dane zostają)'
+              },
               full: { title: 'Usuń wszystko', consequence: 'WSZYSTKO — czat GUI, agenta i wszystkie dane' }
             }
           }
@@ -113,8 +116,14 @@ it.each(['gui', 'lite', 'full'] as const)(
             yesUninstall: 'はい、削除します',
             options: {
               gui: { title: 'チャット GUI のみを削除', consequence: 'チャット GUI（このアプリとそのデータ）' },
-              lite: { title: 'GUI + エージェントを削除、データは保持', consequence: 'チャット GUI と Hermes エージェント（設定・チャット・シークレットは保持）' },
-              full: { title: 'すべてを削除', consequence: 'すべて — チャット GUI、エージェント、すべての設定・チャット・シークレット・ログ' }
+              lite: {
+                title: 'GUI + エージェントを削除、データは保持',
+                consequence: 'チャット GUI と Hermes エージェント（設定・チャット・シークレットは保持）'
+              },
+              full: {
+                title: 'すべてを削除',
+                consequence: 'すべて — チャット GUI、エージェント、すべての設定・チャット・シークレット・ログ'
+              }
             }
           }
         }

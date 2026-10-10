@@ -358,7 +358,6 @@ export function ContribWiring({ children }: { children: ReactNode }) {
 
   const { connectionRef, gateway, gatewayRef, requestGateway: ambientRequestGateway } = useGatewayRequest()
 
-
   // When chrome stays on the launch backend (Bot Mode / all-profiles
   // navigation), session-owned RPCs still have to hit the session's backend.
   // The routing itself lives in createSessionRpcDispatcher (routed by the
@@ -1381,9 +1380,7 @@ export function ContribWiring({ children }: { children: ReactNode }) {
 
       {/* Single persistent xterm host chasing the terminal pane's slot rect.
           Browser windows have no terminal pane, so they have nothing to chase. */}
-      {!isBrowserWindow() && (
-        <PersistentTerminal onAddSelectionToChat={composer.addTerminalSelectionAttachment} />
-      )}
+      {!isBrowserWindow() && <PersistentTerminal onAddSelectionToChat={composer.addTerminalSelectionAttachment} />}
     </ContribWiringContext.Provider>
   )
 }

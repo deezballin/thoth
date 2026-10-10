@@ -41,7 +41,12 @@ function statusGlyph(status: SubagentStatus, a: Translations['agents']): ReactNo
     return <AlertCircle aria-label={a.failed} className="size-3.5 shrink-0 text-destructive" />
   }
 
-  return <CheckCircle2 aria-label={a.done} className="size-3.5 shrink-0 text-(--ui-success)/85 dark:text-(--ui-success)/85" />
+  return (
+    <CheckCircle2
+      aria-label={a.done}
+      className="size-3.5 shrink-0 text-(--ui-success)/85 dark:text-(--ui-success)/85"
+    />
+  )
 }
 
 const STREAM_TONE: Record<SubagentStreamEntry['kind'], string> = {
@@ -63,7 +68,9 @@ function streamGlyph(entry: SubagentStreamEntry): ReactNode {
   }
 
   if (entry.kind === 'summary') {
-    return <CheckCircle2 aria-hidden className="mt-0.5 size-3 shrink-0 text-(--ui-success)/85 dark:text-(--ui-success)/85" />
+    return (
+      <CheckCircle2 aria-hidden className="mt-0.5 size-3 shrink-0 text-(--ui-success)/85 dark:text-(--ui-success)/85" />
+    )
   }
 
   if (entry.kind === 'thinking') {

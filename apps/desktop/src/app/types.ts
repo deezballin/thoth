@@ -126,13 +126,7 @@ export interface HandoffFailResponse {
 }
 
 export type SidebarNavId =
-  | 'artifacts'
-  | 'capabilities'
-  | 'command-center'
-  | 'cron'
-  | 'new-session'
-  | 'settings'
-  | 'subconscious'
+  'artifacts' | 'capabilities' | 'command-center' | 'cron' | 'new-session' | 'settings' | 'subconscious'
 
 export interface SidebarNavItem extends Tiered {
   /** Built-in view id, or a contributed row's namespaced contribution id. */

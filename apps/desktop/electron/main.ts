@@ -13851,7 +13851,7 @@ function spawnSecondaryWindow({
     isIntentionalTeardown: rendererTeardownInProgress,
     reloadWindowMs: RENDERER_RELOAD_WINDOW_MS,
     reloadMax: RENDERER_RELOAD_MAX,
-    recentReloadTimesRef: rendererReloadTimesRef,
+    recentReloadTimesRef: rendererReloadTimesRef
   })
 
   loadWindowUrl(
@@ -14927,7 +14927,7 @@ function createWindow() {
     reloadWindowMs: RENDERER_RELOAD_WINDOW_MS,
     reloadMax: RENDERER_RELOAD_MAX,
     recentReloadTimesRef: rendererReloadTimesRef,
-    reloadOnFailedLoad: true,
+    reloadOnFailedLoad: true
   })
 
   // Electron always passes the event first. The canonical (Electron 36+) shape
