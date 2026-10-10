@@ -103,7 +103,10 @@ async function startRemoteGateway(root: string, mockUrl: string, profiles: strin
 
   const child: ChildProcess = spawn(
     findHermesBinary(),
-    ['serve', '--host', '127.0.0.1', '--port', String(port), '--skip-build'],
+    // --isolated: opt out of the host-ownership singleton. One backend claims
+    // each host; without this a developer's own `hermes dashboard` makes the
+    // spawn refuse with exit 78 (CI never has an owner, so it always passed).
+    ['serve', '--host', '127.0.0.1', '--port', String(port), '--skip-build', '--isolated'],
     {
       cwd: REPO_ROOT,
       detached: true,
