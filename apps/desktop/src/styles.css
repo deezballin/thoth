@@ -607,6 +607,13 @@
     --backdrop-invert-mul: 1;
   }
 
+  /* ── The dark theme block ────────────────────────────────────────────────
+     Every root-level mode flip lives HERE (`applyTheme()` toggles `.dark` on
+     <html>): per-mode mix knobs, the dark accent palette, stroke/inset
+     adjustments, and the surface-token corrections that keep dark cards from
+     glowing. Component-scoped dark VISUALS that cannot be tokens (`.dark
+     .shiki`'s filter, `:root.dark .arc-border`'s arc color) stay with their
+     components — nothing else redefines a surface token for dark. */
   :root.dark {
     /* Per-mode mix knobs — overridden inline by `applyTheme()` per skin. */
     --theme-mix-chrome: 74%;
@@ -645,6 +652,15 @@
        touch — still clearly a surface, no longer the brightest thing in the
        transcript. Derived from the card so every skin follows its own seed. */
     --ui-widget-surface-background: color-mix(in srgb, var(--ui-bg-editor) 88%, #000);
+
+    /* Dock glow intensity — full strength over dark backdrops (the primary
+       glow reads much stronger over a light backdrop, so light dims it; that
+       default lives with the consumer rule in the dock-glow section). */
+    --dock-glow-scale: 1;
+    /* Unfocused chat surface (multi-pane) — a dim over a bright surface loses
+       contrast far more slowly than the same dim over a dark one, so dark
+       keeps more of the pane. The light default lives with its consumer. */
+    --chat-unfocused-opacity: 0.72;
   }
 
   /* ── Window glass (Settings → Appearance → Window Translucency: Glass) ──
@@ -1234,9 +1250,9 @@
   animation-direction: reverse;
 }
 
-/* Nous Portal hero: slower, blue → orange arc. */
-.arc-border.arc-nous,
-:root.dark .arc-border.arc-nous {
+/* Nous Portal hero: slower, blue → orange arc. Both modes — the hero colors
+   never depended on the surface. */
+.arc-border.arc-nous {
   --arc-c1: #4f8cff;
   --arc-c2: #ff8c42;
   --arc-duration: 3.27s;
@@ -1252,9 +1268,9 @@
       against the sidebar. With c0 a transparent sentinel and c2 invisible, only
       the bright c1 stop survives each pass, and it repeats along the ring:
       moving dots instead of an arc. Tying c2 to c1 gives each spike a
-      falloff. (`arc-nous` already overrides c2, so the hero is unaffected.) */
-.arc-border.arc-row,
-:root.dark .arc-border.arc-row {
+      falloff. (`arc-nous` already overrides c2, so the hero is unaffected.) The
+   fix is mode-independent. */
+.arc-border.arc-row {
   --arc-standoff: 0rem;
   --arc-c2: color-mix(in srgb, var(--arc-c1) 45%, transparent);
 }
@@ -1933,13 +1949,9 @@ body.guest-pointer-lock :is(webview, iframe) {
      the focused conversation reads as the one being worked in. Light needs a
      deeper cut — a dim over a bright surface loses contrast far more slowly
      than the same dim over a dark one. Pairs with a grayscale pass on the same
-     element — one treatment for the whole pane, not per-part tuning. */
+     element — one treatment for the whole pane, not per-part tuning. The dark
+     pair lives in the canonical `:root.dark` block with the other mode flips. */
   --chat-unfocused-opacity: 0.62;
-}
-
-.dark {
-  --dock-glow-scale: 1;
-  --chat-unfocused-opacity: 0.72;
 }
 
 /* The whole surface recedes as ONE layer — thread, timeline rail, composer,
