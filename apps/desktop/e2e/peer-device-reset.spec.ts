@@ -144,8 +144,22 @@ async function expectReady(page: Page, label: string): Promise<void> {
 }
 
 async function switchTo(page: Page, label: string): Promise<void> {
+  // Re-homing onto This device is confirmed first — the switch replaces the
+  // center with a fresh session (d45d6f0eb9), so the prompt, not the gateway
+  // button, is what the click lands on. Only a move AWAY from another gateway
+  // prompts; re-picking the device you are already on does not.
+  const reHoming = label === LOCAL_LABEL && (await gateway(page).getAttribute('aria-label')) !== `Registered gateways: ${LOCAL_LABEL}`
+
   await gateway(page).click()
   await page.getByRole('menuitemradio', { name: new RegExp(label) }).click()
+
+  if (reHoming) {
+    await page
+      .getByRole('dialog', { name: 'Switch to This device?' })
+      .getByRole('button', { name: 'Switch', exact: true })
+      .click()
+  }
+
   await expectReady(page, label)
 }
 
@@ -157,6 +171,26 @@ async function newSession(page: Page, label: string): Promise<void> {
   await gateway(page).click()
   await expect(page.getByRole('menuitemradio', { name: new RegExp(label) })).toHaveAttribute('aria-checked', 'true')
   await page.keyboard.press('Escape')
+}
+
+// The source window's first remote-only turn, which doubles as its title.
+const SESSION_PROMPT = 'Remember this remote profile session for the peer-window regression.'
+
+// A peer instance window boots on a fresh draft by design (#74948): it must not
+// replay Window 1's remembered-session restore, which lands it on the very chat
+// Window 1 has open. The remote-only profile's session still lives on its owning
+// gateway, so the test opens it there before asserting the transcript.
+async function openOwningSession(page: Page): Promise<void> {
+  const reply = page.locator('[data-slot="aui_assistant-message-content"]').getByText(MOCK_REPLY, { exact: true })
+
+  // A reload keeps the session route in the URL, so the transcript is already
+  // there; only the fresh-draft boot needs the explicit open.
+  if (await reply.isVisible().catch(() => false)) {
+    return
+  }
+
+  await page.getByRole('button', { name: 'Remember this remote profile session' }).click()
+  await expect(reply).toBeVisible({ timeout: 60_000 })
 }
 
 const peerTest = test.extend<{ gateways: { app: ElectronApplication; source: Page } }>({
@@ -268,7 +302,7 @@ peerTest('Ctrl+Shift+N resumes a remote-only profile on its owning gateway', asy
   await expect(remoteProfile).toBeVisible({ timeout: 60_000 })
   await remoteProfile.click()
   await expectReady(source, REMOTE_LABEL)
-  await composer(source).fill('Remember this remote profile session for the peer-window regression.')
+  await composer(source).fill(SESSION_PROMPT)
   await composer(source).press('Enter')
   await expect(source.locator('[data-slot="aui_assistant-message-content"]').getByText(MOCK_REPLY, { exact: true })).toBeVisible({ timeout: 60_000 })
 
@@ -277,11 +311,11 @@ peerTest('Ctrl+Shift+N resumes a remote-only profile on its owning gateway', asy
   const peer = await opened
   installErrorBannerGuard(peer)
   await expectReady(peer, REMOTE_LABEL)
-  await expect(peer.locator('[data-slot="aui_assistant-message-content"]').getByText(MOCK_REPLY, { exact: true })).toBeVisible({ timeout: 60_000 })
+  await openOwningSession(peer)
   await expectReady(source, REMOTE_LABEL)
   await peer.reload()
   await expectReady(peer, REMOTE_LABEL)
-  await expect(peer.locator('[data-slot="aui_assistant-message-content"]').getByText(MOCK_REPLY, { exact: true })).toBeVisible({ timeout: 60_000 })
+  await openOwningSession(peer)
   await composer(peer).fill('Continue this session after reopening the peer window.')
   await composer(peer).press('Enter')
   await expect(peer.locator('[data-slot="aui_assistant-message-content"]').getByText(MOCK_REPLY, { exact: true })).toHaveCount(2, { timeout: 60_000 })
