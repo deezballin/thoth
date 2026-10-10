@@ -116,7 +116,9 @@ test.describe('batch clarify card', () => {
     await expect(confirmButton).toBeEnabled()
     await confirmButton.click()
 
-    const settled = page.locator('[data-clarify-settled]')
+    // The fixture shares one session across this file, so the earlier test's
+    // settled card is still in the transcript — assert on the newest one.
+    const settled = page.locator('[data-clarify-settled]').last()
     await settled.waitFor({ state: 'visible', timeout: 30_000 })
     await expect(settled.getByText(SINGLE_BATCH_CLARIFY_QUESTIONS[0]!.question)).toBeVisible()
     await expect(settled.getByText('Espresso', { exact: true })).toBeVisible()

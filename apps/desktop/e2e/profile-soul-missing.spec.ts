@@ -50,8 +50,11 @@ test('both SOUL editors explain a missing file and save it without changing pers
     await dialog.locator('.cm-content').fill(instructions)
     await dialog.getByRole('button', { name: 'Save SOUL.md' }).click()
     await expect(dialog).toBeHidden()
-    expect(fs.readFileSync(soulPath, 'utf8')).toBe(instructions)
-    expect(fs.readFileSync(configPath, 'utf8')).toBe(config)
+    // The save pipeline writes text-mode on Windows (CRLF); the assertion is
+    // content equality, so compare modulo platform line endings.
+    const read = (file: string) => fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n')
+    expect(read(soulPath)).toBe(instructions)
+    expect(read(configPath)).toBe(config.replace(/\r\n/g, '\n'))
 
     await page.getByRole('button', { name: 'Manage profiles…' }).click()
     await page.locator(`[data-panel-row="${profileName}"] [data-slot="row-button"]`).click()

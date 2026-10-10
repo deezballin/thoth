@@ -67,6 +67,15 @@ function isolatedEnv(home: string, hermesHome: string): Record<string, string> {
     env[`XDG_${kind}_${kind === 'RUNTIME' ? 'DIR' : 'HOME'}`] = dir
   }
 
+  // Windows: Electron derives userData from USERPROFILE\AppData\Roaming; a
+  // fresh sandbox home must contain that subtree or app.getPath('userData')
+  // throws during main-process load and hangs electron.launch.
+  if (process.platform === 'win32') {
+    for (const sub of ['AppData/Roaming', 'AppData/Local']) {
+      fs.mkdirSync(path.join(home, ...sub.split('/')), { recursive: true, mode: 0o700 })
+    }
+  }
+
   return env
 }
 

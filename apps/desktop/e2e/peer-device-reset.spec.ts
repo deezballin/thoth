@@ -8,6 +8,7 @@ import * as fs from 'node:fs'
 import * as net from 'node:net'
 import * as path from 'node:path'
 
+import { writeEnvFile, writeMockProviderConfig } from '../../../tests-js/scripts/mock-provider-config'
 import { MOCK_REPLY, startMockServer } from '../../../tests-js/scripts/mock-server'
 
 import {
@@ -16,7 +17,6 @@ import {
   launchDesktop,
   type Sandbox,
 } from './fixtures'
-import { writeEnvFile, writeMockProviderConfig } from '../../../tests-js/scripts/mock-provider-config'
 import { collectErrorBanners, type ElectronApplication, expect, installErrorBannerGuard, type Page, test } from './test'
 
 const REPO_ROOT = path.resolve(import.meta.dirname, '../../..')
@@ -59,6 +59,17 @@ function isolatedEnv(sandbox: Sandbox): Record<string, string> {
   for (const key of ['XDG_CONFIG_HOME', 'XDG_CACHE_HOME', 'XDG_DATA_HOME', 'XDG_RUNTIME_DIR', 'APPDATA', 'LOCALAPPDATA']) {
     env[key] = path.join(sandbox.root, key.toLowerCase())
     fs.mkdirSync(env[key], { recursive: true, mode: 0o700 })
+  }
+
+  // Windows: Electron derives userData from USERPROFILE\AppData\Roaming, so a
+  // sandboxed profile dir must contain that subtree or app.getPath('userData')
+  // throws "Failed to get 'userData' path" during main-process load (popping a
+  // native error dialog and hanging electron.launch). The subtree keeps the
+  // profile sandboxed — USERPROFILE must NOT point at the real one either.
+  if (process.platform === 'win32') {
+    for (const sub of ['AppData/Roaming', 'AppData/Local']) {
+      fs.mkdirSync(path.join(sandbox.root, ...sub.split('/')), { recursive: true, mode: 0o700 })
+    }
   }
 
   for (const key of ['HERMES_DESKTOP_USER_DATA_DIR', 'HERMES_DESKTOP_IGNORE_EXISTING', 'HERMES_DESKTOP_HERMES_ROOT', 'HERMES_DESKTOP_APP_NAME', 'HERMES_DESKTOP_SKIP_QUIT_CONFIRM']) {
