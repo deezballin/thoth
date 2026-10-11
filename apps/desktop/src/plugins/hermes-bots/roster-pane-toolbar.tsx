@@ -202,7 +202,10 @@ export function renderRosterToolbar({
                           onSelect={() => setGatewayFilter(option.connectionId)}
                         >
                           <GatewayKindGlyph
-                            className={cn('mr-1.5', !status.available && 'text-(--ui-warning) dark:text-(--ui-warning)')}
+                            className={cn(
+                              'mr-1.5',
+                              !status.available && 'text-(--ui-warning) dark:text-(--ui-warning)'
+                            )}
                             kind={option.kind}
                           />
                           <span className="min-w-0 flex-1 truncate">{option.label || option.connectionId}</span>

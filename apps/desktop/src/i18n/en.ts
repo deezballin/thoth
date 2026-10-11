@@ -1484,8 +1484,7 @@ export const en: Translations = {
     gateway: {
       loading: 'Loading gateway settings...',
       unavailableTitle: 'Gateway settings unavailable',
-      unavailableDesc:
-        'Connection settings can only be changed from the Thoth Desktop app on the computer running it.',
+      unavailableDesc: 'Connection settings can only be changed from the Thoth Desktop app on the computer running it.',
       title: 'Gateway Connection',
       envOverride: 'env override',
       intro:
@@ -3922,8 +3921,7 @@ export const en: Translations = {
     errorTitle: 'Update didn’t finish',
     errorBody: 'No worries — nothing was lost. You can try again now.',
     blockerTitle: 'Close local previews to update Thoth?',
-    blockerBody:
-      'Thoth needs to stop these local previews before updating. This will not modify or delete your files.',
+    blockerBody: 'Thoth needs to stop these local previews before updating. This will not modify or delete your files.',
     foreignBlockerTitle: 'Close other processes to update Thoth',
     foreignBlockerBody:
       'Thoth can’t safely close these processes automatically. Close the app, terminal, or service that owns each one, then try the update again.',
@@ -4038,8 +4036,7 @@ export const en: Translations = {
     installTo: 'Will install to',
     retryAfterRun: 'I’ve run it -- retry',
     setupChoiceTitle: 'Set up Thoth Desktop',
-    setupChoiceDesc:
-      'Connect this app to a Thoth gateway you already run, or install Thoth locally on this computer.',
+    setupChoiceDesc: 'Connect this app to a Thoth gateway you already run, or install Thoth locally on this computer.',
     setupChoiceDescLocal: 'Install Thoth on this computer, or connect to a Thoth gateway you already run.',
     connectExistingTitle: 'Connect to existing Thoth',
     connectExistingShort: 'Connect existing',
@@ -4105,7 +4102,7 @@ export const en: Translations = {
     fireworksPitch: 'Direct model API — Fireworks-hosted frontier models',
     localModelsTitle: 'Run models locally',
     localModelsPitch: 'No account needed — download a model and run it on this machine',
-    openRouterPitch: 'One key, hundreds of models — a solid default',
+    openRouterPitch: 'One key, hundreds of models — a solid default'
   },
 
   modelPicker: {
@@ -4605,8 +4602,7 @@ export const en: Translations = {
         auth: 'The AI service rejected your sign-in. Check the credentials for this provider, then send your message again.',
         billing: 'Your account has no credits left for this provider. Top up or switch provider, then send again.',
         disk: 'Your disk is full, so Thoth could not save this conversation. Free some space, then retry.',
-        endpoint:
-          "Thoth can't reach your custom model server. Check that it is running, then send your message again.",
+        endpoint: "Thoth can't reach your custom model server. Check that it is running, then send your message again.",
         gateway:
           'Thoth hit an internal problem starting this reply. Send your message again; if it keeps happening, send diagnostics.',
         generic: 'Something went wrong while Thoth was replying. Retry, or copy the details if it keeps happening.',
@@ -5128,8 +5124,7 @@ export const en: Translations = {
       success: platform => `Handed off to ${platform}. Resume here anytime.`,
       systemNote: platform => `↻ Handed off to ${platform} — resume here anytime.`,
       failed: error => `Handoff failed: ${error}`,
-      timedOut:
-        "Thoth couldn't reach your messaging connection. Start the gateway, then try the handoff again.",
+      timedOut: "Thoth couldn't reach your messaging connection. Start the gateway, then try the handoff again.",
       startMessaging: 'Start messaging'
     }
   },

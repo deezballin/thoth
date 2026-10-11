@@ -210,7 +210,10 @@ function statusGlyph(status: ToolStatus, copy: ToolStatusCopy): ReactNode {
 
   if (status === 'warning') {
     return (
-      <AlertCircle aria-label={copy.statusRecovered} className="size-3.5 shrink-0 text-(--ui-warning) dark:text-(--ui-warning)" />
+      <AlertCircle
+        aria-label={copy.statusRecovered}
+        className="size-3.5 shrink-0 text-(--ui-warning) dark:text-(--ui-warning)"
+      />
     )
   }
 
@@ -789,7 +792,9 @@ function TerminalTranscript({ command, exitCode }: TerminalTranscriptProps) {
         <span
           className={cn(
             'shrink-0 rounded bg-(--ui-bg-tertiary) px-1 py-px text-[0.6rem] tabular-nums',
-            exitCode === 0 ? 'text-(--ui-success) dark:text-(--ui-success)' : 'text-(--ui-warning) dark:text-(--ui-warning)'
+            exitCode === 0
+              ? 'text-(--ui-success) dark:text-(--ui-success)'
+              : 'text-(--ui-warning) dark:text-(--ui-warning)'
           )}
         >
           exit {exitCode}

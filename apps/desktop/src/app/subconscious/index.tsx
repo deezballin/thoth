@@ -60,15 +60,7 @@ function Stat({ label, value }: { label: string; value: number | string }) {
   )
 }
 
-function Section({
-  children,
-  meta,
-  title
-}: {
-  children: React.ReactNode
-  meta?: React.ReactNode
-  title: string
-}) {
+function Section({ children, meta, title }: { children: React.ReactNode; meta?: React.ReactNode; title: string }) {
   return (
     <section className="space-y-3">
       <header className="flex items-baseline justify-between gap-3">
@@ -95,8 +87,7 @@ function intentRow(intent: UndermindIntent): React.ReactNode {
 }
 
 function doctorBadge(status?: string): React.ReactNode {
-  const variant =
-    status === 'up' ? 'default' : status === 'dead' ? 'destructive' : status ? 'warn' : 'outline'
+  const variant = status === 'up' ? 'default' : status === 'dead' ? 'destructive' : status ? 'warn' : 'outline'
 
   return (
     <Badge size="xs" variant={variant}>
@@ -199,13 +190,7 @@ export function SubconsciousView({ setStatusbarItemGroup: _setStatusbarItemGroup
           </div>
           <div className="flex items-center gap-2">
             <Badge variant={reachable ? (ridingFallback ? 'warn' : 'default') : 'destructive'}>
-              {!health
-                ? 'UNKNOWN'
-                : reachable
-                  ? ridingFallback
-                    ? 'RIDING FALLBACK'
-                    : 'AWAY'
-                  : 'NOT ANSWERING'}
+              {!health ? 'UNKNOWN' : reachable ? (ridingFallback ? 'RIDING FALLBACK' : 'AWAY') : 'NOT ANSWERING'}
             </Badge>
             <Button aria-label="Refresh" onClick={() => void load()} size="icon-sm" variant="ghost">
               <Codicon name="refresh" />
@@ -232,13 +217,11 @@ export function SubconsciousView({ setStatusbarItemGroup: _setStatusbarItemGroup
           </div>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-1 text-xs text-(--ui-text-secondary)">
             <span>
-              Daydream{' '}
-              <span className="text-(--ui-text-primary)">{daydream?.running ? 'watching' : 'asleep'}</span>
+              Daydream <span className="text-(--ui-text-primary)">{daydream?.running ? 'watching' : 'asleep'}</span>
               {daydream ? ` · ${daydream.cycles_run ?? 0} cycles · idle ${daydream.idle_for_s ?? 0}s` : ''}
             </span>
             <span>
-              Serving{' '}
-              <span className="text-(--ui-text-primary)">{health?.serving?.recent_count ?? 0}</span> recent
+              Serving <span className="text-(--ui-text-primary)">{health?.serving?.recent_count ?? 0}</span> recent
               {health?.serving?.median_latency_ms != null
                 ? ` · p50 ${Math.round(health.serving.median_latency_ms)}ms`
                 : ''}
@@ -252,10 +235,7 @@ export function SubconsciousView({ setStatusbarItemGroup: _setStatusbarItemGroup
           </div>
         </Section>
 
-        <Section
-          meta={doctor?.status?.ts}
-          title="Doctor"
-        >
+        <Section meta={doctor?.status?.ts} title="Doctor">
           {pipelines.length ? (
             <div className="space-y-0.5">{pipelines.map(pipelineRow)}</div>
           ) : (
