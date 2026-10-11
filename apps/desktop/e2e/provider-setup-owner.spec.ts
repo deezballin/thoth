@@ -1,5 +1,11 @@
 /**
  * Provider setup must keep the Settings owner's gateway AND profile.
+ * Setup surface: Providers -> Custom Endpoints. The API-keys "Local / custom
+ * endpoint" row left with the onboarding carve (d28ab1995a); the Custom
+ * Endpoints page is the surviving owner-scoped setup form, and it writes over
+ * the gateway's REST control plane rather than the old Connect flow's socket
+ * RPCs - so ownership is proven on disk: the write must land in the owning
+ * gateway's owning profile's config.yaml and nowhere else.
  * Two real serve backends; only OpenAI-compatible model discovery is a fixture.
  * Build dist/ separately, then run this spec with HERMES_DESKTOP_PYTHON pointing
  * at a dependency-complete interpreter. No OAuth account or inference is used.
@@ -27,15 +33,8 @@ const REMOTE_ID = 'athena-fixture'
 const REMOTE_LABEL = 'Athena fixture'
 const PROFILE = 'leverage-ai'
 const REMOTE_TOKEN = 'provider-owner-fixture-token'
-
-interface RpcReceipt {
-  endpoint: string
-  socketProfile: string | null
-  method: string
-  params: Record<string, unknown>
-  result?: unknown
-  error?: unknown
-}
+const ENDPOINT_ID = 'e2e-fixture'
+const ENDPOINT_NAME = 'E2E fixture endpoint'
 
 function isolatedEnv(home: string, hermesHome: string): Record<string, string> {
   // Allowlist rather than inheriting real provider keys, profile selection,
@@ -134,7 +133,9 @@ function configModel(python: string, env: Record<string, string>, home: string):
     python,
     [
       '-c',
-      'import json, pathlib, sys, yaml; print(json.dumps(yaml.safe_load(pathlib.Path(sys.argv[1]).read_text())["model"]))',
+      // The runtime pins pyyaml off (pyproject) and reads config with ruamel; the
+      // probe must use the same YAML lib the venv actually ships.
+      'import json, pathlib, sys; from ruamel.yaml import YAML; print(json.dumps(YAML(typ="safe").load(pathlib.Path(sys.argv[1]).read_text())["model"]))',
       path.join(home, 'config.yaml')
     ],
     { cwd: REPO_ROOT, env, encoding: 'utf8', timeout: 10_000 }
@@ -212,46 +213,35 @@ async function startRemote(python: string, env: Record<string, string>, logPath:
   return { url, child }
 }
 
-function watchRpc(page: Page, receipts: RpcReceipt[]): void {
-  page.on('websocket', socket => {
-    const url = new URL(socket.url())
-    const pending = new Map<unknown, RpcReceipt>()
-    socket.on('framesent', ({ payload }) => {
-      const message = JSON.parse(payload.toString())
-
-      if (!message.method) {
-        return
-      }
-
-      const receipt: RpcReceipt = {
-        endpoint: url.origin,
-        socketProfile: url.searchParams.get('profile'),
-        method: message.method,
-        params: message.params ?? {}
-      }
-
-      receipts.push(receipt)
-      pending.set(message.id, receipt)
-    })
-    socket.on('framereceived', ({ payload }) => {
-      const message = JSON.parse(payload.toString())
-      const receipt = pending.get(message.id)
-
-      if (receipt) {
-        receipt.result = message.result
-        receipt.error = message.error
-      }
-    })
-  })
-}
-
 const gatewayGroup = (page: Page, id: string) =>
   page.locator(`[data-slot="profile-rail-gateway"][data-connection-id="${id}"]`)
 
 async function selectGateway(page: Page, id: string, label: string, profile: string): Promise<void> {
   const group = gatewayGroup(page, id)
   await expect(group).toBeVisible({ timeout: 60_000 })
-  await group.getByRole('button', { name: `${profile} · ${label}`, exact: true }).click()
+  // Re-homing onto This device is confirmed first (d45d6f0eb9): the switch
+  // replaces the center with a fresh session, so the prompt - not the pill -
+  // is what a move from another gateway lands on. Re-picking a profile on the
+  // gateway you're already on never prompts.
+  const currentGateway = await page.getByRole('button', { name: /^Registered gateways: / }).getAttribute('aria-label')
+  const reHoming = id === 'local' && currentGateway !== `Registered gateways: ${label}`
+
+  // At rest, a gateway's default face is its home/local pill - a different
+  // label from the named squares; named profiles read `<profile> · <label>`.
+  const square =
+    id === 'local' && profile === 'default'
+      ? group.locator('[data-slot="profile-rail-local-device"]')
+      : group.getByRole('button', { name: `${profile} · ${label}`, exact: true })
+
+  await square.click()
+
+  if (reHoming) {
+    await page
+      .getByRole('dialog', { name: 'Switch to This device?' })
+      .getByRole('button', { name: 'Switch', exact: true })
+      .click()
+  }
+
   await expect(page.getByRole('button', { name: /^Registered gateways: / })).toHaveAttribute(
     'aria-label',
     `Registered gateways: ${label}`,
@@ -264,11 +254,32 @@ async function selectGateway(page: Page, id: string, label: string, profile: str
   })
 }
 
-async function openProviderKeys(page: Page): Promise<void> {
+/**
+ * Providers -> Custom Endpoints. The Add Endpoint form is the page's
+ * load-bearing surface, so assert it rather than the nav selection alone.
+ */
+async function openCustomEndpoints(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Open settings', exact: true }).click()
   await page.getByRole('button', { name: 'Providers', exact: true }).click()
-  await page.getByRole('button', { name: 'API keys', exact: true }).click()
-  await expect(page.getByRole('button', { name: /^Local \/ custom endpoint/ })).toBeVisible()
+  await page.getByRole('button', { name: 'Custom Endpoints', exact: true }).click()
+  await expect(page.getByPlaceholder('http://127.0.0.1:8081/v1')).toBeVisible()
+}
+
+/**
+ * Save the fixture endpoint as the active profile's default model route.
+ * "Use for new chats" stays at its default (checked) so the save also switches
+ * the owning profile's model - the write this spec's ownership assertions watch
+ * for. Re-saving with the same Provider ID updates the entry in place.
+ */
+async function saveFixtureEndpoint(page: Page, endpointUrl: string, model: string): Promise<void> {
+  await page.getByPlaceholder('Axet Proxy').fill(ENDPOINT_NAME)
+  await page.getByPlaceholder('axet-proxy').fill(ENDPOINT_ID)
+  await page.getByPlaceholder('http://127.0.0.1:8081/v1').fill(`${endpointUrl}/v1`)
+  await page.getByPlaceholder('gpt-5.4').fill(model)
+  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  // The row above the form is the save landing; the config poll below is the
+  // ownership assertion that actually carries the test.
+  await expect(page.getByRole('button', { name: ENDPOINT_NAME })).toBeVisible({ timeout: 45_000 })
 }
 
 test('Settings provider setup stays on its gateway/profile across A → B → A', async () => {
@@ -282,7 +293,6 @@ test('Settings provider setup stays on its gateway/profile across A → B → A'
   const python = pythonBinary()
   const localEnv = isolatedEnv(localHome, sandbox.hermesHome)
   const remoteEnv = isolatedEnv(remoteHome, remoteHermesHome)
-  const receipts: RpcReceipt[] = []
   const discoveryRequests: string[] = []
   let advertisedModel = 'remote-first'
 
@@ -354,7 +364,6 @@ test('Settings provider setup stays on its gateway/profile across A → B → A'
     })
     page = await app.firstWindow()
     installErrorBannerGuard(page)
-    watchRpc(page, receipts)
     await expect(page.getByRole('button', { name: 'Open settings', exact: true })).toBeVisible({ timeout: 90_000 })
     await expect(page.locator('[data-slot="statusbar"]').getByText('ready', { exact: true })).toBeVisible({
       timeout: 60_000
@@ -369,63 +378,39 @@ test('Settings provider setup stays on its gateway/profile across A → B → A'
 
     expect(localProfiles()).toEqual([])
 
-    // A: inspect the local default through Settings, without changing it.
-    await openProviderKeys(page)
+    // A: open the setup surface on the local default without changing it.
+    await openCustomEndpoints(page)
     await page.getByRole('button', { name: 'Close settings', exact: true }).click()
     await selectGateway(page, REMOTE_ID, REMOTE_LABEL, PROFILE)
 
     for (const model of ['remote-first', 'remote-second']) {
       advertisedModel = model
-      await openProviderKeys(page)
+      await openCustomEndpoints(page)
       await expect(page.getByText(new RegExp(`Changes on this page apply to.*${PROFILE}`))).toBeVisible()
-      await page.getByRole('button', { name: /^Local \/ custom endpoint/ }).click()
-      const input = page.getByPlaceholder('http://127.0.0.1:8000/v1')
+      const input = page.getByPlaceholder('http://127.0.0.1:8081/v1')
       await expect(input).toBeVisible()
-      await input.fill(`${endpointUrl}/v1`)
       await input.scrollIntoViewIfNeeded()
       await page.screenshot({ path: test.info().outputPath(`${model}-endpoint-form.png`) })
-      const start = receipts.length
-      await page.getByRole('button', { name: 'Connect', exact: true }).click()
-      await expect(input).toBeHidden({ timeout: 45_000 })
+      await saveFixtureEndpoint(page, endpointUrl, model)
       await expect
-        .poll(() => configModel(python, remoteEnv, remoteProfileHome))
+        .poll(() => configModel(python, remoteEnv, remoteProfileHome), { timeout: 45_000 })
         .toMatchObject({
-          provider: expect.stringMatching(/^custom(?::.+)?$/),
+          provider: ENDPOINT_ID,
           default: model,
           base_url: `${endpointUrl}/v1`
         })
 
-      const setupCalls = receipts
-        .slice(start)
-        .filter(row => ['reload.env', 'setup.status', 'setup.runtime_check'].includes(row.method))
-
-      // A scoped setup must not mutate the launch profile's process environment.
-      expect(setupCalls.some(row => row.method === 'reload.env')).toBe(false)
-
-      for (const method of ['setup.status', 'setup.runtime_check']) {
-        const calls = setupCalls.filter(row => row.method === method)
-        expect(calls, `wire request for ${method}`).not.toHaveLength(0)
-
-        for (const call of calls) {
-          expect(new URL(call.endpoint).host).toBe(new URL(remote.url).host)
-          expect(call.params.profile).toBe(PROFILE)
-          expect(call.error).toBeUndefined()
-        }
-      }
-
-      expect
-        .soft(
-          setupCalls.find(row => row.method === 'setup.runtime_check')?.result,
-          'readiness must resolve the model just saved in the owning profile'
-        )
-        .toMatchObject({ ok: true, model, profile: PROFILE })
+      // Ownership, measured where it now lives: the write landed in the owning
+      // gateway's owning profile's config.yaml - and nothing else moved: not
+      // the local machine's config, not its profile list, not the remote's
+      // default profile.
       expect(fs.readFileSync(path.join(sandbox.hermesHome, 'config.yaml'), 'utf8')).toBe(localConfig)
       expect(localProfiles()).toEqual([])
       expect(fs.readFileSync(path.join(remoteHermesHome, 'config.yaml'), 'utf8')).toBe(remoteDefault)
       await page.screenshot({ path: test.info().outputPath(`${model}-saved.png`) })
       await page.getByRole('button', { name: 'Close settings', exact: true }).click()
       await selectGateway(page, 'local', 'This device', 'default')
-      await openProviderKeys(page)
+      await openCustomEndpoints(page)
       expect(configModel(python, localEnv, sandbox.hermesHome)).toMatchObject({ default: 'local-sentinel' })
       await page.screenshot({ path: test.info().outputPath(`${model}-back-on-local.png`) })
       await page.getByRole('button', { name: 'Close settings', exact: true }).click()
@@ -444,10 +429,6 @@ test('Settings provider setup stays on its gateway/profile across A → B → A'
       await collectErrorBanners(page)
     }
 
-    fs.writeFileSync(test.info().outputPath('setup-wire.json'), JSON.stringify(receipts, null, 2))
-    await test
-      .info()
-      .attach('setup-wire', { path: test.info().outputPath('setup-wire.json'), contentType: 'application/json' })
     await app?.close()
 
     if (remote) {
