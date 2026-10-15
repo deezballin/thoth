@@ -1,4 +1,4 @@
-"""Supervised daemon thread for the in-process cron ticker.
+"""Supervised daemon thread for the built-in in-process cron ticker.
 
 The gateway (and the Desktop backend) run ``InProcessCronScheduler.start`` on a bare daemon thread.
 Every guard inside ``start`` keeps the loop alive on a per-tick failure, but nothing outside it could
@@ -23,8 +23,6 @@ class SupervisedTickerThread:
                  stop_event: threading.Event, name: str = "cron-scheduler") -> None:
         self._target, self._args, self._kwargs = target, args, dict(kwargs or {})
         self._stop_event, self._name = stop_event, name
-        # An external provider's start() (Chronos) arms remote one-shots and RETURNS by design;
-        # only a target that escaped with an exception is a dead ticker worth respawning.
         self._crashed = False
         self._thread = self._spawn()
         self.restarts = 0

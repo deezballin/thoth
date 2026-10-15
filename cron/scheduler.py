@@ -3286,8 +3286,8 @@ def _install_fire_secret_scope() -> "tuple[contextvars.Token, Optional[contextva
     gateway/run.py and the external cron worker already use: ``build_profile_secret_scope`` only
     READS the per-home source map, so a scope frozen first would carry no vault-backed value.
 
-    For a fire routed to a profile other than the process's own (``routed_profile_fire`` on the
-    fire's home — every entry point: ticker, dashboard Run now, CLI) also run under multiplex semantics — for
+    For a fire routed to a profile other than the process's own (every entry point: ticker,
+    dashboard Run now, CLI), also run under multiplex semantics — for
     exactly this span and no wider. The desktop backend ticks every local profile from a process
     that is not a multiplexer, so nothing else isolates that fire; and switching the context on
     here rather than at the tick means no read is ever fail-closed without a scope to read — the
@@ -3295,13 +3295,13 @@ def _install_fire_secret_scope() -> "tuple[contextvars.Token, Optional[contextva
     """
     from agent.secret_scope import (
         build_profile_secret_scope, set_multiplex_context, set_secret_scope)
-    from cron.scheduler_provider import routed_profile_fire
+    from cron.scheduler_provider import _is_routed_profile_cron
     from hermes_cli.env_loader import hydrate_profile_secret_sources
 
     home = Path(_get_hermes_home())
     hydrate_profile_secret_sources(home)
     scope_token = set_secret_scope(build_profile_secret_scope(home), profile_home=str(home))
-    context_token = set_multiplex_context(True) if routed_profile_fire() else None
+    context_token = set_multiplex_context(True) if _is_routed_profile_cron(home) else None
     return scope_token, context_token
 
 
@@ -3354,8 +3354,7 @@ def _run_one_job_body(
         _fire_scope_tokens = _install_fire_secret_scope()
         # Commit a finite one-shot's dispatch BEFORE its side effect so a tick dying mid-run cannot
         # re-fire it forever on restart. No-op for recurring/infinite jobs (at-most-times).
-        # This lives here in the shared body so BOTH the built-in ticker and the external provider (Chronos
-        # fire_due) get at-most-times semantics. See #38758.
+        # The shared body keeps scheduled-job rate-limit tracking consistent across entry points. See #38758.
         if not claim_dispatch(job["id"]):
             logger.info(
                 "Job '%s': one-shot dispatch limit reached — skipping",
@@ -3695,7 +3694,7 @@ def _launch_external_cron_worker(job: dict) -> bool:
     ]
 
     from agent.secret_scope import is_multiplex_active
-    from cron.scheduler_provider import routed_profile_fire
+    from cron.scheduler_provider import _is_routed_profile_cron
     from tools.environments.local import build_subprocess_env, strip_launch_profile_env
     from tools.process_registry import (
         restart_safe_gateway_child_argv,
@@ -3707,7 +3706,7 @@ def _launch_external_cron_worker(job: dict) -> bool:
     # off (the desktop ticker is not a multiplexer): the payload says so, and the worker env is built
     # under that context so the scrub and the launch-residue strip both apply. The context is set
     # for exactly the env build; nothing else here reads it.
-    multiplex_active = is_multiplex_active() or routed_profile_fire()
+    multiplex_active = is_multiplex_active() or _is_routed_profile_cron()
     try:
         require_restart_safe_scope = bool(
             (load_config_readonly().get("cron") or {}).get("require_restart_safe_scope", False)
@@ -4014,63 +4013,6 @@ def _run_external_worker_payload(payload_path: Path, ack_path: Path) -> bool:
         set_multiplex_active(previous_multiplex)
         if home_token is not None:
             reset_hermes_home_override(home_token)
-
-
-def _notify_provider_jobs_changed() -> None:
-    """Best-effort: tell the active scheduler provider the job set changed. Call AFTER a successful
-    store mutation so an external provider can re-provision/cancel the one-shot; no-op for the
-    built-in. Kept out of cron/jobs.py (import cycle). Never raises."""
-    try:
-        from cron.scheduler_provider import resolve_cron_scheduler
-        resolve_cron_scheduler().on_jobs_changed()
-    except Exception as e:
-        logger.debug("on_jobs_changed notify failed: %s", e)
-
-
-class CronSchedulerRegistrationError(RuntimeError):
-    """A job was persisted but its first external trigger was not registered."""
-
-    def __init__(self, job: dict, cause: Exception) -> None:
-        self.job = job
-        self.cause = cause
-        super().__init__(
-            f"Cron job '{job['id']}' was saved, but its first scheduler "
-            f"registration failed ({type(cause).__name__}). Do not create a "
-            "duplicate. Pause/resume or update the job to retry registration."
-        )
-
-    def user_message(self) -> str:
-        """Human-facing variant for chat/CLI surfaces (no exception class name)."""
-        label = self.job.get("name") or self.job["id"]
-        return (
-            f"Saved cron job '{label}', but couldn't register it with the "
-            "external scheduler yet. The job is kept — don't re-create it; "
-            "pause/resume or edit it (e.g. via /cron) to retry registration."
-        )
-
-    def to_dict(self) -> dict:
-        """Return the public partial-failure contract without provider details."""
-        return {
-            "error": str(self),
-            "job_id": self.job["id"],
-            "job_saved": True,
-            "scheduler_registered": False,
-            "retry_create": False}
-
-
-def create_job_with_scheduler_registration(**kwargs) -> dict:
-    """Persist one job and register its first trigger with the active provider."""
-    from cron.jobs import create_job
-    from cron.scheduler_provider import resolve_cron_scheduler
-
-    job = create_job(**kwargs)
-    if not job.get("enabled", True):
-        return job
-    try:
-        resolve_cron_scheduler().register_job(job)
-    except Exception as exc:
-        raise CronSchedulerRegistrationError(job, exc) from exc
-    return job
 
 
 # Dead-owner reap is throttled (opens the executions ledger). Tests may reset

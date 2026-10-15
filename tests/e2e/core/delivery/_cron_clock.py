@@ -21,11 +21,9 @@ What is virtual and what stays real:
 this file as a script runs the same loop in a separate OS process (``ChildHost``), stepped via
 files, so two processes can share one ``HERMES_HOME`` and one can be SIGKILLed mid-run. Two
 tickers never contend for a FIRE: the tick lock admits one per instant and the winner advances
-``next_run_at`` before it releases. Fire-claim contention is the external-provider path
-(``CronScheduler.fire_due``, "exactly one of N replicas runs a job"): ``ReplicaHost`` runs a
-replica in a second process, and ``install_claim_barrier`` parks each replica's
-``claim_job_for_fire`` until every replica of the round is inside it, so the store CAS, not
-timing, decides every fire.
+``next_run_at`` before it releases. Manual-fire contention runs a second built-in scheduler in a separate process; ``install_claim_barrier``
+parks each replica's ``claim_job_for_fire`` until every replica of the round is inside it, so the
+store CAS, not timing, decides every fire.
 """
 
 from __future__ import annotations
@@ -471,25 +469,16 @@ def tick_together(hosts: Iterable[Any]) -> None:
         host.wait_idle()
 
 
-# --- external-provider replicas contending for one fire ----------------------------------------
+# --- independent scheduler processes contending for one fire ----------------------------------
 
 _CLAIM_ROUND: List[Optional[int]] = [None]  # one round in flight per process at a time
 
 
 def replica_scheduler():
-    """A minimal external ``CronScheduler``: the base class's real ``fire_due`` (store CAS claim,
-    audit attempt, shared ``run_one_job``) is the whole firing path; nothing ticks."""
-    from cron.scheduler_provider import CronScheduler
+    """A second built-in scheduler instance used to contend on the durable store claim."""
+    from cron.scheduler_provider import InProcessCronScheduler
 
-    class ReplicaScheduler(CronScheduler):
-        @property
-        def name(self) -> str:
-            return "replica"
-
-        def start(self, stop_event, **_kwargs) -> None:
-            stop_event.wait()
-
-    return ReplicaScheduler()
+    return InProcessCronScheduler()
 
 
 def install_claim_barrier(control: Control, setattr_fn=setattr, parties: int = 2) -> None:
@@ -520,7 +509,7 @@ def fire_as_replica(provider, job_id: str, rnd: int) -> bool:
 
 class ReplicaHost:
     """A second replica in its own OS process: fires ``req-<n>.json`` requests in order and
-    answers ``res-<n>.json`` with whether its ``fire_due`` claimed the fire."""
+    answers ``res-<n>.json`` with whether its built-in ``fire_due`` claimed the fire."""
 
     def __init__(self, control: Control, env: Dict[str, str], repo_root: Path):
         self.control, self.env, self.repo_root = control, env, repo_root

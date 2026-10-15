@@ -13,14 +13,12 @@ from hermes_cli import cron as cron_cli
 from hermes_cli.cron import cron_command
 from hermes_cli.subcommands.cron import build_cron_parser
 
-
 @pytest.fixture()
 def tmp_cron_dir(tmp_path, monkeypatch):
     monkeypatch.setattr("cron.jobs.CRON_DIR", tmp_path / "cron")
     monkeypatch.setattr("cron.jobs.JOBS_FILE", tmp_path / "cron" / "jobs.json")
     monkeypatch.setattr("cron.jobs.OUTPUT_DIR", tmp_path / "cron" / "output")
     return tmp_path
-
 
 class TestCronCommandLifecycle:
 
@@ -130,7 +128,6 @@ class TestCronCommandLifecycle:
         assert jobs[0]["skills"] == ["blogwatcher", "maps"]
         assert jobs[0]["name"] == "Skill combo"
 
-
 class TestUnverifiedDeliveryVisibility:
     """An evidence-free live-adapter ack (Slack/Matrix/Mattermost bare
     ``SendResult(success=True)``) is accepted as delivered, but the UNVERIFIED
@@ -167,7 +164,6 @@ class TestUnverifiedDeliveryVisibility:
         assert job["id"] in out
         assert "last delivery unverified" in out
         assert "slack:C0123456" in out
-
 
 class TestCronDoctor:
     def test_doctor_reports_cron_health_issues(self, tmp_cron_dir, capsys):
@@ -256,7 +252,6 @@ class TestCronDoctor:
         assert rc == 0
         assert "✓ Cron doctor found no issues" in out
 
-
 class TestCronListStatusRendering:
     """`cron list` must never paint an undelivered run as a success (#83993)."""
 
@@ -310,7 +305,6 @@ class TestCronListStatusRendering:
         assert f"{cron_cli.Colors.GREEN}ok" in last_run_line
         assert "not delivered" not in last_run_line
 
-
 class TestGatewayNotRunningWarning:
     """`cron create` / `cron list` must warn when the gateway (and thus the
     cron ticker) isn't running, since jobs only fire inside the gateway.
@@ -318,77 +312,12 @@ class TestGatewayNotRunningWarning:
     report was simply a gateway that was never started.
     """
 
-
     def test_list_warns_when_gateway_absent(self, tmp_cron_dir, capsys, monkeypatch):
         create_job(prompt="Daily report", schedule="0 11 * * *")
         monkeypatch.setattr("hermes_cli.gateway.find_gateway_pids", lambda: [])
         cron_command(Namespace(cron_command="list", all=True))
         out = capsys.readouterr().out
         assert "Scheduler is not ready" in out
-
-
-class TestExternalCronProviderStatus:
-    """With an external cron provider (e.g. Chronos), jobs fire via a
-    NAS-mediated webhook, NOT the in-process ticker. The ticker-heartbeat /
-    gateway-process heuristics are meaningless there, so neither
-    `cron status` nor the create/list warning must claim the gateway being
-    absent means jobs won't fire — that was a false-negative on every healthy
-    Chronos instance (the heartbeat is intentionally never written).
-    """
-
-    def test_status_reports_provider_not_ticker_for_chronos(
-        self, tmp_cron_dir, capsys, monkeypatch
-    ):
-        create_job(prompt="Ping", schedule="every 2m")
-        monkeypatch.setattr(
-            "hermes_cli.cron._active_cron_provider_name", lambda: "chronos"
-        )
-        # Even with NO gateway process and NO ticker heartbeat, Chronos status
-        # must NOT report a stall / "not firing".
-        monkeypatch.setattr("hermes_cli.gateway.find_gateway_pids", lambda: [])
-        cron_command(Namespace(cron_command="status"))
-        out = capsys.readouterr().out
-        assert "chronos" in out
-        assert "managed scheduler" in out
-        assert "not firing" not in out.lower()
-        assert "STALLED" not in out
-        assert "No scheduler is serving profile" not in out
-        # Still surfaces the active-job summary.
-        assert "active job(s)" in out
-
-
-    def test_create_silent_for_chronos_even_without_gateway(
-        self, tmp_cron_dir, capsys, monkeypatch
-    ):
-        # The create-time "gateway not running" nag is a ticker-only concern;
-        # an external provider doesn't depend on a live in-process ticker.
-        monkeypatch.setattr(
-            "hermes_cli.cron._active_cron_provider_name", lambda: "chronos"
-        )
-        monkeypatch.setattr("hermes_cli.gateway.find_gateway_pids", lambda: [])
-        cron_command(
-            Namespace(
-                cron_command="create",
-                schedule="every 2m",
-                prompt="Ping",
-                name="Ping",
-                deliver=None,
-                repeat=None,
-                skill=None,
-                skills=None,
-                script=None,
-                workdir=None,
-                no_agent=False,
-            )
-        )
-        out = capsys.readouterr().out
-        assert "Created job" in out
-        assert "Scheduler is not ready" not in out
-
-
-
-
-
 
 def test_cron_create_failure_returns_nonzero(monkeypatch, capsys):
     monkeypatch.setattr(cron_cli, "_cron_api", lambda **kwargs: {"success": False, "error": "boom"})
@@ -411,7 +340,6 @@ def test_cron_create_failure_returns_nonzero(monkeypatch, capsys):
     out = capsys.readouterr().out
     assert rc == 1
     assert "Failed to create job: boom" in out
-
 
 class TestCronRunBackgroundDispatch:
     """`hermes cron run` must not report 'failed' when the run was dispatched
@@ -535,7 +463,6 @@ class TestCronRunBackgroundDispatch:
         assert "Running in background (delegation del-xyz)." in out
         assert "failed" not in out.lower()
 
-
 class TestSlashCronListLastStatus:
     """The in-chat ``/cron list`` (cli_commands_mixin) renders every
     ``last_status`` literal explicitly — ``delivery_failed`` names the delivery
@@ -562,8 +489,6 @@ class TestSlashCronListLastStatus:
 
         out = self._run_list(tmp_cron_dir, capsys)
         assert "Last run: 2026-09-01T07:00:00+00:00 (delivery_failed: telegram: 502 Bad Gateway)" in out
-
-
 
 class TestStatusSurfacesDeadScheduler:
     """#114309 — with the ticker dead and a job's next_run_at stranded in the past, `cron
@@ -652,7 +577,6 @@ class TestStatusSurfacesDeadScheduler:
         assert "Next" not in overview_out  # the overview lists enabled jobs only
         assert list_out.count("Next run:") == 1  # only the paused job's stamp stays plain
         assert list_out.index("Overdue:") < list_out.index("Next run:")
-
 
 class TestSlashCronRunSkipped:
     """``/cron run`` on a job whose claim is refused (paused here; a live claim held by another

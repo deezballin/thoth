@@ -304,8 +304,6 @@ HERMES_HOME override. Asset writes are atomic, type- and size-capped.
 - Scoped platform gates: A2A (`A2A_PORT`) and Buzz enablement are read through
   the profile's own scope / `platforms.<name>` section, so a launch-profile
   env var no longer enables an inbound listener in every secondary.
-- Fallback: an external `cron.provider` does not support multiplexing and
-  falls back to the built-in ticker with a warning.
 
 ## Known limitations
 

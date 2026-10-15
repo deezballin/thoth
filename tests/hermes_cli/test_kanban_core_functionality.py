@@ -690,6 +690,9 @@ def test_default_spawn_does_not_auto_load_any_skill(kanban_home, monkeypatch):
         def __init__(self):
             self.pid = 99999
 
+        def poll(self):
+            return None
+
     def fake_popen(cmd, **kwargs):
         captured["cmd"] = cmd
         captured["env"] = kwargs.get("env", {})
@@ -1349,7 +1352,7 @@ def test_dead_worker_reap_surfaces_the_workers_own_last_output(kanban_home, driv
         tid = kb.create_task(conn, title="handoff", assignee="worker")
         log_path = kb.worker_log_path(tid)
         log_path.parent.mkdir(parents=True, exist_ok=True)
-        log_path.write_text(_WORKER_LOG_TAIL)
+        log_path.write_text(_WORKER_LOG_TAIL, encoding="utf-8")
 
         drive(conn, tid, 991100)
 
@@ -1379,7 +1382,7 @@ def test_dead_worker_reap_reads_the_log_of_the_dispatching_board(kanban_home):
         tid = kb.create_task(conn, title="handoff", assignee="worker")
         log_path = kb.worker_log_path(tid, board=board)
         log_path.parent.mkdir(parents=True, exist_ok=True)
-        log_path.write_text(_WORKER_LOG_TAIL)
+        log_path.write_text(_WORKER_LOG_TAIL, encoding="utf-8")
         host_prefix = kb._claimer_id().split(":", 1)[0]
         assert kb.claim_task(conn, tid, claimer=f"{host_prefix}:mock") is not None
         kbd._set_worker_pid(conn, tid, 991101)

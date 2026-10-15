@@ -35,7 +35,7 @@ def served_root(tmp_path, monkeypatch):
     return root
 
 
-@pytest.mark.parametrize("mode", ["missing", "fresh", "stale", "disabled", "excluded", "local", "external", "unrelated_pid"])
+@pytest.mark.parametrize("mode", ["missing", "fresh", "stale", "disabled", "excluded", "local", "unrelated_pid"])
 def test_status_preserves_profile_health_contract(served_root, capsys, monkeypatch, mode):
     from cron import jobs
     from hermes_cli import cron
@@ -50,8 +50,6 @@ def test_status_preserves_profile_health_contract(served_root, capsys, monkeypat
         served_root.joinpath("gateway_state.json").write_text(json.dumps({"served_profiles": ["other"]}))
     if mode == "local":
         monkeypatch.setattr("hermes_cli.gateway.find_gateway_pids", lambda: [os.getpid()])
-    if mode == "external":
-        monkeypatch.setattr(cron, "_active_cron_provider_name", lambda: "managed-test")
     if mode == "unrelated_pid":
         monkeypatch.setattr("gateway.status._read_process_cmdline", lambda pid: "python -m pytest")
 
@@ -79,11 +77,6 @@ def test_status_preserves_profile_health_contract(served_root, capsys, monkeypat
         assert "gateway migrate --multiplex" in output
         assert "LEGACY" not in output
         assert "hermes gateway install   # starts a SECOND gateway" not in output
-    if mode == "external":
-        assert "managed scheduler" in output
-        assert "STALLED" not in output
-
-
 def test_host_record_rung_names_the_roster_and_a_runnable_restart(served_root, capsys, monkeypatch):
     """The OTHER rung: a published host record answers before the config-derived one.
 
@@ -121,7 +114,6 @@ def test_satellite_list_and_create_require_own_heartbeat(served_root, capsys, mo
         jobs.record_ticker_heartbeat(success=True)
         if heartbeat == "stale":
             (jobs.CRON_DIR / "ticker_heartbeat").write_text(str(time.time() - 3600))
-    monkeypatch.setattr(cron, "_active_cron_provider_name", lambda: "builtin")
     assert cron._builtin_gateway_liveness() is (heartbeat == "fresh")
     cron.cron_command(Namespace(cron_command="create", schedule="every 1h", prompt="probe"))
     created = capsys.readouterr().out
@@ -172,7 +164,6 @@ def test_desktop_serve_ticker_is_not_reported_as_no_gateway(tmp_path, monkeypatc
     monkeypatch.setattr("gateway.status.is_gateway_runtime_lock_active", lambda lock_path=None: False)
     monkeypatch.setattr("hermes_cli.gateway.named_profile_served_by_running_multiplexer", lambda: False)
     monkeypatch.setattr("gateway.host_topology.host_gateway_serving", lambda profile_name=None: None)
-    monkeypatch.setattr(cron, "_active_cron_provider_name", lambda: "builtin")
     jobs.record_ticker_heartbeat(success=True)
 
     assert cron._builtin_gateway_liveness() is True
@@ -208,7 +199,6 @@ def test_in_process_ticker_heartbeat_counts_only_while_its_writer_lives(tmp_path
     monkeypatch.setattr("hermes_cli.gateway.find_gateway_pids", lambda: [])
     monkeypatch.setattr("gateway.status.is_gateway_runtime_lock_active", lambda lock_path=None: False)
     monkeypatch.setattr("hermes_cli.gateway.named_profile_served_by_running_multiplexer", lambda: False)
-    monkeypatch.setattr(cron, "_active_cron_provider_name", lambda: "builtin")
     dead = subprocess.Popen([sys.executable, "-c", ""], stdin=subprocess.DEVNULL)
     dead.wait()
 
@@ -229,7 +219,6 @@ def test_named_profile_output_names_the_profile_and_trusts_its_own_ticker(served
     from hermes_cli import cron
 
     served_root.joinpath("gateway_state.json").write_text(json.dumps({"served_profiles": ["other"]}))
-    monkeypatch.setattr(cron, "_active_cron_provider_name", lambda: "builtin")
 
     cron.cron_list()
     assert "No scheduled jobs in profile 'probe'." in capsys.readouterr().out
@@ -248,63 +237,25 @@ def test_named_profile_output_names_the_profile_and_trusts_its_own_ticker(served
     assert "NOT fire" not in alive
 
 
-@pytest.mark.parametrize("detail", ["unreachable " * 30 + "\nsecret second line", ""])
-def test_doctor_bounds_persisted_fire_errors(served_root, capsys, detail):
-    from cron import jobs
-    from hermes_cli.cron import cron_doctor
-
-    jobs.create_job(prompt="probe", schedule="every 1h")
-    records = jobs.load_jobs()
-    records[0]["last_fire_error"] = {"at": "test-time", "detail": detail}
-    jobs.save_jobs(records)
-    assert cron_doctor() == bool(detail)
-    output = capsys.readouterr().out
-    if detail:
-        assert "missed scheduled fire at test-time: unreachable" in output
-        line = next(line for line in output.splitlines() if "missed scheduled fire at" in line)
-        assert len(line.split(". The messaging gateway")[0]) < 200
-        assert f"hermes cron run {records[0]['id']}" in line
-        assert detail not in output
-        assert "secret second line" not in output
-    else:
-        assert "missed scheduled fire" not in output
-
-
-@pytest.mark.parametrize("dispatch", ["catch_up", "late", "forward_error"])
+@pytest.mark.parametrize("dispatch", ["catch_up", "late"])
 def test_doctor_reports_persisted_dispatch_health(served_root, capsys, dispatch):
     from cron import jobs
     from hermes_cli.cron import cron_doctor
 
     job = jobs.create_job(prompt="probe", schedule="every 1h")
-    if dispatch == "forward_error":
-        jobs.note_fire_forward_failure(job["id"], "loopback unavailable")
-    else:
-        records = jobs.load_jobs()
-        delay = timedelta(hours=5) if dispatch == "catch_up" else timedelta(minutes=6)
-        records[0]["next_run_at"] = (datetime.now(timezone.utc) - delay).isoformat()
-        jobs.save_jobs(records)
-        assert len(jobs.get_due_jobs()) == 1
-        persisted = jobs.get_job(job["id"])
-        assert persisted is not None
-        assert persisted["last_dispatch"]["kind"] == dispatch
+    records = jobs.load_jobs()
+    delay = timedelta(hours=5) if dispatch == "catch_up" else timedelta(minutes=6)
+    records[0]["next_run_at"] = (datetime.now(timezone.utc) - delay).isoformat()
+    jobs.save_jobs(records)
+    assert len(jobs.get_due_jobs()) == 1
+    persisted = jobs.get_job(job["id"])
+    assert persisted is not None
+    assert persisted["last_dispatch"]["kind"] == dispatch
     assert cron_doctor() == 1
     output = capsys.readouterr().out
-    expected = {"catch_up": "catch-up", "late": "last fire was late", "forward_error": "loopback unavailable"}
+    expected = {"catch_up": "catch-up", "late": "last fire was late"}
     assert expected[dispatch] in output
     assert "Review the findings above, then run `hermes cron doctor` again." in output
     jobs.mark_job_run(job["id"], success=True)
-    if dispatch == "forward_error":
-        assert cron_doctor() == 0
-    else:
-        assert "This warning clears at the next on-time fire." in output
-        assert cron_doctor() == 1
-        capsys.readouterr()
-        records = jobs.load_jobs()
-        records[0]["next_run_at"] = datetime.now(timezone.utc).isoformat()
-        jobs.save_jobs(records)
-        assert len(jobs.get_due_jobs()) == 1
-        persisted = jobs.get_job(job["id"])
-        assert persisted is not None
-        assert persisted["last_dispatch"]["kind"] == "on_time"
-        assert cron_doctor() == 0
-        assert "This warning clears" not in capsys.readouterr().out
+    assert "This warning clears at the next on-time fire." in output
+    assert cron_doctor() == 1

@@ -81,7 +81,7 @@ class TestMultiplexConfigFlag:
             def start(self, stop_event, **kwargs):
                 captured.update(kwargs)
 
-        monkeypatch.setattr("cron.scheduler_provider.resolve_cron_scheduler", lambda: _Ticker())
+        monkeypatch.setattr("cron.scheduler_provider.InProcessCronScheduler", lambda: _Ticker())
         monkeypatch.setattr(run_mod, "_cron_tick_profile_homes", lambda cfg: [("rex", tmp_path)])
         monkeypatch.setattr(run_mod, "_start_gateway_housekeeping", lambda *a, **k: None)
         runner = SimpleNamespace(

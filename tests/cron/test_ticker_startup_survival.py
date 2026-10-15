@@ -8,7 +8,6 @@ import threading
 import time
 from unittest.mock import patch
 
-
 def _wait_until(predicate, timeout=10.0, interval=0.005):
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
@@ -18,13 +17,11 @@ def _wait_until(predicate, timeout=10.0, interval=0.005):
         time.sleep(interval)
     return predicate()
 
-
 def _run_ticker(provider, stop, **kwargs):
     thread = threading.Thread(target=provider.start, args=(stop,), kwargs={"interval": 0, **kwargs},
                               daemon=True, name="cron-scheduler")
     thread.start()
     return thread
-
 
 def test_ticker_survives_a_corrupt_ledger_at_startup(tmp_path, monkeypatch):
     """A real corrupt ``executions.db`` (sqlite ``file is not a database``) used to escape
@@ -44,7 +41,6 @@ def test_ticker_survives_a_corrupt_ledger_at_startup(tmp_path, monkeypatch):
         thread.join(timeout=5)
     assert alive and len(ticks) >= 2, "ticker died on the pre-loop recovery scan"
     assert (tmp_path / "cron" / "ticker_heartbeat").exists()
-
 
 def test_multiplex_ticker_survives_a_raising_gate_without_ticking_ungated(tmp_path, caplog):
     """A ``profile_gate`` that raises (Desktop stand-down probe) must fail the CYCLE: thread alive,
@@ -69,7 +65,6 @@ def test_multiplex_ticker_survives_a_raising_gate_without_ticking_ungated(tmp_pa
         thread.join(timeout=5)
     assert alive, "ticker thread died when profile_gate raised"
     assert ticks == [], "a raising gate must not tick the ungated home list"
-
 
 def test_housekeeping_restarts_a_dead_ticker(monkeypatch):
     """The supervisor is the outer layer: a ticker that ended without a stop request is respawned
@@ -105,17 +100,3 @@ def test_housekeeping_restarts_a_dead_ticker(monkeypatch):
         stop.set()
         gateway_run._start_gateway_housekeeping(_OneTick(), interval=0, cron_thread=ticker)
         assert len(starts) == 2, "a stopped ticker must not be respawned"
-
-
-def test_supervisor_leaves_a_returning_external_provider_alone():
-    """An external provider's start() (Chronos) arms remote one-shots and RETURNS by design; the
-    supervisor must not read that as a dead ticker and re-run start() every housekeeping tick
-    (each rerun re-reconciles against NAS and logs a spurious "died without a stop request")."""
-    from cron.scheduler_thread import SupervisedTickerThread
-
-    starts = []
-    stop = threading.Event()
-    ticker = SupervisedTickerThread(lambda stop_event: starts.append(1), args=(stop,), stop_event=stop)
-    ticker.start()
-    _wait_until(lambda: not ticker.is_alive())
-    assert ticker.restart_if_dead() is False and starts == [1] and ticker.restarts == 0

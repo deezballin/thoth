@@ -103,10 +103,10 @@ def _start_desktop_cron_ticker(stop_event: "threading.Event", interval: int = 60
     ticker dies with its backend and that profile's jobs silently stop firing until the user next opens it
     ("tasks on the sleeping profile could be idle" — community report, Aug 2026).
     """
-    from cron.scheduler_provider import InProcessCronScheduler, resolve_cron_scheduler
+    from cron.scheduler_provider import InProcessCronScheduler
     from hermes_constants import get_hermes_home, profile_name_for_home
 
-    provider = resolve_cron_scheduler()
+    provider = InProcessCronScheduler()
     own_home = Path(get_hermes_home())
     own_name = profile_name_for_home(own_home) or "default"
     # Ownership is re-checked every tick, not once at startup, so Desktop takes over when the
@@ -146,28 +146,7 @@ def _start_desktop_cron_ticker(stop_event: "threading.Event", interval: int = 60
             # neither ticked nor heartbeated, so Desktop never marks the gateway's store healthy.
             start_kwargs["profile_homes"] = lambda: [(own_name, own_home)]
             start_kwargs["profile_gate"] = profile_gate
-    else:
-        # External providers take no per-tick gate: defer their start until the gateway is gone.
-        def _owned() -> bool:
-            try:
-                return _gateway_owns_cron(own_name, own_home)
-            except Exception:
-                # Start the ticker rather than silently stand down.
-                _log.warning("Desktop cron: gateway-ownership probe failed; starting the ticker", exc_info=True)
-                return False
-
-        if _owned():
-            _log.info(
-                "Desktop cron scheduler waiting: live gateway owns cron on this HERMES_HOME; "
-                "the gateway ticks with live adapters (re-probing every %ds)", interval,
-            )
-            while True:
-                if stop_event.wait(interval):
-                    return
-                if not _owned():
-                    break
-
-    _log.info("Desktop cron scheduler started (provider=%s, interval=%ds)", provider.name, interval)
+    _log.info("Desktop cron scheduler started (interval=%ds)", interval)
     provider.start(stop_event, **start_kwargs)
 
 

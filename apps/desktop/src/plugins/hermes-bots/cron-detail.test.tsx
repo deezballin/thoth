@@ -101,11 +101,9 @@ describe('the facts the row never showed', () => {
       routineDetailIssue({
         ...activeJob,
         last_delivery_error: 'telegram 401',
-        last_fire_error: 'model timeout',
         paused_reason: 'too many failures'
       })
-      // The run that never happened outranks the delivery of a run that did.
-    ).toBe('model timeout')
+    ).toBe('telegram 401')
   })
 })
 
@@ -175,14 +173,14 @@ describe('the row is reachable', () => {
 describe('the inspector', () => {
   it('renders the job\u2019s instruction and its failure', () => {
     render(
-      <RoutineDetailDialog job={{ ...activeJob, last_fire_error: 'model timeout' }} onClose={() => undefined} open />
+      <RoutineDetailDialog job={{ ...activeJob, last_delivery_error: 'telegram 401' }} onClose={() => undefined} open />
     )
 
     const dialog = screen.getByRole('dialog')
 
     expect(within(dialog).getByText('Morning digest')).toBeTruthy()
     expect(within(dialog).getByText('Summarize yesterday and post it.')).toBeTruthy()
-    expect(within(dialog).getByText('model timeout')).toBeTruthy()
+    expect(within(dialog).getByText('telegram 401')).toBeTruthy()
     // The routing tag is plumbing, not a title.
     expect(dialog.textContent).not.toMatch(/\[bot:notetaker\]/)
   })

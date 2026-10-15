@@ -453,7 +453,6 @@ const sidebars: SidebarsConfig = {
             'developer-guide/browser-supervisor',
             'developer-guide/acp-internals',
             'developer-guide/cron-internals',
-            'developer-guide/chronos-managed-cron-contract',
             'developer-guide/egress-internals',
             'developer-guide/gateway-monitoring',
             'developer-guide/relay-connector-contract',

@@ -1,7 +1,6 @@
 """Shared directory-plugin loader for ``plugins/<kind>/<name>/`` discovery packages
-(cron_providers, context_engine, memory): import ``__init__.py`` by path with siblings
-pre-registered so relative imports work, then extract the provider via ``register(ctx)``
-or an ABC-subclass fallback."""
+(context_engine, memory): import ``__init__.py`` by path with siblings pre-registered
+so relative imports work, then extract the provider via ``register(ctx)`` or an ABC-subclass fallback."""
 
 from __future__ import annotations
 

@@ -4638,14 +4638,6 @@ def _housekeeping_paste_sweep() -> None:
         logger.info("Paste sweep: deleted %d expired paste(s), %d pending", deleted, remaining)
 
 
-def _housekeeping_misfire_catch_up(cron_provider, adapters, loop) -> None:
-    """External cron providers only: fire jobs whose time passed with no external fire delivered (dead
-    loopback hop). No-op for the built-in ticker; enforces misfire_grace_minutes; CAS claim de-dupes."""
-    from cron.scheduler_provider import fire_overdue_jobs
-    caught_up = fire_overdue_jobs(cron_provider, adapters=adapters, loop=loop)
-    if caught_up:
-        logger.info("Misfire catch-up: fired %d overdue job(s)", caught_up)
-
 
 def _housekeeping_curator() -> None:
     """maybe_run_curator() is gated by config.interval_hours (7 days default); this is the poll."""
@@ -4778,12 +4770,11 @@ def _drain_restart_safe_cron_deliveries(adapters, loop, runner=None) -> None:
 
 
 def _start_gateway_housekeeping(
-    stop_event: threading.Event, adapters=None, loop=None, interval: int = 60, cron_provider=None, runner=None,
+    stop_event: threading.Event, adapters=None, loop=None, interval: int = 60, runner=None,
     cron_thread=None,
 ):
-    """Background thread for gateway-only periodic chores (NOT cron). Separate from the cron trigger
-    so chores run under any ``CronScheduler`` provider (external scale-to-zero has no 60s loop).
-    Cadences are ticks of ``interval``; inner gates own the real cadence."""
+    """Background thread for gateway-only periodic chores (NOT cron). Cadences are ticks of
+    ``interval``; inner gates own the real cadence."""
     from gateway.run_delivery_queue_watch import DRAIN_LABEL, DeliveryQueueWatch, wait_for_next_tick
     from gateway.run_profile_reconcile import _mcp_config_reconciler, profile_scoped_chore
     chores: list[tuple[int, str, Any]] = [
@@ -4800,8 +4791,6 @@ def _start_gateway_housekeeping(
         (5, "Channel directory refresh", lambda: adapters and _housekeeping_channel_directory(adapters, loop)),
         (60, "Media cache cleanup", _housekeeping_media_caches),
         (60, "Paste sweep", _housekeeping_paste_sweep)]
-    if cron_provider is not None:
-        chores.append((5, "Misfire catch-up sweep", lambda: _housekeeping_misfire_catch_up(cron_provider, adapters, loop)))
     if cron_thread is not None:
         # The ticker's own guards keep its loop alive; this is the outer layer for a thread that has
         # already ended (#111010). Runs every tick so the outage is bounded by one housekeeping interval.
@@ -4847,22 +4836,9 @@ def _start_gateway_housekeeping(
 
 
 def _start_cron_ticker(stop_event: threading.Event, adapters=None, loop=None, interval: int = 60):
-    """DEPRECATED shim — runs ONLY the built-in in-process cron tick loop; the trigger now lives behind
-    the ``CronScheduler`` provider and housekeeping in ``_start_gateway_housekeeping``."""
+    """Compatibility shim for the built-in in-process cron tick loop."""
     from cron.scheduler_provider import InProcessCronScheduler
     InProcessCronScheduler().start(stop_event, adapters=adapters, loop=loop, interval=interval)
-
-
-def _stop_cron_provider(provider) -> None:
-    """Stop a cron provider without letting it choose the gateway exit code."""
-    try:
-        provider.stop()
-    except SystemExit as exc:
-        logger.warning(
-            "Cron provider stop() attempted to exit the gateway with code %s; ignoring", exc.code)
-    except Exception as exc:
-        logger.debug("Cron provider stop() error: %s", exc)
-
 
 # Cron thread blocks on future.result(timeout=60) (cron/scheduler.py::_deliver_result) + margin.
 _CRON_SHUTDOWN_DRAIN_TIMEOUT = 65.0
@@ -5658,11 +5634,9 @@ async def _start_gateway_start_control_socket(runner):
 
 
 def _start_gateway_start_cron_and_housekeeping(runner):
-    """Start the cron scheduler thread + gateway housekeeping thread; returns
-    ``(cron_stop, cron_provider, cron_thread, housekeeping_thread)``."""
+    """Start the built-in cron ticker + gateway housekeeping; return their stop/thread handles."""
     # The event loop is passed so cron delivery can use live adapters (E2EE support).
-    from cron.scheduler_provider import (
-        InProcessCronScheduler, resolve_cron_scheduler, scheduler_for_profile_mode)
+    from cron.scheduler_provider import InProcessCronScheduler
     cron_stop = threading.Event()
     # ONE gateway process per host multiplexes every profile, so its cron ticker owns EVERY
     # profile's store — `gateway.multiplex_profiles` gates adapters, not cron. Gating the tick set
@@ -5673,12 +5647,9 @@ def _start_gateway_start_cron_and_housekeeping(runner):
     except Exception as exc:
         logger.warning("Could not resolve profile homes for cron: %s", exc)
         cron_profile_homes = []
-    # External providers own one unscoped remote registry, so they can only serve a single home.
-    cron_provider = scheduler_for_profile_mode(
-        resolve_cron_scheduler(), multiplex_profiles=len(cron_profile_homes) > 1)
     cron_start_kwargs: Dict[str, Any] = {"adapters": runner.adapters, "loop": asyncio.get_running_loop()}
 
-    if isinstance(cron_provider, InProcessCronScheduler) and cron_profile_homes:
+    if cron_profile_homes:
         # Live enumerator: the ticker re-reads profiles/ every cycle so a profile created while
         # the gateway runs gets its jobs fired without a restart (hot-serve).
         cron_start_kwargs["profile_homes"] = lambda: _cron_tick_profile_homes(runner.config)
@@ -5696,46 +5667,26 @@ def _start_gateway_start_cron_and_housekeeping(runner):
             "Cron scheduler will tick %d profile(s): %s", len(cron_profile_homes),
             [p[0] if isinstance(p, tuple) else p for p in cron_profile_homes])
 
-    # Only the in-process ticker polls local due jobs, so only it gets the external-drain dispatch gate.
-    if isinstance(cron_provider, InProcessCronScheduler):
-        cron_start_kwargs["can_dispatch"] = lambda: not (
-            runner._draining or runner._external_drain_active)
+    cron_start_kwargs["can_dispatch"] = lambda: not (
+        runner._draining or runner._external_drain_active)
     # Supervised: a ticker that dies without a stop request is respawned by housekeeping (#111010).
     from cron.scheduler_thread import SupervisedTickerThread
     cron_thread = SupervisedTickerThread(
-        cron_provider.start, args=(cron_stop,), kwargs=cron_start_kwargs, stop_event=cron_stop)
+        InProcessCronScheduler().start, args=(cron_stop,), kwargs=cron_start_kwargs, stop_event=cron_stop)
     cron_thread.start()
 
-    # External providers fire over loopback HTTP to THIS process's api_server; if it never came up (usually
-    # API_SERVER_KEY missing) every fire fails while manual runs work — misread as a job bug. Say it ONCE.
-    if not isinstance(cron_provider, InProcessCronScheduler):
-        try:
-            _has_api_server = Platform.API_SERVER in (runner.adapters or {})
-        except Exception:
-            _has_api_server = True  # never let the tell break startup
-        if not _has_api_server:
-            logger.warning(
-                "Cron provider '%s' is active but the api_server adapter is "
-                "NOT running in this gateway — scheduled fires arrive over "
-                "loopback HTTP and will all fail (jobs only run when "
-                "triggered manually). Most common cause: API_SERVER_KEY is "
-                "missing from this gateway process's environment. Restart "
-                "the gateway through its supervisor (`hermes gateway "
-                "restart`) so the profile env loads.",
-                getattr(cron_provider, "name", "external"))
-
-    # Gateway-only housekeeping runs independently of the cron provider; shares cron_stop for shutdown.
+    # Gateway-only housekeeping shares cron_stop for shutdown.
     housekeeping_thread = threading.Thread(
         target=_start_gateway_housekeeping, args=(cron_stop,),
         kwargs={"adapters": runner.adapters, "loop": asyncio.get_running_loop(),
-                "cron_provider": cron_provider, "runner": runner, "cron_thread": cron_thread},
+                "runner": runner, "cron_thread": cron_thread},
         daemon=True, name="gateway-housekeeping")
     housekeeping_thread.start()
-    return cron_stop, cron_provider, cron_thread, housekeeping_thread
+    return cron_stop, cron_thread, housekeeping_thread
 
 
 async def _start_gateway_shutdown_tail(
-    runner, _control_server, cron_stop: threading.Event, cron_provider,
+    runner, _control_server, cron_stop: threading.Event,
     cron_thread: Any, housekeeping_thread: threading.Thread,
     _planned_stop_watcher_stop: threading.Event, _planned_stop_watcher_thread: threading.Thread,
     _signal_initiated_shutdown: list) -> bool:
@@ -5762,7 +5713,6 @@ async def _start_gateway_shutdown_tail(
     # message was silently dropped (#58818). Awaiting keeps the loop alive so the in-flight delivery
     # finishes before we tear down.
     cron_stop.set()
-    _stop_cron_provider(cron_provider)
     if not await _await_thread_exit(cron_thread, timeout=_CRON_SHUTDOWN_DRAIN_TIMEOUT):
         logger.warning("Cron ticker did not exit within %.0fs of shutdown — an in-flight "
                        "delivery may have been dropped.", _CRON_SHUTDOWN_DRAIN_TIMEOUT)
@@ -5963,7 +5913,7 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
         finally:
             _shutdown_gateway_health_export(runner)
 
-    cron_stop, cron_provider, cron_thread, housekeeping_thread = (
+    cron_stop, cron_thread, housekeeping_thread = (
         _start_gateway_start_cron_and_housekeeping(runner))
 
     # READY only once adapters, cron and housekeeping run; missing systemd state just disables watchdog.
@@ -5972,7 +5922,7 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
     await runner.wait_for_shutdown()
 
     return await _start_gateway_shutdown_tail(
-        runner, _control_server, cron_stop, cron_provider, cron_thread, housekeeping_thread,
+        runner, _control_server, cron_stop, cron_thread, housekeeping_thread,
         _planned_stop_watcher_stop, _planned_stop_watcher_thread, _signal_initiated_shutdown)
 
 

@@ -145,8 +145,8 @@ export function CapabilitiesView({
         profile={scope.profile}
       />
     ),
-    // Agent plugins for the scoped profile (selector in the section header),
-    // app-level desktop plugins, and the docs catalog picker underneath.
+    // Agent plugins for the scoped profile (selector in the section header)
+    // and app-level desktop plugins.
     plugins: () => (
       <PluginsTab
         key={`plugins-${scope.key}`}

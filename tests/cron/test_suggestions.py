@@ -143,21 +143,12 @@ class TestStore:
         # And accepting again is a no-op (not pending anymore).
         assert store.accept_suggestion("acc") is None
 
-    def test_registration_failure_marks_suggestion_accepted(self, store):
-        """Retrying an acceptance must not create a duplicate durable job."""
-        from cron.scheduler import CronSchedulerRegistrationError
-
-        rec = _add(store, key="registration-failed", title="My Job")
-        job = {"id": "job123", "name": "My Job"}
-        failure = CronSchedulerRegistrationError(job, RuntimeError("private detail"))
-
-        with patch(
-            "cron.scheduler.create_job_with_scheduler_registration",
-            side_effect=failure,
-        ):
-            with pytest.raises(CronSchedulerRegistrationError):
-                store.accept_suggestion(rec["id"])
-
+    def test_accept_marks_suggestion_accepted(self, store):
+        """Successful job creation closes the suggestion without a provider registration phase."""
+        rec = _add(store, key="accepted", title="My Job")
+        with patch("cron.jobs.create_job", lambda **kwargs: {"id": "job123", **kwargs}):
+            job = store.accept_suggestion(rec["id"])
+        assert job["id"] == "job123"
         assert store.list_pending() == []
         assert store.accept_suggestion(rec["id"]) is None
 

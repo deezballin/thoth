@@ -2046,7 +2046,6 @@ export interface Translations {
       desktopHalfRemoteTip: string
       emptyAll: string
       empty: string
-      emptyHint: string
       loadFailed: string
       toggleFailed: (name: string) => string
       toolsetOn: (name: string, profile: string) => string
@@ -2065,10 +2064,6 @@ export interface Translations {
         unsupported_gpu: string
         unknown: string
       }
-      catalogTitle: string
-      catalogBrowse: string
-      catalogHide: string
-      catalogHint: string
       alreadyInstalled: (name: string) => string
       catalogProvenance: (sha: string) => string
       pinnedProvenance: (sha: string) => string

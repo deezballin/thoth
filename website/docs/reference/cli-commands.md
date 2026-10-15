@@ -68,7 +68,7 @@ The install also ships `hermes-agent`, a minimal runner that sends one query and
 | `hermes status` | Show agent, auth, and platform status. |
 | `hermes usage` | Show the configured account's rate-limit windows (the `/usage` block) without a session; `--json` for scripts. |
 | `hermes cron` | Inspect and tick the cron scheduler. |
-| `hermes pause` / `hermes resume` | Global emergency stop: no new cron fires (built-in ticker, managed-cron webhook, misfire catch-up), kanban dispatch or gateway turns start until resumed; in-flight work is never killed. |
+| `hermes pause` / `hermes resume` | Global emergency stop: no new scheduled cron fires, Kanban dispatch or gateway turns start until resumed; in-flight work is never killed. |
 | `hermes kanban` | Multi-profile collaboration board (tasks, links, dispatcher). |
 | `hermes project` | Manage named, multi-folder workspaces (projects). Anchors desktop session grouping and, when bound to a kanban board, gives tasks a deterministic worktree + branch convention. State is per-profile. |
 | `hermes webhook` | Manage dynamic webhook subscriptions for event-driven activation. |
@@ -772,14 +772,7 @@ hermes cron <list|create|edit|pause|resume|run|remove|status|runs|incidents|doct
 | `doctor` | Read-only fleet health check: failed runs, failed deliveries, overdue/missing `next_run_at`, missing scripts or workdirs. Exits non-zero when issues are found. |
 | `tick` | Run due jobs once and exit. |
 
-The cron **trigger** is pluggable via the `cron.provider` config key. Empty
-(the default) uses the built-in in-process ticker. Set it to `chronos` (the
-NAS-managed provider for scale-to-zero hosted gateways) — configured via the
-`cron.chronos.*` keys (`portal_url`, `callback_url`, `expected_audience`,
-`nas_jwks_url`) — or name a custom provider under `plugins/cron/<name>/` or
-`$HERMES_HOME/plugins/<name>/`. An unknown or unavailable provider falls back to
-the built-in, so cron is never left without a trigger. See the
-[cron internals](../developer-guide/cron-internals.md#gateway-integration) doc.
+Scheduled jobs use Hermes' built-in in-process ticker in the gateway, `hermes serve`, and the Desktop backend. Manual Run now uses the same atomic claim as a ticker fire without consuming the next scheduled occurrence. See the [cron internals](../developer-guide/cron-internals.md#gateway-integration) doc.
 
 ## `hermes kanban`
 

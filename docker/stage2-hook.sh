@@ -449,10 +449,8 @@ seed_one "SOUL.md" "docker/SOUL.md"
 # The gateway's aiohttp api_server refuses to start without a strong
 # API_SERVER_KEY (>=16 chars; startup guard in gateway/platforms/api_server.py).
 # Hosted deployments need that listener on loopback so the dashboard — the
-# container's only public HTTP door — can forward Chronos cron fires into the
-# GATEWAY process, where the live platform adapters (relay, E2EE) live. The
-# cron-fire route itself is NAS-JWT-authed, not key-authed; the key gates the
-# rest of the api_server surface. Generate once, persist in .env (mounted
+# container's only public HTTP door — can reach the GATEWAY process, where the
+# live platform adapters (relay, E2EE) live. Generate once, persist in .env (mounted
 # volume), never overwrite an operator-provided value. Loopback-only: the
 # default bind host is 127.0.0.1 and the Fly service only exposes the
 # dashboard's port, so this listener is never publicly reachable.
@@ -461,8 +459,7 @@ seed_one "SOUL.md" "docker/SOUL.md"
 # the first-boot seed above depends on /opt/hermes/.env.example being present
 # in the image, and when it isn't (the .dockerignore excluded it for a long
 # stretch of releases) seed_one is a silent no-op, no .env ever exists, this
-# keygen never ran, the api_server never started, and every scheduled cron
-# fire on the instance was silently lost. The key must not depend on the
+# keygen never ran and the api_server never started. The key must not depend on the
 # example-file seed having worked.
 #
 # OPERATOR-PROVIDED KEYS WIN: if the container environment already carries
@@ -477,7 +474,7 @@ if [ -n "${API_SERVER_KEY:-}" ]; then
         # The env key is the effective key on this boot (no .env key wins
         # over it). The api_server startup guard refuses keys shorter than
         # 16 chars; since this branch skips generation, a weak operator key
-        # means the server stays DOWN (cron fires lost), not just 401s.
+        # means the server stays DOWN, not just 401s.
         # Warn where the operator will look — the boot log. Checked only in
         # this branch: when a strong .env key wins at runtime, the warning
         # would be false (the server does start).
@@ -518,7 +515,7 @@ elif ! grep -q '^API_SERVER_KEY=..*' "$HERMES_HOME/.env" 2>/dev/null; then
                 if printf 'API_SERVER_KEY=%s\n' "$_gen_key" >> "$HERMES_HOME/.env" 2>/dev/null; then
                     echo "[stage2] Generated API_SERVER_KEY for the loopback gateway api_server"
                 else
-                    echo "[stage2] Warning: could not write API_SERVER_KEY to $HERMES_HOME/.env (read-only volume?) — gateway api_server (cron fires) will be unavailable"
+                    echo "[stage2] Warning: could not write API_SERVER_KEY to $HERMES_HOME/.env (read-only volume?) — gateway api_server will be unavailable"
                 fi
             fi
             unset _gen_key

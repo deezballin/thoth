@@ -11403,18 +11403,6 @@
             "default": null,
             "title": "Last Delivery Unverified"
           },
-          "last_fire_error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "title": "Last Fire Error"
-          },
           "last_error": {
             "anyOf": [
               {

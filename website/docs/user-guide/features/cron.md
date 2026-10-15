@@ -272,7 +272,7 @@ What they do:
 
 ### Pausing everything: `hermes pause`
 
-`hermes pause [--reason ...]` is the global emergency stop (`hermes resume` lifts it). While it is engaged no scheduled cron fire starts, whichever door it arrives through: the built-in ticker skips its dispatch, the managed-cron (hosted scheduler) fire webhook answers `503` with `Retry-After: 60` so the scheduler redelivers the fire after you resume, and the [misfire catch-up](#misfire-catch-up) sweep stays idle instead of force-firing everything that was held back. Runs already in flight are never killed, and nothing is lost: due work catches up on the first tick or sweep after `hermes resume`. Explicit manual runs (`hermes cron run`, the dashboard's Trigger button) are an operator override and still execute while paused.
+`hermes pause [--reason ...]` is the global emergency stop (`hermes resume` lifts it). While it is engaged the built-in ticker does not start scheduled runs. Runs already in flight are never killed, and due work catches up on a later tick after `hermes resume`. Explicit manual runs (`hermes cron run`, dashboard Run now) are an operator override and still execute while paused.
 
 ### Creating a job paused (safe canary)
 
@@ -529,7 +529,6 @@ Checks per active job:
 - last run failed (`last_status` not ok, with the recorded error),
 - last delivery failed (the output was produced but never reached you),
 - last dispatch was late or caught up after a missed schedule (`last_dispatch`); this warning clears at the next on-time fire,
-- a scheduled fire could not reach the runner (`last_fire_error`), with the recorded timestamp and a shortened reason; this warning clears after a successful run,
 - `next_run_at` missing, or parked in the past beyond a 15-minute ticker
   grace window — the "job is silently not firing" signal (scheduler dead,
   gateway down, or a wedged fire-claim),
@@ -1031,8 +1030,7 @@ A single rate-limited key therefore does not fail a run that has another credent
 
 A failed agent run records a concise `last_error`, visible in job listings and `/cron list`
 with credential patterns and URL credentials redacted (including previously stored errors).
-This is separate from `last_fire_error` (scheduler handoff) and `last_delivery_error` (delivery).
-Those fields can correctly be empty when the agent itself failed.
+This is separate from `last_delivery_error` (delivery), which can correctly be empty when the agent itself failed.
 
 For a connection failure, inspect the run document under `cron/output/<job_id>/` in the active
 Hermes home. Its `## Error` section includes the chained traceback, with credential patterns
@@ -1040,19 +1038,6 @@ and URL credentials redacted. The file uses the existing private output-file per
 traceback locals are not captured. Delivery notices and `last_error` retain the concise error,
 not the full traceback. Review diagnostics before sharing: redaction is not a guarantee that
 arbitrary application data is non-sensitive.
-
-## Missed scheduled fires (`last_fire_error`)
-
-On hosted (managed-cron) deployments, a scheduled fire travels from the platform scheduler through the dashboard to the gateway's internal API server. If that final hand-off fails — the gateway process is down, or its API-server listener never started — the run never begins, so there is no execution record and no `last_status` to inspect. The tell-tale shape: the job works every time you trigger it manually, but never auto-fires.
-
-These misses are stamped on the job record as `last_fire_error` (timestamp + reason) and surfaced by:
-
-- `cronjob_manage` tool → `action: "list"` — the `last_fire_error` field
-- `hermes cron list`: a red missed-fire warning under the job
-- `hermes cron doctor`: a per-job missed-fire finding that makes the command exit `1`
-- The dashboard job view
-
-The stamp always reflects **current** auto-fire health: it is overwritten by newer misses and cleared automatically by the next successful run. If you see it, the job and its schedule are fine — the gateway side of the fire path needs attention (most commonly, restart the gateway through its supervisor so it loads the full profile environment: `hermes gateway restart`).
 
 ### Local missed-run policy
 
@@ -1075,20 +1060,7 @@ job later than its existing grace window (half its period, clamped to 120 second
 hours) is re-anchored to its next future occurrence without firing now. The skip is
 logged. Jobs inside grace and explicit manual triggers still run normally; if the
 next occurrence cannot be computed, the existing run-once fallback is preserved.
-This does not change one-shot expiry, resume behavior, or the hosted-provider sweep
-below. There is no per-job override.
-
-### Misfire catch-up
-
-When an external scheduler provider is active (managed cron on hosted deployments), the gateway also runs a catch-up sweep: a job whose scheduled time passed with no fire delivered — and whose grace window has elapsed — is claimed and run locally, so an outage in the fire hand-off costs minutes instead of the whole day. The sweep is de-duplicated against late scheduler retries by the same store claim used for normal fires.
-
-```yaml
-cron:
-  misfire_grace_minutes: 10   # wait this long for the scheduler's own retries
-                              # before catching up locally; 0 disables catch-up
-```
-
-Local (built-in ticker) deployments don't need this — the ticker already picks up past-due jobs on its next tick.
+This does not change one-shot expiry or resume behavior. There is no per-job override.
 
 ## Schedule formats
 

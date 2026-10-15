@@ -2417,7 +2417,6 @@ export const en: Translations = {
         "This package's desktop half is on the remote backend's disk, which this app cannot read. To use it here, run Install from Git with the package's repo URL and the Desktop target checked — that clones the desktop half onto this machine.",
       emptyAll: 'No plugins yet.',
       empty: 'No agent plugins installed for this profile.',
-      emptyHint: 'Browse the catalog below and install a reviewed plugin with one click.',
       loadFailed: 'Could not load agent plugins',
       toggleFailed: (name: string) => `Could not toggle ${name}`,
       toolsetOn: (name: string, profile: string) => `${name} agent tools enabled for ${profile}`,
@@ -2437,11 +2436,6 @@ export const en: Translations = {
         unsupported_gpu: 'GPU not supported',
         unknown: 'status unknown'
       },
-      catalogTitle: 'Plugin catalog',
-      catalogBrowse: 'Browse',
-      catalogHide: 'Hide the catalog browser',
-      catalogHint:
-        'Hit "+ Add to this Agent" on any plugin — reviewed entries install at their pinned commit into the selected profile. Bundled agent+desktop plugins offer both halves.',
       alreadyInstalled: (name: string) => `${name} is already installed in this profile.`,
       catalogProvenance: (sha: string) => `Installed from the Thoth catalog${sha ? ` at pin ${sha}` : ''}.`,
       pinnedProvenance: (sha: string) =>

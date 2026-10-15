@@ -131,8 +131,6 @@ def test_desktop_ticker_gates_on_profile_gateway_running(tmp_path, monkeypatch, 
 
     from cron import scheduler_provider as sp
 
-    monkeypatch.setattr(web_server, "resolve_cron_scheduler", lambda: _Provider(), raising=False)
-    monkeypatch.setattr(sp, "resolve_cron_scheduler", lambda: _Provider())
     monkeypatch.setattr(sp, "InProcessCronScheduler", _Provider)
     monkeypatch.setattr("hermes_logging.enable_profile_log_routing", lambda homes: None)
 
@@ -156,7 +154,7 @@ def test_desktop_ticker_gates_on_profile_gateway_running(tmp_path, monkeypatch, 
     assert not any(gate(name, home) for name, home in homes)
 
 
-def test_a_routed_profile_fire_runs_under_multiplex_semantics_for_exactly_its_scope(tmp_path, monkeypatch):
+def test_routed_profile_cron_scope_isolates_secrets_for_exactly_its_run(tmp_path, monkeypatch):
     """The desktop ticker fires a SIBLING profile's job from a process that is not a multiplexer.
     The tick only MARKS the fire as routed; multiplex semantics switch on where run_one_job
     installs the profile's secret scope and off with it — so the routed .env stays out of the
@@ -166,7 +164,7 @@ def test_a_routed_profile_fire_runs_under_multiplex_semantics_for_exactly_its_sc
 
     import cron.scheduler as scheduler
     from agent import secret_scope
-    from cron.scheduler_provider import _profile_cron_scope, routed_profile_fire
+    from cron.scheduler_provider import _profile_cron_scope
     from hermes_cli.env_loader import load_hermes_dotenv
 
     launch, routed = tmp_path / "launch", tmp_path / "launch" / "profiles" / "ops"
@@ -182,11 +180,6 @@ def test_a_routed_profile_fire_runs_under_multiplex_semantics_for_exactly_its_sc
     environ_before = dict(os.environ)
 
     with _profile_cron_scope(routed):
-        # Before the scope exists — where run_one_job's restart-safe handoff runs — the marker is
-        # set, the semantics are not.
-        assert routed_profile_fire() is True
-        assert secret_scope.is_multiplex_active() is False
-
         tokens = scheduler._install_fire_secret_scope()
         try:
             assert secret_scope.is_multiplex_active() is True
@@ -198,7 +191,6 @@ def test_a_routed_profile_fire_runs_under_multiplex_semantics_for_exactly_its_sc
             scheduler._reset_fire_secret_scope(tokens)
         assert secret_scope.is_multiplex_active() is False  # off with the scope, not later
 
-    assert routed_profile_fire() is False
     assert dict(os.environ) == environ_before
 
 
@@ -273,7 +265,6 @@ def test_dashboard_run_now_isolates_a_sibling_profile_fire_like_the_ticker(tmp_p
     monkeypatch.setattr(profiles, "_get_default_hermes_home", lambda: launch)
     monkeypatch.setattr(profiles, "_get_profiles_root", lambda: launch / "profiles")
     monkeypatch.setattr(scheduler, "_hermes_home", None)
-    monkeypatch.setattr("cron.scheduler_provider.resolve_cron_scheduler", lambda: InProcessCronScheduler())
     secret_scope.set_multiplex_active(False)  # the desktop backend never sets the process flag
 
     def _job_for(home, name):

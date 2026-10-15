@@ -410,7 +410,7 @@ export function routineDetailRows(
  *  "paused"; the scheduler's own reason and the last fire/delivery failures
  *  had no surface in Bot Mode at all. */
 export function routineDetailIssue(job: RoutineJob | null | undefined): null | string {
-  const reasons = [job?.last_fire_error, job?.last_delivery_error, job?.paused_reason]
+  const reasons = [job?.last_delivery_error, job?.paused_reason]
   const first = reasons.find(value => typeof value === 'string' && value.trim())
 
   return first ? first.trim() : null

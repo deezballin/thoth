@@ -71,15 +71,6 @@ def _dumps(payload: Dict[str, Any]) -> str:
     return json.dumps(payload, indent=2)
 
 
-def _notify_provider_jobs_changed_safe() -> None:
-    """Tell the active scheduler provider the job set changed; best-effort, never raises."""
-    try:
-        from cron.scheduler import _notify_provider_jobs_changed
-        _notify_provider_jobs_changed()
-    except Exception:
-        pass
-
-
 # ---------------------------------------------------------------------------
 # Manual run execution (claim -> run_one_job -> report)
 # ---------------------------------------------------------------------------
@@ -201,7 +192,6 @@ def _hand_off_primary_routed_run(job: Dict[str, Any], extra_prompt: Optional[str
                 f"gateway's profile route, which has no standalone sender. {cause}"),
         })
     updated = trigger_job(job["id"], extra_prompt=extra_prompt)
-    _notify_provider_jobs_changed_safe()
     return _dumps({
         "success": True,
         "job": _format_job(updated),
@@ -678,29 +668,25 @@ def _action_create(a: Dict[str, Any]) -> str:
     if a["continuity"] is not None:
         context_from = _apply_continuity(context_from, a["continuity"])
 
-    from cron.scheduler import CronSchedulerRegistrationError, create_job_with_scheduler_registration
-    try:
-        job = create_job_with_scheduler_registration(
-            prompt=prompt or "", schedule=a["schedule"], name=a["name"], repeat=a["repeat"],
-            deliver=_resolve_cron_context_deliver(deliver),
-            origin=_origin_from_env(a["schedule"]),
-            skills=canonical_skills,
-            model=_normalize_optional_job_value(a["model"]), provider=_normalize_optional_job_value(a["provider"]),
-            base_url=_normalize_optional_job_value(a["base_url"], strip_trailing_slash=True),
-            script=_normalize_optional_job_value(script), context_from=context_from,
-            enabled_toolsets=a["enabled_toolsets"] or None, workdir=_normalize_optional_job_value(a["workdir"]),
-            no_agent=_no_agent, attach_to_session=a["attach_to_session"],
-            monitor_script=_normalize_optional_job_value(a["monitor_script"]),
-            monitor_url=_normalize_optional_job_value(a["monitor_url"]),
-            # CLI-only lane: absent from CRONJOB_SCHEMA and the model dispatch (models don't pick models).
-            reasoning_effort=a["reasoning_effort"], interpreter=a["interpreter"],
-            pinned=bool(a["pinned"]),
-            failure_deliver=_resolve_cron_context_deliver(_normalize_deliver_param(a["failure_deliver"])),
-            **({"paused": a["paused"], "paused_reason": a["paused_reason"]}
-               if a["paused"] is not False or a["paused_reason"] is not None else {}))
-    except CronSchedulerRegistrationError as exc:
-        _partial = exc.to_dict()
-        return tool_error(_partial.pop("error"), success=False, **_partial)
+    from cron.jobs import create_job
+    job = create_job(
+        prompt=prompt or "", schedule=a["schedule"], name=a["name"], repeat=a["repeat"],
+        deliver=_resolve_cron_context_deliver(deliver),
+        origin=_origin_from_env(a["schedule"]),
+        skills=canonical_skills,
+        model=_normalize_optional_job_value(a["model"]), provider=_normalize_optional_job_value(a["provider"]),
+        base_url=_normalize_optional_job_value(a["base_url"], strip_trailing_slash=True),
+        script=_normalize_optional_job_value(script), context_from=context_from,
+        enabled_toolsets=a["enabled_toolsets"] or None, workdir=_normalize_optional_job_value(a["workdir"]),
+        no_agent=_no_agent, attach_to_session=a["attach_to_session"],
+        monitor_script=_normalize_optional_job_value(a["monitor_script"]),
+        monitor_url=_normalize_optional_job_value(a["monitor_url"]),
+        # CLI-only lane: absent from CRONJOB_SCHEMA and the model dispatch (models don't pick models).
+        reasoning_effort=a["reasoning_effort"], interpreter=a["interpreter"],
+        pinned=bool(a["pinned"]),
+        failure_deliver=_resolve_cron_context_deliver(_normalize_deliver_param(a["failure_deliver"])),
+        **({"paused": a["paused"], "paused_reason": a["paused_reason"]}
+           if a["paused"] is not False or a["paused_reason"] is not None else {}))
     _create_message = " ".join(filter(None, (f"Cron job '{job['name']}' created.",
         "Created PAUSED — resume to schedule, or explicitly run now." if not job.get("enabled", True) else None,
         _local_delivery_notice(job, deliver))))
@@ -730,7 +716,6 @@ def _action_remove(job: Dict[str, Any], a: Dict[str, Any]) -> str:
     job_id = job["id"]
     if not remove_job(job_id):
         return tool_error(f"Failed to remove job '{job_id}'", success=False)
-    _notify_provider_jobs_changed_safe()
     return _dumps({
         "success": True,
         "message": f"Cron job '{job['name']}' removed.",
@@ -739,7 +724,6 @@ def _action_remove(job: Dict[str, Any], a: Dict[str, Any]) -> str:
 
 
 def _job_state_result(updated: Dict[str, Any]) -> str:
-    _notify_provider_jobs_changed_safe()
     return _dumps({"success": True, "job": _format_job(updated)})
 
 
@@ -766,7 +750,6 @@ def _action_run(job: Dict[str, Any], a: Dict[str, Any]) -> str:
     # dispatch (handle now, outcome as a completion event); inline fallback otherwise.
     bg = _try_dispatch_background_run(job, session_id=a["session_id"], extra_prompt=extra_prompt)
     if bg is not None and bg.get("dispatched"):
-        _notify_provider_jobs_changed_safe()
         result = _refreshed_job_view(job_id)
         result["executed"] = True
         result["execution_mode"] = "background"
@@ -792,8 +775,6 @@ def _action_run(job: Dict[str, Any], a: Dict[str, Any]) -> str:
     # one-shot for the same occurrence; a lost consumed fire cannot re-arm itself, so
     # reconcile after the run has persisted its final state.
     claimed = exec_result.get("claimed", False)
-    if claimed:
-        _notify_provider_jobs_changed_safe()
     result = _refreshed_job_view(job_id)
     result["executed"] = claimed
     result["execution_success"] = exec_result.get("success", False)
@@ -945,7 +926,6 @@ def _action_update(job: Dict[str, Any], a: Dict[str, Any]) -> str:
     if not updates:
         return tool_error("No updates provided.", success=False)
     updated = update_job(job["id"], updates)
-    _notify_provider_jobs_changed_safe()
     # An update can switch modes or delivery — echo the same guidance as create.
     return _dumps(_with_guidance(
         {"success": True, "job": _format_job(updated)}, updated, _normalize_deliver_param(a["deliver"])))

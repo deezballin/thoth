@@ -3824,7 +3824,6 @@ export interface CronJobRow {
   last_status?: string | null
   last_delivery_error?: string | null
   last_delivery_unverified?: string[] | null
-  last_fire_error?: string | null
   last_error?: string | null
   enabled?: boolean
   state?: string | null

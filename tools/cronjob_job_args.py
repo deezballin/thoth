@@ -499,7 +499,6 @@ def _format_job(job: Dict[str, Any]) -> Dict[str, Any]:
         "last_status": job.get("last_status"),
         "last_delivery_error": job.get("last_delivery_error"),
         "last_delivery_unverified": job.get("last_delivery_unverified"),
-        "last_fire_error": job.get("last_fire_error"),
         "last_error": redact_sensitive_text(
             job["last_error"], force=True, redact_url_credentials=True,
         ) if job.get("last_error") else job.get("last_error"),

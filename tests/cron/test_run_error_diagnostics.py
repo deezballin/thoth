@@ -31,7 +31,7 @@ def test_list_exposes_run_error_and_clears_it_after_success(tmp_path, capsys):
         displayed = _format_job(jobs.get_job(job["id"]))
         assert displayed["last_error"].startswith("RuntimeError:") and "localhost" in displayed["last_error"]
         assert "password" not in displayed["last_error"] and "secret-token" not in displayed["last_error"]
-        assert displayed["last_delivery_error"] is None and displayed["last_fire_error"] is None
+        assert displayed["last_delivery_error"] is None
         CLICommandsMixin._cron_list(object(), "list", {"all": False})
         console = capsys.readouterr().out
         assert f"error: {displayed['last_error']}" in console

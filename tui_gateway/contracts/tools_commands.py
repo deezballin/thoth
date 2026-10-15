@@ -452,7 +452,6 @@ class CronJobRow(_Open):
     last_status: str | None = None
     last_delivery_error: str | None = None
     last_delivery_unverified: list[str] | None = None  # unconfirmed ``platform:chat_id[:thread_id]`` targets
-    last_fire_error: str | None = None
     last_error: str | None = None
     enabled: bool = True
     state: str | None = None
