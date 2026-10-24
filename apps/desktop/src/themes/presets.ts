@@ -371,7 +371,7 @@ const classicPalette = (colors: Record<string, string>) => skinToDesktopTheme({ 
 /**
  * Classic Hermes — the CLI's stock `default` skin (gold on navy), offered as a
  * Desktop pick under its OWN id. Never `default`: stock config ships
- * `display.skin: default`, and Desktop reads that as "no pick" (→ nous), so a
+ * `display.skin: default`, and Desktop reads that as "no pick" (→ thoth), so a
  * user only ever gets Classic by choosing it (#76579). Both palettes go through
  * the converter a backend skin takes, so each mode paints what the CLI paints
  * in a dark or light terminal.
@@ -407,6 +407,112 @@ export const emberTheme: DesktopTheme = {
   typography: {
     fontMono: `"IBM Plex Mono", ${SYSTEM_MONO}`,
     fontUrl: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap'
+  }
+}
+
+/**
+ * Thoth — a monochrome X-ray palette: graphite surfaces, bone-white text,
+ * silver focus edges, and color reserved for semantic status.
+ */
+export const thothTheme: DesktopTheme = {
+  name: 'thoth',
+  label: 'Thoth',
+  description: 'Monochrome X-ray — graphite, bone white, and silver',
+  colors: {
+    background: '#f0f0f0',
+    foreground: '#1b1b1b',
+    card: '#fafafa',
+    cardForeground: '#1b1b1b',
+    muted: '#e6e6e6',
+    mutedForeground: '#5e5e5e',
+    popover: '#ffffff',
+    popoverForeground: '#171717',
+    primary: '#434343',
+    primaryForeground: '#ffffff',
+    secondary: '#dadada',
+    secondaryForeground: '#202020',
+    accent: '#d2d2d2',
+    accentForeground: '#1b1b1b',
+    border: '#c0c0c0',
+    input: '#aeaeae',
+    ring: '#4b4b4b',
+    midground: '#555555',
+    midgroundForeground: '#ffffff',
+    composerRing: '#555555',
+    destructive: '#b4232b',
+    destructiveForeground: '#ffffff',
+    sidebarBackground: '#e8e8e8',
+    sidebarBorder: '#c6c6c6',
+    userBubble: '#dfdfdf',
+    userBubbleBorder: '#c0c0c0'
+  },
+  darkColors: {
+    background: '#0a0a0a',
+    foreground: '#f0f0f0',
+    card: '#121212',
+    cardForeground: '#f0f0f0',
+    muted: '#1a1a1a',
+    mutedForeground: '#a3a3a3',
+    popover: '#171717',
+    popoverForeground: '#f2f2f2',
+    primary: '#c7c7c7',
+    primaryForeground: '#141414',
+    secondary: '#252525',
+    secondaryForeground: '#e5e5e5',
+    accent: '#202020',
+    accentForeground: '#eeeeee',
+    border: '#373737',
+    input: '#303030',
+    ring: '#c1c1c1',
+    midground: '#adadad',
+    midgroundForeground: '#151515',
+    composerRing: '#c5c5c5',
+    destructive: '#ef747b',
+    destructiveForeground: '#171717',
+    sidebarBackground: '#0e0e0e',
+    sidebarBorder: '#303030',
+    userBubble: '#1b1b1b',
+    userBubbleBorder: '#444444'
+  },
+  // Integrated-terminal ANSI: grayscale everywhere except the three status
+  // hues (red/green/yellow) — the same "color is semantic" rule as the UI.
+  terminal: {
+    foreground: '#1b1b1b',
+    black: '#262626',
+    red: '#b4232b',
+    green: '#2c6b3d',
+    yellow: '#6f5400',
+    blue: '#5e5e5e',
+    magenta: '#6b6b6b',
+    cyan: '#767676',
+    white: '#d6d6d6',
+    brightBlack: '#8f8f8f',
+    brightRed: '#d0343c',
+    brightGreen: '#3c8550',
+    brightYellow: '#8f6c00',
+    brightBlue: '#8a8a8a',
+    brightMagenta: '#9a9a9a',
+    brightCyan: '#a5a5a5',
+    brightWhite: '#ececec'
+  },
+  darkTerminal: {
+    foreground: '#e6e6e6',
+    black: '#161616',
+    red: '#ef747b',
+    green: '#8fbf9a',
+    yellow: '#d6b45c',
+    blue: '#9a9a9a',
+    magenta: '#adadad',
+    cyan: '#bcbcbc',
+    white: '#c4c4c4',
+    brightBlack: '#767676',
+    brightRed: '#f3989e',
+    brightGreen: '#a9d1b3',
+    brightYellow: '#e5ca85',
+    brightBlue: '#b5b5b5',
+    brightMagenta: '#c7c7c7',
+    brightCyan: '#d4d4d4',
+    brightWhite: '#f0f0f0'
   }
 }
 
@@ -451,6 +557,7 @@ export const BUILTIN_THEMES: Record<string, DesktopTheme> = {
   classic: classicTheme,
   midnight: midnightTheme,
   ember: emberTheme,
+  thoth: thothTheme,
   mono: monoTheme,
   slate: slateTheme,
   cyberpunk: cyberpunkTheme
@@ -459,7 +566,7 @@ export const BUILTIN_THEMES: Record<string, DesktopTheme> = {
 export const BUILTIN_THEME_LIST = Object.values(BUILTIN_THEMES)
 
 /** Skin used when nothing is persisted or the persisted name is retired. */
-export const DEFAULT_SKIN_NAME = 'nous'
+export const DEFAULT_SKIN_NAME = 'thoth'
 
 /** Names that no longer resolve to a skin of their own. A stored pick of one
  *  falls back to DEFAULT_SKIN_NAME, and a cached backend theme under one is

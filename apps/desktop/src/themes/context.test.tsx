@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { $backendThemes, __resetBackendSkinSync, ingestBackendSkin } from './backend-sync'
 import { skinPref, ThemeProvider, useTheme } from './context'
-import { everforestTheme } from './presets'
+import { everforestTheme, thothTheme } from './presets'
 
 // The live-authoring loop: Hermes writes/edits one skin file and every surface
 // repaints. An in-place edit keeps the NAME — only the palette moves.
@@ -232,6 +232,34 @@ describe('ThemeProvider highlight preview', () => {
     expect(ctx.themeName).toBe('mono')
     expect(skinPref.resolve('default')).toBe('mono')
     expect(cssVar('--theme-foreground')).not.toBe(everforestTheme.darkColors!.foreground)
+  })
+
+  it('lists and previews the Thoth X-ray palette in both modes without committing it', () => {
+    renderProbe()
+
+    // Thoth is the stock default now, so commit another theme first — the
+    // preview must paint Thoth without disturbing the committed pick.
+    act(() => ctx.setTheme('nous'))
+    expect(ctx.themeName).toBe('nous')
+
+    expect(ctx.availableThemes).toContainEqual({
+      name: 'thoth',
+      label: 'Thoth',
+      description: 'Monochrome X-ray — graphite, bone white, and silver'
+    })
+
+    act(() => ctx.previewTheme('thoth', 'dark'))
+    expect(cssVar('--theme-foreground')).toBe(thothTheme.darkColors!.foreground)
+    expect(cssVar('--theme-background-seed')).toBe(thothTheme.darkColors!.background)
+    expect(window.document.documentElement.dataset.hermesTheme).toBe('thoth')
+    expect(ctx.themeName).not.toBe('thoth')
+
+    act(() => ctx.previewTheme('thoth', 'light'))
+    expect(cssVar('--theme-foreground')).toBe(thothTheme.colors.foreground)
+    expect(cssVar('--theme-background-seed')).toBe(thothTheme.colors.background)
+
+    act(() => ctx.clearThemePreview())
+    expect(ctx.themeName).not.toBe('thoth')
   })
 
   it('ignores a preview of an unknown theme', () => {
