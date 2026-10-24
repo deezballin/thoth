@@ -482,12 +482,20 @@
     --dt-destructive-foreground: #ffffff;
     --dt-sidebar-bg: var(--ui-bg-sidebar);
     --dt-sidebar-border: var(--ui-stroke-secondary);
+    /* The own-turn fill before the translucency lever: the skin's `userBubble`
+       seed (`--theme-bubble-seed`, written by applyTheme). Light mode takes it
+       from HERE, not from `--ui-chat-bubble-background`: that overlay token's
+       light mix ratio is 0% seed (`--theme-mix-bubble`), so resolving through
+       it dropped the seed entirely and every skin's light bubble painted the
+       neutral card instead of the `userBubble` it declares — and previews in
+       Settings. Dark replaces this with the blended surface below. */
+    --dt-user-bubble-fill: var(--theme-bubble-seed);
     /* `--user-bubble-keep` is the Settings → Appearance → Message Bubble lever
        (store/user-bubble-transparency.ts): the share of the theme's bubble
        fill to keep. Unset at the default, so the mix is a no-op and the bubble
        is the theme's fill exactly as before. The border stays put either way —
        at full transparency the outline is what still marks your turn. */
-    --dt-user-bubble: color-mix(in srgb, var(--ui-chat-bubble-background) var(--user-bubble-keep, 100%), transparent);
+    --dt-user-bubble: color-mix(in srgb, var(--dt-user-bubble-fill) var(--user-bubble-keep, 100%), transparent);
     --dt-user-bubble-border: var(--ui-stroke-tertiary);
 
     --dt-font-sans:
@@ -622,6 +630,12 @@
     --theme-neutral-chrome: #0d0d0e;
     --theme-neutral-sidebar: #0a0a0b;
     --theme-neutral-card: #161618;
+    /* Dark bubbles keep the long-standing blend — 46% seed toward the neutral
+       card (the same knob as `--theme-mix-bubble`) — so a bright seed settles
+       into the transcript instead of glowing. `--ui-chat-bubble-background`
+       already resolves to exactly that mix once the knobs above are set, and
+       it stays correct when `applyTheme()` overrides them inline per skin. */
+    --dt-user-bubble-fill: var(--ui-chat-bubble-background);
 
     /* Dark-only accent palette overrides. */
     --ui-red: #e75e78;
