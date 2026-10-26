@@ -526,6 +526,16 @@ def _history_meta(session: dict) -> dict[str, Any]:
 
 
 def _rss_mb(pid: int) -> float:
+    if sys.platform == "win32":
+        # Git for Windows' ps.exe does not implement POSIX `-o`; psutil is a
+        # core cross-platform dependency and reads the same process RSS directly.
+        try:
+            import psutil
+
+            return psutil.Process(pid).memory_info().rss / (1024.0 * 1024.0)
+        except Exception:
+            return 0.0
+
     try:
         out = subprocess.check_output(
             ["ps", "-o", "rss=", "-p", str(pid)], text=True, encoding="utf-8", errors="replace",

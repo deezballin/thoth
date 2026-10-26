@@ -27,6 +27,18 @@ def _read_json_line(out: queue.Queue[dict], timeout: float = 2.0) -> dict:
         raise AssertionError("timed out waiting for compute host JSON") from exc
 
 
+@pytest.mark.platforms("windows")
+def test_compute_host_rss_reads_process_memory_without_posix_ps(monkeypatch):
+    from tui_gateway import compute_host
+
+    monkeypatch.setattr(
+        compute_host.subprocess,
+        "check_output",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("Windows must not invoke ps")),
+    )
+
+    assert compute_host._rss_mb(os.getpid()) > 0
+
 @pytest.mark.platforms("linux")
 def test_compute_host_line_json_hello_and_shutdown():
     repo = Path(__file__).resolve().parents[2]

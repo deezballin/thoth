@@ -5,6 +5,7 @@ import sys
 import threading
 import time
 
+import pytest
 
 from tui_gateway import compute_host, server
 from tui_gateway.compute_host import ComputeHost, _default_workers
@@ -95,6 +96,21 @@ def test_append_log_record_single_write_lines(tmp_path):
     assert len(lines) == 32
     assert sorted(line.split("-", 2)[1] for line in lines) == [f"{i:03d}" for i in range(32)]
     assert all(line.endswith("x" * 2000) for line in lines)
+
+
+@pytest.mark.platforms("windows")
+def test_supervisor_pid_command_reads_windows_process_without_posix_ps(monkeypatch):
+    from tui_gateway import host_supervisor
+
+    monkeypatch.setattr(
+        host_supervisor, "_check_output",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("Windows must not invoke ps")),
+    )
+
+    command = host_supervisor._pid_command(os.getpid())
+
+    assert command
+    assert str(sys.executable).lower() in command.lower()
 
 
 def test_supervisor_startup_reconcile_pid_reuse_guard(tmp_path, monkeypatch):

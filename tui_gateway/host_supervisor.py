@@ -129,6 +129,12 @@ def _pid_command(pid: int) -> str:
         data = (Path("/proc") / str(pid) / "cmdline").read_bytes()
         if data:
             return data.replace(b"\x00", b" ").decode("utf-8", errors="replace")
+    if sys.platform == "win32":
+        with contextlib.suppress(Exception):
+            import psutil
+
+            return " ".join(psutil.Process(pid).cmdline())
+        return ""
     return _check_output(["ps", "-p", str(pid), "-o", "command="])
 
 
