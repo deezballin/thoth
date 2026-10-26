@@ -122,7 +122,6 @@ describe('Thoth monochrome X-ray theme', () => {
   ] as const)('%s terminal palette ships every ANSI slot, color reserved for status', (_mode, palette, surface) => {
     expect(palette).toBeDefined()
 
-
     for (const slot of terminalSlots) {
       const color = palette?.[slot]
       expect(color, slot + ' is a hex color').toMatch(/^#[0-9a-f]{6}$/i)

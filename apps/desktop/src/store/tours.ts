@@ -14,7 +14,6 @@
 import { Codecs, persistentAtom } from '@/lib/persisted'
 import { mirrorDisplayToggle } from '@/store/display-toggles'
 
-
 const KEY = 'hermes.desktop.tours.v1'
 
 export const $toursEnabled = persistentAtom(KEY, true, Codecs.bool)

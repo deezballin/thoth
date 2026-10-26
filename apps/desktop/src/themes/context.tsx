@@ -30,7 +30,14 @@ import {
 } from './backend-sync'
 import { $chatFontFamily, resolveChatFontFamily } from './chat-font'
 import { harmonize, readableInk } from './color'
-import { BUILTIN_THEME_LIST, DEFAULT_SKIN_NAME, DEFAULT_TYPOGRAPHY, nousTheme, RETIRED_SKINS, thothTheme } from './presets'
+import {
+  BUILTIN_THEME_LIST,
+  DEFAULT_SKIN_NAME,
+  DEFAULT_TYPOGRAPHY,
+  nousTheme,
+  RETIRED_SKINS,
+  thothTheme
+} from './presets'
 import { retintTheme } from './retint'
 import type { DesktopTheme, DesktopThemeColors } from './types'
 import { $userThemes, listAllThemes, resolveTheme } from './user-themes'

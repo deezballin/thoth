@@ -74,7 +74,10 @@ export function SyncStatusCard() {
         <ul className="grid gap-1 text-xs text-foreground">
           {summary.needsFixing.map(item => (
             <li className="flex items-start gap-2" key={`needs-fixing-${item.plugin}`}>
-              <AlertTriangle aria-hidden className="mt-0.5 size-3 shrink-0 text-(--ui-warning) dark:text-(--ui-warning)" />
+              <AlertTriangle
+                aria-hidden
+                className="mt-0.5 size-3 shrink-0 text-(--ui-warning) dark:text-(--ui-warning)"
+              />
               <span className="leading-snug">
                 {item.plugin}: {item.reason}
               </span>
@@ -87,7 +90,10 @@ export function SyncStatusCard() {
         <ul className="grid gap-1 text-xs text-foreground">
           {summary.disabledPlugins.map(item => (
             <li className="flex items-start gap-2" key={`disabled-${item.plugin}`}>
-              <AlertTriangle aria-hidden className="mt-0.5 size-3 shrink-0 text-(--ui-warning) dark:text-(--ui-warning)" />
+              <AlertTriangle
+                aria-hidden
+                className="mt-0.5 size-3 shrink-0 text-(--ui-warning) dark:text-(--ui-warning)"
+              />
               <span className="leading-snug">
                 {item.plugin}: {item.reason}
               </span>

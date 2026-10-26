@@ -109,7 +109,9 @@ export function ConnectorSummary({
           {connector.title || connector.name}
         </span>
         {meta ? (
-          <span className={cn(SCAFFOLD_META_CLASS, tone === 'ok' && 'text-(--ui-success)/85 dark:text-(--ui-success)/85')}>
+          <span
+            className={cn(SCAFFOLD_META_CLASS, tone === 'ok' && 'text-(--ui-success)/85 dark:text-(--ui-success)/85')}
+          >
             {meta}
           </span>
         ) : null}

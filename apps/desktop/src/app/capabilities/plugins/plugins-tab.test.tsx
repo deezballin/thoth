@@ -1,9 +1,9 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { $pluginDecisions, $pluginRecords } from '@/contrib/plugins-store'
-import { $confirmRequest, settleConfirm } from '@/store/confirm'
+import { $pluginRecords } from '@/contrib/plugins-store'
 import { $agentPlugins, $agentPluginsStatus } from '@/store/agent-plugins'
+import { $confirmRequest, settleConfirm } from '@/store/confirm'
 import { $pluginInstallRequest, closePluginInstallRequest } from '@/store/plugin-install-request'
 import { $connection } from '@/store/session'
 
@@ -264,8 +264,6 @@ describe('PluginsTab', () => {
 
     expect(requestGateway).not.toHaveBeenCalledWith('plugins.manage', expect.objectContaining({ action: 'toggle' }))
   })
-
-
 })
 
 describe('PluginsTab catalog management', () => {
@@ -405,5 +403,4 @@ describe('PluginsTab catalog management', () => {
     expect(screen.getByText('demo-tool')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Uninstall: demo-tool' })).toBeNull()
   })
-
 })

@@ -1019,12 +1019,7 @@ const AssistantActionBar: FC<MessageActionProps & { durationS?: number }> = ({
             <GitForkIcon className="size-3.5" />
           </TooltipIconButton>
         )}
-        <CopyButton
-          appearance="icon"
-          buttonSize="icon"
-          label={copy.copy}
-          text={getMessageText}
-        />
+        <CopyButton appearance="icon" buttonSize="icon" label={copy.copy} text={getMessageText} />
         {fullResponseAvailable && (
           <CopyButton appearance="icon" buttonSize="icon" label={copy.copyFullResponse} text={getFullResponseText} />
         )}

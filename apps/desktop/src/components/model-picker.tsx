@@ -488,7 +488,9 @@ function ModelPrice({ price, isCurrent }: { price?: ModelPricing; isCurrent: boo
           <span
             className={cn(
               'rounded-sm px-1 py-0.5 text-[0.62rem] font-semibold',
-              isCurrent ? 'bg-primary-foreground/20' : 'bg-(--ui-warning)/15 text-(--ui-warning) dark:text-(--ui-warning)'
+              isCurrent
+                ? 'bg-primary-foreground/20'
+                : 'bg-(--ui-warning)/15 text-(--ui-warning) dark:text-(--ui-warning)'
             )}
           >
             -{price.discount_percent}%
