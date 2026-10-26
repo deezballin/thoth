@@ -453,6 +453,7 @@ import {
 } from './primary-backend-startup'
 import { rehomePrimaryConnection } from './primary-connection-rehome'
 import { PrimaryProfilePin, resolveLaunchProfile } from './primary-profile-pin'
+import { isHermesProcess } from './process-identity'
 import { applyDesktopIdentity, PRODUCT_IDENTITY } from './product-identity'
 import {
   assertLocalProfileCanStart,
@@ -9254,36 +9255,6 @@ function writeActiveDesktopProfile(name: string | null): string | null {
   return desktopProfilePreferences.remember(name)
 }
 
-// True when the given pid belongs to a running process whose command line
-// contains "hermes", avoiding false positives from stale gateway.pid files
-// whose PID was recycled by the OS to an unrelated process.
-function isHermesProcess(pid) {
-  try {
-    process.kill(pid, 0) // signal 0 = existence check, no signal sent
-  } catch {
-    return false
-  }
-
-  // On macOS / Linux, check the command line to avoid PID recycling false positives.
-  try {
-    const cmdline = fs.readFileSync(`/proc/${pid}/cmdline`, 'utf8')
-
-    return cmdline.includes('hermes')
-  } catch {
-    // /proc not available (macOS) — fall back to ps. Use -o args= to inspect
-    // the full command line, not just the process name.  -o comm= would return
-    // "python3" for any Python process, creating false positives.
-    try {
-      const { execSync } = require('child_process')
-      const out = execSync(`ps -p ${pid} -o args=`, { encoding: 'utf8', timeout: 2000 })
-
-      return out.includes('hermes')
-    } catch {
-      return false
-    }
-  }
-}
-
 // Seed active-profile.json from the best available signal when the file does
 // not yet exist.  Runs exactly once (no-op once the file exists).  Priority:
 //   1. Legacy ~/.hermes/active_profile (explicit CLI choice via hermes profile use)
@@ -13851,7 +13822,7 @@ function spawnSecondaryWindow({
     isIntentionalTeardown: rendererTeardownInProgress,
     reloadWindowMs: RENDERER_RELOAD_WINDOW_MS,
     reloadMax: RENDERER_RELOAD_MAX,
-    recentReloadTimesRef: rendererReloadTimesRef,
+    recentReloadTimesRef: rendererReloadTimesRef
   })
 
   loadWindowUrl(
@@ -14927,7 +14898,7 @@ function createWindow() {
     reloadWindowMs: RENDERER_RELOAD_WINDOW_MS,
     reloadMax: RENDERER_RELOAD_MAX,
     recentReloadTimesRef: rendererReloadTimesRef,
-    reloadOnFailedLoad: true,
+    reloadOnFailedLoad: true
   })
 
   // Electron always passes the event first. The canonical (Electron 36+) shape
