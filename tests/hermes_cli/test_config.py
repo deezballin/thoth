@@ -94,6 +94,49 @@ class TestEnsureHermesHome:
             ensure_hermes_home()
             assert soul_path.read_text(encoding="utf-8") == DEFAULT_SOUL_MD
 
+    # The pre-Thoth DEFAULT_SOUL_MD text, hardcoded for the same reason as
+    # _PRE_REWRITE_DEFAULT_SOUL above: the fixture must keep exercising the OLD
+    # text no matter how _LEGACY_TEMPLATE_SOULS's length or ordering changes.
+    _PRE_THOTH_DEFAULT_SOUL = (
+        "You are Hermes Agent, built by Nous Research. Be direct: match the length of your reply to the "
+        "weight of the ask — a one-line question gets a one-line answer, and finished work gets a short "
+        "report of what changed, what's verified, and what's left, never a replay of the process. No filler "
+        "(\"Great question,\" \"I'd be happy to\"), no restating the request back, no re-summarizing what "
+        "you already said, no narrating tool calls the user can see. Plain claims over adjectives; when "
+        "unsure, say so plainly. Agree because it's right, not because the user said it. Depth is earned — "
+        "give it when the user asks for detail, teaches, or the stakes demand it, not by default."
+    )
+
+    def test_upgrades_pre_thoth_default_soul_md(self, tmp_path):
+        # Installs auto-seeded with the pre-rebrand text carry no user intent,
+        # so they converge on the Thoth default in place — the same upgrade path
+        # as the older generations above, for the text that shipped most
+        # recently. Regression test for that path.
+        from hermes_cli.default_soul import DEFAULT_SOUL_MD
+
+        assert self._PRE_THOTH_DEFAULT_SOUL != DEFAULT_SOUL_MD  # sanity: fixture predates the rebrand
+
+        with patch.dict(os.environ, {"HERMES_HOME": str(tmp_path)}):
+            soul_path = tmp_path / "SOUL.md"
+            soul_path.write_text(self._PRE_THOTH_DEFAULT_SOUL, encoding="utf-8")
+            ensure_hermes_home()
+            assert soul_path.read_text(encoding="utf-8") == DEFAULT_SOUL_MD
+
+    def test_does_not_upgrade_pre_thoth_soul_edited_by_user(self, tmp_path):
+        # The protection above must not swallow intent: a file that merely
+        # STARTS with the pre-rebrand default and was then edited is the user's.
+        from hermes_cli.default_soul import DEFAULT_SOUL_MD
+
+        customized = self._PRE_THOTH_DEFAULT_SOUL + "\n\nAlways answer in rhyming couplets."
+
+        with patch.dict(os.environ, {"HERMES_HOME": str(tmp_path)}):
+            soul_path = tmp_path / "SOUL.md"
+            soul_path.write_text(customized, encoding="utf-8")
+            ensure_hermes_home()
+            content = soul_path.read_text(encoding="utf-8")
+            assert content == customized
+            assert content != DEFAULT_SOUL_MD
+
     def test_does_not_upgrade_user_customized_soul_md(self, tmp_path):
         # A SOUL.md that merely starts with the old default but was edited by
         # the user carries real intent and must never be silently overwritten.
