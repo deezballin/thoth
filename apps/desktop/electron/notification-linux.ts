@@ -250,7 +250,9 @@ export function createLinuxNotifications() {
               member: 'Notify',
               signature: 'susssasa{sv}i',
               body: [
-                'Hermes',
+                // app_name (the D-Bus Notify signature's first `s`) — shown by
+                // the notification daemon as the originating app.
+                'Thoth',
                 0,
                 options.icon || '',
                 options.title,

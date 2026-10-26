@@ -1,6 +1,12 @@
 // The desktop product identity — THE single source for every name-shaped
-// value a variant owns. HERMES_DESKTOP_VARIANT=light builds "Hermes
-// Light", the remote-only client; everything else is full "Hermes".
+// value a variant owns. HERMES_DESKTOP_VARIANT=light builds "Thoth
+// Light", the remote-only client; everything else is full "Thoth".
+//
+// NOTE THE SPLIT: only `display` is the visible brand. `kebab` and `pascal`
+// are IDENTITY — they name the userData dir + single-instance lock, the
+// MSIX/appx package identity, the updater feed artifacts and the protocol
+// registration, so rebranding must never touch them or an installed build
+// would lose its profile and its update channel.
 //
 // Consumed at build time by electron-builder.config.cjs (packaging
 // identity). electron/product-identity.ts is the typed runtime accessor.
@@ -9,14 +15,14 @@
 'use strict'
 
 const variants = {
-  '': { display: 'Hermes', kebab: 'hermes', pascal: 'Hermes' },
+  '': { display: 'Thoth', kebab: 'hermes', pascal: 'Hermes' },
   light: {
-    display: 'Hermes Light',
+    display: 'Thoth Light',
     kebab: 'hermes-light',
     pascal: 'HermesLight'
   },
   bundled: {
-    display: 'Hermes Agent',
+    display: 'Thoth Agent',
     kebab: 'hermes-bundled',
     pascal: 'HermesBundled'
   }

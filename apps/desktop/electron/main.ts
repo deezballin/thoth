@@ -2149,7 +2149,7 @@ const POOL_KEEPALIVE_FRESH_MS = Math.max(
 // refreshes lastActiveAt for every OPEN chat, so the idle reaper's only clock
 // never fires for the pinned tier — every profile whose chat was ever opened
 // held its ~120 MB serve child until app quit (126 processes / 7.5 GB on the
-// reporter's machine, all parented to Hermes.exe). A keepalive proves the
+// reporter's machine, all parented to Thoth.exe). A keepalive proves the
 // chat is open, not that anything streamed: retire a local child whose last
 // streamed turn is older than this window. Re-focusing the chat re-ensures it
 // idempotently (ensureBackend/ensureRegistryBackend reuse), and mid-stream
@@ -5192,7 +5192,7 @@ function isPackagedInstallPath(dir) {
 
 function resolveHermesCwd() {
   // In a packaged build, `process.cwd()` resolves to the install root (e.g.
-  // `…/win-unpacked` on Windows or `/Applications/Hermes.app/Contents/...`
+  // `…/win-unpacked` on Windows or `/Applications/Thoth.app/Contents/...`
   // on macOS). Sessions spawned there leave files inside the app bundle
   // and bewilder users when "where did my files go?" is the install dir.
   // The user-configurable default project directory wins over everything,
@@ -13068,7 +13068,7 @@ async function runHermesStart({ supervisorRecovery = false }: { supervisorRecove
     const token = crypto.randomBytes(32).toString('base64url')
     // Pin the desktop's chosen profile via the global --profile flag. A launch
     // override is persisted into active-profile.json before startHermes, so
-    // Hermes.exe --profile <name> and hermes -p <name> desktop both land here.
+    // Thoth.exe --profile <name> and hermes -p <name> desktop both land here.
     // Null (no stored preference, no launch flag) keeps the legacy bare serve
     // so the child still follows the sticky active_profile file.
     // `activeProfile` is the SAME decision that pinned routing above — never
@@ -17649,7 +17649,7 @@ ipcMain.on('hermes:translucency:support', event => {
 // Feature-flag facts the renderer needs before first paint (same sendSync
 // pattern as translucency). Resolved in feature-flags.ts from the launch
 // argv and the artifact's channel: `--local` (from `hermes desktop --local`
-// or directly on Hermes.exe, a shortcut edit) gates the local-models GUI on
+// or directly on Thoth.exe, a shortcut edit) gates the local-models GUI on
 // stable builds, and canary builds get the same surfaces by default. Launch
 // flags survive self-relaunches because collectRelaunchArgs only strips
 // internal flags.
@@ -18725,7 +18725,7 @@ if (!isPrimaryInstance) {
       handleDeepLink(url)
     }
 
-    // #130810: a second Start-menu / shortcut / Hermes.exe launch must never
+    // #130810: a second Start-menu / shortcut / Thoth.exe launch must never
     // silently exit. Log it so a future silent exit stays diagnosable, then
     // restore a live primary with activation (restore + show + focus), or
     // re-create it when it was destroyed.
