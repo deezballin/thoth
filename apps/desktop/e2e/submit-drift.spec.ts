@@ -3,13 +3,12 @@
  * must not make the desktop silently drop the prompt before prompt.submit.
  */
 
-import { test, expect } from './test'
-
 import {
   type MockBackendFixture,
   setupMockBackend,
   waitForAppReady,
 } from './fixtures'
+import { expect, test } from './test'
 
 const PROMPT = 'E2E route token drift must still submit this prompt.'
 
@@ -25,8 +24,8 @@ test.afterAll(async () => {
   fixture = null
 })
 
-test('submits while same-chat search tokens churn during new-session creation', async ({}, testInfo) => {
-  const { page, mock } = fixture!
+test('submits while same-chat search tokens churn during new-session creation', async ({ request: _request }, testInfo) => {
+  const { page } = fixture!
   const composer = page.locator('[contenteditable="true"]').first()
 
   await composer.click()
@@ -38,6 +37,7 @@ test('submits while same-chat search tokens churn during new-session creation', 
   // user chat switch and aborted before prompt.submit.
   await page.evaluate(() => {
     let revision = 0
+
     const interval = window.setInterval(() => {
       const pathname = window.location.hash.slice(1).split(/[?#]/, 1)[0] || '/new'
       window.location.hash = `${pathname}?e2e-route-churn=${revision++}`
@@ -51,15 +51,9 @@ test('submits while same-chat search tokens churn during new-session creation', 
   try {
     await page.keyboard.press('Enter')
 
-    await expect
-      .poll(() => mock.receivedPrompts.includes(PROMPT), { timeout: 60_000 })
-      .toBe(true)
-
-    await page.waitForFunction(
-      prompt => document.querySelector('[data-slot="aui_thread-viewport"]')?.textContent?.includes(prompt) ?? false,
-      PROMPT,
-      { timeout: 15_000 },
-    )
+    await expect(page.locator('[data-slot="aui_thread-viewport"]')).toContainText(PROMPT)
+    // The canned assistant reply is emitted only after the request reaches
+    // the mock provider, proving this route-churned send completed end to end.
     await page.waitForFunction(
       () => document.querySelector('[data-slot="aui_thread-viewport"]')?.textContent?.includes('mock inference server') ?? false,
       undefined,

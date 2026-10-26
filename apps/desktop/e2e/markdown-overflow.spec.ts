@@ -36,7 +36,7 @@ test('constrains prose while tables and code scroll inside their own cards', asy
     <main
       class="aui-md prose w-full min-w-0 max-w-none overflow-hidden"
       data-testid="markdown"
-      style="width: 320px"
+      style="width: 240px"
     >
       <p class="wrap-anywhere">${LONG_TOKEN}</p>
       <div class="aui-md-table my-2 max-w-full overflow-x-auto">
@@ -84,7 +84,7 @@ test('constrains prose while tables and code scroll inside their own cards', asy
     }
   })
 
-  expect(metrics.rootClientWidth).toBe(320)
+  expect(metrics.rootClientWidth).toBe(240)
   expect(metrics.rootScrollWidth).toBe(metrics.rootClientWidth)
   expect(metrics.proseScrollWidth).toBe(metrics.proseClientWidth)
   expect(metrics.tableOverflowX).toBe('auto')

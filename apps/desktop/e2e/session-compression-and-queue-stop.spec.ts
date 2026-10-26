@@ -2,10 +2,11 @@
  * E2E coverage for session compression, which rotates a live backend session.
  */
 
-import { expect, test, type Page } from '@playwright/test'
+import { expect, type Page, test } from '@playwright/test'
+
+import { MOCK_REPLY, receivedUserTexts, restartMockServer } from '../../../tests-js/scripts/mock-server'
 
 import { type MockBackendFixture, setupMockBackend, waitForAppReady } from './fixtures'
-import { MOCK_REPLY, receivedUserTexts, restartMockServer } from '../../../tests-js/scripts/mock-server'
 
 async function send(page: Page, text: string, delay = 15): Promise<void> {
   const composer = page.locator('[contenteditable="true"]').first()
@@ -122,7 +123,7 @@ auxiliary:
     await fixture?.cleanup()
   })
 
-  test('queues an Enter-submitted draft instead of steering while compaction is active', async ({}, testInfo) => {
+  test('queues an Enter-submitted draft instead of steering while compaction is active', async ({ request: _request }, testInfo) => {
     const { page } = fixture
     const queued = 'E2E_QUEUED_DURING_COMPACTION'
 
@@ -150,7 +151,11 @@ auxiliary:
     await expect(primary).toHaveAttribute('aria-label', 'Stop')
 
     await send(page, queued)
-    await expect(page.getByText('1 Queued')).toBeVisible()
+    // During compression the composer routes text through session.redirect;
+    // the backend acknowledges it as queued and the user row is already
+    // visible, rather than adding it to the renderer's local QueuePanel. Prove
+    // it has not reached inference until the held summary completes.
+    await expect(page.locator('[data-slot="aui_thread-viewport"]')).toContainText(queued)
     expect(fixture.mock.heldCompletionCount()).toBe(1)
     expect(receivedUserTexts()).not.toContain(queued)
     await page.screenshot({ path: testInfo.outputPath('queued-during-compaction.png') })

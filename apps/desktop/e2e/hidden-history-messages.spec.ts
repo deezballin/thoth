@@ -72,7 +72,7 @@ async function setupSeededMockBackend(): Promise<MockBackendFixture> {
   }
 }
 
-test('resume hides real context-compaction handoffs', async ({}, testInfo) => {
+test('resume hides real context-compaction handoffs', async ({ request: _request }, testInfo) => {
   const fixture = await setupSeededMockBackend()
 
   try {
@@ -97,7 +97,7 @@ test('resume hides real context-compaction handoffs', async ({}, testInfo) => {
   }
 })
 
-test('live verify-on-stop continuations stay out of the transcript', async ({}, testInfo) => {
+test('live verify-on-stop continuations stay out of the transcript', async ({ request: _request }, testInfo) => {
   const sandbox = createSandbox('live-verification-nudge')
   const projectRoot = path.join(sandbox.root, 'project')
   const changedFile = path.join(projectRoot, 'e2e-verification-target.py')
@@ -111,17 +111,9 @@ test('live verify-on-stop continuations stay out of the transcript', async ({}, 
   const mock = await startMockServer({ verificationWritePath: changedFile })
   writeMockProviderConfig(sandbox.hermesHome, mock.url)
   fs.appendFileSync(path.join(sandbox.hermesHome, 'config.yaml'), '\nagent:\n  verify_on_stop: true\n', 'utf8')
-  // Auto session titling (feat f726090d48) fires an auxiliary title_generation
-  // LLM call whose user snippet CONTAINS the trigger keyword, so the mock's
-  // isVerificationStopTrigger matches it and the title call steals a scripted
-  // verify-on-stop turn (the transcript then ends on 'The code edit is
-  // complete.' instead of the exhausted-verifier final). Disable the
-  // model-backed title upgrade so script indices track real chat turns.
-  fs.appendFileSync(
-    path.join(sandbox.hermesHome, 'config.yaml'),
-    '\nauxiliary:\n  title_generation:\n    enabled: false\n',
-    'utf8',
-  )
+  // writeMockProviderConfig already disables model-backed title generation;
+  // keep this append limited to verify-on-stop to avoid a duplicate top-level
+  // auxiliary key in config.yaml.
   writeEnvFile(sandbox.hermesHome)
   const { app, page } = await launchDesktop(buildAppEnv(sandbox))
 

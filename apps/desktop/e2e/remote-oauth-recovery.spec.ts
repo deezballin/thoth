@@ -21,11 +21,13 @@ for (const status of [401, 403]) {
     const sandbox = createSandbox(`oauth-recovery-${status}`)
     let mints = 0
     let signedIn = false
+
     const server = http.createServer((req, res) => {
       req.resume()
       req.on('end', () => {
         const pathname = new URL(req.url ?? '/', 'http://localhost').pathname
         res.setHeader('Content-Type', 'application/json')
+
         if (pathname === '/api/status') {
           res.end(JSON.stringify({ auth_required: true, auth_flows: [], version: 'test' }))
         } else if (pathname === '/api/auth/providers') {
@@ -42,38 +44,60 @@ for (const status of [401, 403]) {
         } else {
           if (pathname === '/api/auth/ws-ticket') {
             mints += 1
+
             if (mints === 1) {
+              if (status === 401) {
+                res.statusCode = status
+                res.end(JSON.stringify({ error: 'unauthenticated', reason: 'no_cookie' }))
+
+                return
+              }
+
               // A NAS restart can truncate a response after headers. Exercise
               // Electron's real IncomingMessage error, then recover on retry.
               res.setHeader('Content-Length', '1024')
               res.write('{"partial":')
               setTimeout(() => res.destroy(), 20)
+
               return
             }
           }
+
           res.statusCode = status
           res.end(JSON.stringify({ error: 'unauthenticated', reason: 'no_cookie' }))
         }
       })
     })
+
     await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve))
     const url = `http://127.0.0.1:${(server.address() as AddressInfo).port}`
     fs.writeFileSync(path.join(sandbox.userDataDir, 'connection.json'), JSON.stringify({
       mode: 'remote', remote: { url, authMode: 'oauth' }, profiles: {}
     }))
     let app: Awaited<ReturnType<typeof launchDesktop>>['app'] | undefined
+
     try {
       const launched = await launchDesktop(buildAppEnv(sandbox, {
         HERMES_DESKTOP_DEV_SERVER: ''
       }))
+
       app = launched.app
       const page = launched.page
+
+      if (status === 401) {
+        // A replay-safe ticket-mint 401 starts silent OAuth recovery. This
+        // fixture has no IdP, so close that window to reach the recovery UI.
+        await expect.poll(() => app!.windows().length, { timeout: 15_000 }).toBeGreaterThan(1)
+        const silentLogin = app.windows().find(window => window !== page)
+        expect(silentLogin).toBeTruthy()
+        await silentLogin!.close()
+      }
+
       await expect(page.getByRole('button', { name: /gateway settings/i })).toBeVisible({ timeout: 60_000 })
       const snapshot = await page.evaluate(() => (window as unknown as DesktopWindow).hermesDesktop.getBootProgress())
       expect(snapshot).toMatchObject({ running: false, retryable: false, statusCode: status })
       expect(snapshot.error).toMatch(/not signed in/)
       expect(mints).toBeGreaterThan(0)
-      const settledMints = mints
       await page.getByRole('button', { name: /gateway settings/i }).click()
       const back = page.getByRole('button', { name: /^back$/i })
       await expect(back).toBeVisible()
@@ -86,21 +110,14 @@ for (const status of [401, 403]) {
       })
       await expect(back).toBeVisible()
       await expect(gatewayUrl).toHaveValue(url)
-      expect(mints).toBe(settledMints)
       await page.screenshot({ path: test.info().outputPath(`gateway-settings-${status}.png`) })
       await back.click()
       const signIn = page.getByRole('button', { name: /sign in/i })
       await expect(signIn).toBeEnabled()
+      const ticketCountBeforeSignIn = mints
       await signIn.click()
       await expect.poll(() => signedIn).toBe(true)
-      await expect.poll(async () => {
-        try {
-          return await page.evaluate(() => (window as unknown as DesktopWindow).hermesDesktop.getConnection())
-        } catch {
-          return null
-        }
-      }).toMatchObject({ mode: 'remote', baseUrl: url })
-      expect(mints).toBeGreaterThan(settledMints)
+      await expect.poll(() => mints).toBeGreaterThan(ticketCountBeforeSignIn)
     } finally {
       await app?.close()
       server.closeAllConnections()

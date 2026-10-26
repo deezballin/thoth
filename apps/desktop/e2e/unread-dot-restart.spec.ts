@@ -25,8 +25,10 @@
  * Prerequisite: `npm run build` must have been run so dist/ exists.
  */
 
-import { expect, type Page, test } from '@playwright/test'
 import { type ElectronApplication } from '@playwright/test'
+import { expect, type Page, test } from '@playwright/test'
+
+import { restartMockServer } from '../../../tests-js/scripts/mock-server'
 
 import {
   buildAppEnv,
@@ -35,7 +37,6 @@ import {
   setupMockBackend,
   waitForAppReady,
 } from './fixtures'
-import { restartMockServer } from '../../../tests-js/scripts/mock-server'
 
 /** Finished-unread dot aria-label (from i18n en.ts). */
 const UNREAD_DOT_LABEL = 'Finished — unread'
@@ -141,7 +142,9 @@ test.describe('unread dot survives app restart', () => {
     // The dot sits inside A's sidebar row button; click that row.
     await unreadDots(page)
       .first()
-      .locator('xpath=ancestor::button[1]')
+      .locator('xpath=ancestor::div[contains(@class, "row-hover")][1]')
+      .locator('button')
+      .first()
       .click()
 
     await expect
