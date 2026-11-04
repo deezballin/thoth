@@ -42,6 +42,15 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Each test gets its own worker so the Electron process is fully isolated. */
   fullyParallel: false,
+  /* `fullyParallel: false` only serialises tests *within* a file — different
+   * files still run concurrently across workers, and each worker boots a full
+   * Electron app + mock backend + sandbox. Left unset, Playwright takes half
+   * the cores (6 on the 12-core dev box) and a full sweep flaked: 51 passed /
+   * 8 failed / 2 did not run, while every one of those specs passed when run
+   * alone (see GAME-PLAN, "First full desktop e2e sweep"). At 1 worker the
+   * suite takes ~27 min on this machine, so 2 is the compromise. Override with
+   * PLAYWRIGHT_WORKERS=1 for a determinism-first run. */
+  workers: Number(process.env.PLAYWRIGHT_WORKERS ?? 2),
   reporter: reporters,
   use: {
     screenshot: 'on',

@@ -4,7 +4,30 @@
     "types": ["node", "@playwright/test"],
     "allowImportingTsExtensions": true,
     "composite": true,
-    "noEmit": false
+    "noEmit": false,
+    // Composite projects may not disable emit, so a bare `tsc -p
+    // tsconfig.e2e.json` still writes .js/.d.ts — but NOT beside the sources.
+    // Emitting into e2e/ put *.unit.test.js next to vitest files, Playwright's
+    // default matcher claimed them, discovery crashed and NO e2e test was
+    // runnable (160 files, Oct 2026). Send the output somewhere ignored and
+    // disposable so the same command can never break collection again.
+    // The includes reach outside apps/desktop (../../tests-js/scripts, the
+    // install e2e assets) and `composite` infers rootDir as this tsconfig's
+    // own directory. Spelling the repo root out keeps every input inside
+    // rootDir, which starts mattering the moment outDir is set: without it
+    // tsc reports TS6059 for those files and `--noEmit` stops being clean.
+    "rootDir": "../..",
+    // Keep emit out of the tree. A bare `tsc -p tsconfig.e2e.json` wrote
+    // .js/.d.ts beside the sources; inside e2e/ that put *.unit.test.js next
+    // to vitest files, Playwright's default matcher claimed them, discovery
+    // crashed and NO e2e test was runnable (160 files, Oct 2026).
+    "outDir": "./node_modules/.cache/tsc-e2e",
+    // Belt and braces: a bare `tsc -p` still exits 2 on a pre-existing config
+    // error (TS5096 — allowImportingTsExtensions with noEmit:false, and
+    // composite forbids noEmit), so typechecking goes through
+    // `tsc -p tsconfig.e2e.json --noEmit`, which is clean. This makes the
+    // failing form emit nothing at all instead of half a tree.
+    "noEmitOnError": true
   },
   "include": ["e2e", "playwright.config.ts", "../../tests-js/scripts", "../../tests/install/e2e-assets/desktop-smoke.ts"],
   "exclude": ["src", "electron"]
