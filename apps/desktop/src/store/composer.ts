@@ -4,7 +4,6 @@ import { deriveDraftTitle } from '@/lib/draft-title'
 import { triggerHaptic } from '@/lib/haptics'
 import { persistString, storedString } from '@/lib/storage'
 
-
 /** Release blob: chip previews created for OS image drops (see #63682). */
 export function revokeAttachmentPreviewUrl(url?: string | null) {
   if (url?.startsWith('blob:')) {

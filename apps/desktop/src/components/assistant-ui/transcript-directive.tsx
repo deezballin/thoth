@@ -3,7 +3,11 @@ import { useMemo } from 'react'
 
 import { type Contribution, useContributions } from '@/contrib'
 import { ContribBoundary, ContribRender } from '@/contrib/react/boundary'
-import { parseTranscriptDirective, TRANSCRIPT_DIRECTIVE_AREA, type TranscriptDirectiveContribution } from '@/lib/transcript-directives'
+import {
+  parseTranscriptDirective,
+  TRANSCRIPT_DIRECTIVE_AREA,
+  type TranscriptDirectiveContribution
+} from '@/lib/transcript-directives'
 
 /**
  * The transcript's directive slot. Given text, renders the plugin component

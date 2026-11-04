@@ -294,22 +294,20 @@ export function notifyError(
   const poolSlotTimeout = isLocalBackendSlotWaitTimeout(error)
   logErrorToDesktopLog(error, fallback)
 
-  return showNotification(
-    {
-      action: poolSlotTimeout
-        ? {
-            label: translateNow('desktop.poolSlotTimeoutOpenSettings'),
-            onClick: requestPoolLimitsSettings
-          }
-        : (options.action ?? readable.action),
-      // A caller that can fire again for the same cause names its toast, so the repeat replaces it.
-      id: options.id,
-      kind: 'error',
-      title: fallback,
-      message: poolSlotTimeout ? translateNow('desktop.poolSlotTimeoutBody') : readable.message,
-      detail: poolSlotTimeout ? readable.message : readable.detail
-    }
-  )
+  return showNotification({
+    action: poolSlotTimeout
+      ? {
+          label: translateNow('desktop.poolSlotTimeoutOpenSettings'),
+          onClick: requestPoolLimitsSettings
+        }
+      : (options.action ?? readable.action),
+    // A caller that can fire again for the same cause names its toast, so the repeat replaces it.
+    id: options.id,
+    kind: 'error',
+    title: fallback,
+    message: poolSlotTimeout ? translateNow('desktop.poolSlotTimeoutBody') : readable.message,
+    detail: poolSlotTimeout ? readable.message : readable.detail
+  })
 }
 
 export function dismissNotification(id: string) {

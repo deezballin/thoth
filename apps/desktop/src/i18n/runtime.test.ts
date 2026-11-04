@@ -25,9 +25,7 @@ describe('desktop i18n runtime translator', () => {
     expect(translateNow('boot.ready')).toBe('Gotowe')
     expect(translateNow('boot.ready')).not.toBe(TRANSLATIONS.en.boot.ready)
     // Keys the pack does not carry fall back per key, never to the raw key.
-    expect(translateNow('assistant.tool.statusRecovered')).toBe(
-      TRANSLATIONS.en.assistant.tool.statusRecovered
-    )
+    expect(translateNow('assistant.tool.statusRecovered')).toBe(TRANSLATIONS.en.assistant.tool.statusRecovered)
   })
 
   it('passes arguments to function translations', () => {

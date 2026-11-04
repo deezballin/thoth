@@ -26,7 +26,6 @@ export function SessionPickerOverlay({ onResume }: SessionPickerOverlayProps) {
       activeStoredSessionId={activeStoredSessionId}
       onOpenChange={setSessionPickerOpen}
       onResume={(...args: Parameters<typeof onResume>) => {
-
         return onResume(...args)
       }}
       open={open}

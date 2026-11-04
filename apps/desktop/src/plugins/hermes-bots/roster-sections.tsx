@@ -275,7 +275,11 @@ export function RosterSectionHeader({
       <span aria-hidden className="min-w-0 flex-1" />
       <span className="shrink-0 font-normal tabular-nums text-(--ui-text-quaternary)">{count}</span>
       {status && !status.available ? (
-        <Codicon aria-hidden className="shrink-0 text-(--ui-warning) dark:text-(--ui-warning)" name="debug-disconnect" />
+        <Codicon
+          aria-hidden
+          className="shrink-0 text-(--ui-warning) dark:text-(--ui-warning)"
+          name="debug-disconnect"
+        />
       ) : null}
     </RowButton>
   )

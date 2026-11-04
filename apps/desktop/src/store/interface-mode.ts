@@ -56,10 +56,7 @@ export const $interfaceMode = persistentAtom<InterfaceMode>(
   modeCodec
 )
 
-export const modeLayout = createLayoutPersistence(
-  $interfaceMode.get(),
-  !isSecondaryWindow() && !isBrowserWindow()
-)
+export const modeLayout = createLayoutPersistence($interfaceMode.get(), !isSecondaryWindow() && !isBrowserWindow())
 
 export function setInterfaceMode(mode: InterfaceMode) {
   modeLayout.change(mode, () => $interfaceMode.set(mode))

@@ -264,8 +264,6 @@ describe('PluginsTab', () => {
 
     expect(requestGateway).not.toHaveBeenCalledWith('plugins.manage', expect.objectContaining({ action: 'toggle' }))
   })
-
-
 })
 
 describe('PluginsTab catalog management', () => {
@@ -405,5 +403,4 @@ describe('PluginsTab catalog management', () => {
     expect(screen.getByText('demo-tool')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Uninstall: demo-tool' })).toBeNull()
   })
-
 })
