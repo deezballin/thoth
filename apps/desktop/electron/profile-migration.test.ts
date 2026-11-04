@@ -32,6 +32,7 @@ import {
   scoreStateDb,
   withDefaultCandidate
 } from './profile-migration'
+import type { MigrationDecision } from './profile-migration'
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -684,4 +685,60 @@ test('migrateActiveProfileIfMissing leaves a still-correct heuristic pin alone',
 
   assert.equal(migrateActiveProfileIfMissing('/cfg/active-profile.json', deps), false)
   assert.equal(written, null)
+})
+
+// ---------------------------------------------------------------------------
+// Identity seam: what a false-negative probe actually costs (#145235)
+// ---------------------------------------------------------------------------
+
+test('a false-negative identity answer costs a repairable pin, not a silent wrong choice', () => {
+  // #145235: on Windows a probe that cannot read CommandLine answers false for a
+  // live gateway. At the probe, that false negative is indistinguishable from a
+  // recycled PID — which is why the probe alone can't be tested for it. The
+  // consequence lives here: seeding drops to the state.db heuristic and pins the
+  // biggest database instead of the running gateway.
+  //
+  // What keeps that survivable is `_migrated: true`: the file is heuristic-owned,
+  // so the next boot re-scores it. Once the probe answers correctly the pin moves
+  // to the gateway on its own — the user never picks a profile by hand.
+  const fs = makeFs({
+    '/home/u/.hermes/profiles/coder/gateway.pid': { content: '{"pid":1234}' },
+    '/home/u/.hermes/profiles/coder/state.db': { size: 2 * 1024 * 1024, mtime: NOW - 86_400_000 },
+    '/home/u/.hermes/profiles/writer/state.db': { size: 400 * 1024 * 1024, mtime: NOW - 86_400_000 }
+  })
+
+  let preference: string | null = null
+  const payloads: MigrationDecision[] = []
+  const pidsSeen: number[] = []
+  let gatewayIsIdentifiable = false
+
+  const deps = baseDeps({
+    ...fs,
+    existsSync: (p: string) => (p === '/cfg/active-profile.json' ? preference !== null : fs.existsSync(p)),
+    readFileSync: (p: string, enc: 'utf8') =>
+      p === '/cfg/active-profile.json' ? (preference as string) : fs.readFileSync(p, enc),
+    isHermesProcess: (pid: number) => {
+      pidsSeen.push(pid)
+
+      return gatewayIsIdentifiable && pid === 1234
+    },
+    writeJson: (_p: string, payload: MigrationDecision) => {
+      payloads.push(payload)
+      preference = JSON.stringify(payload)
+    }
+  })
+
+  // Boot 1 — the probe cannot identify the gateway, so the heuristic owns the pin.
+  assert.equal(migrateActiveProfileIfMissing('/cfg/active-profile.json', deps), true)
+  assert.deepEqual(payloads, [{ profile: 'writer', _migrated: true }])
+  // The seam did ask the identity probe about the live gateway; it just could not
+  // confirm it. Without this the test would pass even if gateway.pid were ignored.
+  assert.deepEqual(pidsSeen, [1234])
+
+  // Boot 2 — same install, probe now answers. The heuristic-owned pin is repaired
+  // and converges on the live gateway, flagless because it is now gateway-owned.
+  gatewayIsIdentifiable = true
+  assert.equal(migrateActiveProfileIfMissing('/cfg/active-profile.json', deps), true)
+  assert.deepEqual(payloads, [{ profile: 'writer', _migrated: true }, { profile: 'coder' }])
+  assert.equal(payloads[1]._migrated, undefined)
 })
